@@ -328,26 +328,32 @@ class ConsultationController extends Controller
 
     /**
      * Map internal status to frontend status
+     * Priority: payment_status first, then consultation progress
      */
     private function mapStatus($paymentStatus, $startedAt, $endedAt)
     {
-        if ($endedAt) {
-            return 'completed';
+        // Payment status is PRIMARY factor
+        if ($paymentStatus === 'failed') {
+            return 'cancelled';
         }
 
-        if ($startedAt && !$endedAt) {
-            return 'confirmed';
+        if ($paymentStatus === 'pending') {
+            return 'pending';  // Always pending if not paid (regardless of scheduled time)
         }
 
-        switch ($paymentStatus) {
-            case 'paid':
-                return 'confirmed';
-            case 'failed':
-                return 'cancelled';
-            case 'pending':
-            default:
-                return 'pending';
+        // Only if payment is successful, then check consultation progress
+        if ($paymentStatus === 'paid') {
+            if ($endedAt) {
+                return 'completed';  // Paid, started, and ended
+            }
+            if ($startedAt) {
+                return 'in_progress';  // Paid, started, but not ended
+            }
+            return 'confirmed';  // Paid but not started yet
         }
+
+        // Fallback
+        return 'pending';
     }
 
     public function mine(Request $request)
@@ -356,36 +362,38 @@ class ConsultationController extends Controller
             $user = $request->user();
 
             if ($user->role === 'patient') {
-                // Patient viewing their consultations
+                // Patient viewing their consultations - same structure as index() method
                 $consultations = Consultation::where('patient_id', $user->id)
-                    ->with(['doctor.doctor', 'payment'])
+                    ->with(['doctor.doctor'])
                     ->orderBy('created_at', 'desc')
-                    ->get();
-
-                $consultations->transform(function ($consultation) {
-                    return [
-                        'id' => $consultation->id,
-                        'doctor_name' => $consultation->doctor->name,
-                        'doctor_specialization' => $consultation->doctor->doctor->specialization ?? 'General Practice',
-                        'patient_symptoms' => $consultation->patient_symptoms,
-                        'doctor_notes' => $consultation->doctor_notes,
-                        'status' => $consultation->status,
-                        'started_at' => $consultation->started_at,
-                        'ended_at' => $consultation->ended_at,
-                        'duration_minutes' => $consultation->duration_minutes,
-                        'fee_amount' => $consultation->fee_amount,
-                        'payment_status' => $consultation->payment_status,
-                        'agora_channel' => $consultation->agora_channel,
-                        'created_at' => $consultation->created_at,
-                        'updated_at' => $consultation->updated_at,
-                    ];
-                });
+                    ->get()
+                    ->map(function ($consultation) {
+                        return [
+                            'id' => $consultation->id,
+                            'patient_id' => $consultation->patient_id,
+                            'doctor_id' => $consultation->doctor_id,
+                            'doctor' => $consultation->doctor ? [
+                                'id' => $consultation->doctor->id,
+                                'name' => $consultation->doctor->name,
+                                'specialization' => $consultation->doctor->doctor->specialization ?? 'General Practice',
+                                'gender' => $consultation->doctor->gender,
+                                'profile_photo' => $consultation->doctor->profile_photo,
+                            ] : null,
+                            'scheduled_at' => $consultation->started_at ?? $consultation->created_at,
+                            'status' => $this->mapStatus($consultation->payment_status, $consultation->started_at, $consultation->ended_at),
+                            'amount' => $consultation->fee_amount,
+                            'duration' => $consultation->duration_minutes ?: 30,
+                            'notes' => $consultation->patient_symptoms,
+                            'payment_status' => $consultation->payment_status,
+                            'agora_channel' => $consultation->agora_channel,
+                            'created_at' => $consultation->created_at,
+                            'updated_at' => $consultation->updated_at,
+                        ];
+                    });
             } elseif ($user->role === 'doctor') {
-                // Doctor viewing their consultations
-                $consultations = Consultation::whereHas('doctor', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
-                    ->with(['patient', 'payment'])
+                // Doctor viewing their consultations (using doctor_id = user_id)
+                $consultations = Consultation::where('doctor_id', $user->id)
+                    ->with(['patient'])
                     ->orderBy('created_at', 'desc')
                     ->get();
 
@@ -396,7 +404,7 @@ class ConsultationController extends Controller
                         'patient_phone' => $consultation->patient->phone,
                         'patient_symptoms' => $consultation->patient_symptoms,
                         'doctor_notes' => $consultation->doctor_notes,
-                        'status' => $consultation->status,
+                        'status' => $this->mapStatus($consultation->payment_status, $consultation->started_at, $consultation->ended_at),
                         'started_at' => $consultation->started_at,
                         'ended_at' => $consultation->ended_at,
                         'duration_minutes' => $consultation->duration_minutes,

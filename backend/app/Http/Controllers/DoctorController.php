@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Models\Consultation;
+use App\Models\Payment;
 use Illuminate\Support\Facades\Log;
 
 class DoctorController extends Controller
@@ -162,19 +163,22 @@ class DoctorController extends Controller
                 return response()->json(['message' => 'Doctor profile not found'], 404);
             }
 
-            // Get consultation statistics
-            $totalConsultations = Consultation::where('doctor_id', $doctor->id)->count();
-            $pendingConsultations = Consultation::where('doctor_id', $doctor->id)
-                ->where('status', 'pending')
+            // Get consultation statistics (using user_id as foreign key)
+            $totalConsultations = Consultation::where('doctor_id', $user->id)->count();
+            $pendingConsultations = Consultation::where('doctor_id', $user->id)
+                ->where('payment_status', 'pending')
                 ->count();
-            $completedConsultations = Consultation::where('doctor_id', $doctor->id)
-                ->where('status', 'completed')
+            $completedConsultations = Consultation::where('doctor_id', $user->id)
+                ->where('payment_status', 'paid')
+                ->whereNotNull('ended_at')
                 ->count();
 
-            // Calculate total earnings from completed consultations
-            $totalEarnings = Consultation::where('doctor_id', $doctor->id)
-                ->where('payment_status', 'paid')
-                ->sum('fee_amount');
+            // Calculate total earnings from valid payments (same as admin revenue logic)
+            $totalEarnings = Payment::whereHas('consultation', function ($query) use ($user) {
+                $query->where('doctor_id', $user->id);
+            })
+                ->where('ssl_status', 'VALID')
+                ->sum('amount');
 
             return response()->json([
                 'stats' => [

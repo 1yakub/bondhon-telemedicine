@@ -64,7 +64,7 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     // Consultation Routes
     Route::prefix('consultations')->group(function () {
         Route::get('/', [ConsultationController::class, 'index']); // Patient's consultations
-        Route::get('mine', [ConsultationController::class, 'index']); // Alternative endpoint for consistency
+        Route::get('mine', [ConsultationController::class, 'mine']); // For both patients and doctors
         Route::post('/', [ConsultationController::class, 'store']);
         Route::get('{id}', [ConsultationController::class, 'show']);
         Route::delete('{id}', [ConsultationController::class, 'destroy']);

@@ -29,7 +29,7 @@ class AdminController extends Controller
             $totalPatients = User::where('role', 'patient')->count();
             $totalConsultations = Consultation::count();
             $onlineDoctors = Doctor::where('is_online', true)->count();
-            $pendingConsultations = Consultation::where('status', 'pending')->count();
+            $pendingConsultations = Consultation::where('payment_status', 'pending')->count();
 
             // Calculate total revenue from paid consultations
             $totalRevenue = Payment::where('ssl_status', 'VALID')->sum('amount');
@@ -126,7 +126,7 @@ class AdminController extends Controller
                         'doctor_specialization' => $consultation->doctor->doctor->specialization ?? 'General Practice',
                         'patient_symptoms' => $consultation->patient_symptoms,
                         'doctor_notes' => $consultation->doctor_notes,
-                        'status' => $consultation->status,
+                        'status' => $this->mapStatus($consultation->payment_status, $consultation->started_at, $consultation->ended_at),
                         'fee_amount' => $consultation->fee_amount,
                         'payment_status' => $consultation->payment_status,
                         'started_at' => $consultation->started_at,
@@ -203,11 +203,11 @@ class AdminController extends Controller
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
-            // Get consultations by status
-            $consultationsByStatus = Consultation::selectRaw('status, COUNT(*) as count')
-                ->groupBy('status')
+            // Get consultations by payment status (since status column doesn't exist)
+            $consultationsByStatus = Consultation::selectRaw('payment_status, COUNT(*) as count')
+                ->groupBy('payment_status')
                 ->get()
-                ->pluck('count', 'status');
+                ->pluck('count', 'payment_status');
 
             // Get consultations by month (last 6 months)
             $consultationsByMonth = Consultation::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
@@ -253,5 +253,35 @@ class AdminController extends Controller
                 'message' => 'Failed to fetch analytics'
             ], 500);
         }
+    }
+
+    /**
+     * Map internal status to frontend status
+     * Priority: payment_status first, then consultation progress
+     */
+    private function mapStatus($paymentStatus, $startedAt, $endedAt)
+    {
+        // Payment status is PRIMARY factor
+        if ($paymentStatus === 'failed') {
+            return 'cancelled';
+        }
+
+        if ($paymentStatus === 'pending') {
+            return 'pending';  // Always pending if not paid (regardless of scheduled time)
+        }
+
+        // Only if payment is successful, then check consultation progress
+        if ($paymentStatus === 'paid') {
+            if ($endedAt) {
+                return 'completed';  // Paid, started, and ended
+            }
+            if ($startedAt) {
+                return 'in_progress';  // Paid, started, but not ended
+            }
+            return 'confirmed';  // Paid but not started yet
+        }
+
+        // Fallback
+        return 'pending';
     }
 }
