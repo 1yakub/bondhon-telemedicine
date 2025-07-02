@@ -8,6 +8,8 @@ export default function PatientDashboard() {
   const [user, setUser] = useState(null);
   const [doctors, setDoctors] = useState([]);
   const [consultations, setConsultations] = useState([]);
+  const [recentConsultations, setRecentConsultations] = useState([]);
+  const [dashboardStats, setDashboardStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
@@ -39,6 +41,9 @@ export default function PatientDashboard() {
           router.push("/patient/complete-profile");
           return;
         }
+
+        // Fetch consultations for authenticated user
+        fetchConsultations();
       } else {
         router.push("/login");
       }
@@ -66,6 +71,101 @@ export default function PatientDashboard() {
     }
   };
 
+  const fetchConsultations = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/consultations/mine`,
+        {
+          credentials: "include",
+        }
+      );
+      if (response.ok) {
+        const data = await response.json();
+        const allConsultations = data.consultations || [];
+        setConsultations(allConsultations);
+
+        // Set recent consultations (last 3)
+        setRecentConsultations(allConsultations.slice(0, 3));
+
+        // Calculate and set dashboard stats
+        const stats = calculateStats(allConsultations);
+        setDashboardStats(stats);
+      }
+    } catch (err) {
+      console.error("Failed to fetch consultations:", err);
+    }
+  };
+
+  const calculateStats = (consultations) => {
+    if (!consultations || consultations.length === 0) {
+      return {
+        totalConsultations: 0,
+        thisMonth: 0,
+        totalSpent: 0,
+        favoriteDoctor: "None",
+        topSpecialization: "None",
+      };
+    }
+
+    const totalConsultations = consultations.length;
+
+    // This month consultations
+    const currentMonth = new Date().getMonth();
+    const currentYear = new Date().getFullYear();
+    const thisMonth = consultations.filter((c) => {
+      const consultationDate = new Date(c.created_at);
+      return (
+        consultationDate.getMonth() === currentMonth &&
+        consultationDate.getFullYear() === currentYear
+      );
+    }).length;
+
+    // Total spent (only paid consultations)
+    const totalSpent = consultations
+      .filter((c) => c.payment_status === "paid")
+      .reduce((sum, c) => sum + parseFloat(c.amount || 0), 0);
+
+    // Most consulted doctor
+    const doctorCounts = {};
+    consultations.forEach((c) => {
+      const doctorName = c.doctor?.name;
+      if (doctorName) {
+        doctorCounts[doctorName] = (doctorCounts[doctorName] || 0) + 1;
+      }
+    });
+    const favoriteDoctor =
+      Object.keys(doctorCounts).length > 0
+        ? Object.keys(doctorCounts).reduce((a, b) =>
+            doctorCounts[a] > doctorCounts[b] ? a : b
+          )
+        : "None";
+
+    // Most consulted specialization
+    const specializationCounts = {};
+    consultations.forEach((c) => {
+      const spec = c.doctor?.specialization;
+      if (spec) {
+        specializationCounts[spec] = (specializationCounts[spec] || 0) + 1;
+      }
+    });
+    const topSpecialization =
+      Object.keys(specializationCounts).length > 0
+        ? `${Object.keys(specializationCounts).reduce((a, b) =>
+            specializationCounts[a] > specializationCounts[b] ? a : b
+          )} (${Object.values(specializationCounts).reduce((a, b) =>
+            a > b ? a : b
+          )})`
+        : "None";
+
+    return {
+      totalConsultations,
+      thisMonth,
+      totalSpent,
+      favoriteDoctor,
+      topSpecialization,
+    };
+  };
+
   const logout = async () => {
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
@@ -82,6 +182,55 @@ export default function PatientDashboard() {
     if (gender === "male") return "👨‍⚕️";
     if (gender === "female") return "👩‍⚕️";
     return "🩺";
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+
+    if (date.toDateString() === today.toDateString()) {
+      return "Today";
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return "Yesterday";
+    } else {
+      return date.toLocaleDateString();
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-800";
+      case "confirmed":
+        return "bg-blue-100 text-blue-800";
+      case "in_progress":
+        return "bg-purple-100 text-purple-800";
+      case "completed":
+        return "bg-green-100 text-green-800";
+      case "cancelled":
+        return "bg-red-100 text-red-800";
+      default:
+        return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "pending":
+        return "⏳";
+      case "confirmed":
+        return "✅";
+      case "in_progress":
+        return "🔄";
+      case "completed":
+        return "🏁";
+      case "cancelled":
+        return "❌";
+      default:
+        return "❓";
+    }
   };
 
   if (loading) {
@@ -342,7 +491,7 @@ export default function PatientDashboard() {
                       </div>
                     </div>
                     <Link
-                      href="/login"
+                      href="/doctors"
                       className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"
                     >
                       Consult
@@ -351,6 +500,107 @@ export default function PatientDashboard() {
                 ))}
               </div>
             )}
+          </div>
+
+          {/* Recent Consultations */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">
+                📋 Recent Consultations
+              </h3>
+              <Link
+                href="/patient/consultations"
+                className="text-sm text-blue-600 hover:text-blue-500"
+              >
+                View All
+              </Link>
+            </div>
+
+            {recentConsultations.length === 0 ? (
+              <p className="text-sm text-gray-500">
+                No consultations yet. Book your first consultation!
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {recentConsultations.map((consultation) => (
+                  <div
+                    key={consultation.id}
+                    className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="flex-1">
+                      <div className="flex items-center">
+                        <span className="text-sm mr-2">
+                          {getStatusIcon(consultation.status)}
+                        </span>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">
+                            Dr. {consultation.doctor?.name || "Unknown"}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {consultation.doctor?.specialization ||
+                              "General Practice"}
+                          </p>
+                          <p className="text-xs text-gray-400">
+                            {formatDate(consultation.created_at)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span
+                        className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
+                          consultation.status
+                        )}`}
+                      >
+                        {consultation.status}
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        ৳{consultation.amount || 0}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Dashboard Stats */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              📊 Your Health Summary
+            </h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="text-center">
+                <p className="text-2xl font-bold text-blue-600">
+                  {dashboardStats.totalConsultations || 0}
+                </p>
+                <p className="text-sm text-gray-500">Total Consultations</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-green-600">
+                  {dashboardStats.thisMonth || 0}
+                </p>
+                <p className="text-sm text-gray-500">This Month</p>
+              </div>
+              <div className="text-center">
+                <p className="text-2xl font-bold text-purple-600">
+                  ৳{dashboardStats.totalSpent || 0}
+                </p>
+                <p className="text-sm text-gray-500">Total Spent</p>
+              </div>
+              <div className="text-center">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {dashboardStats.favoriteDoctor || "None"}
+                </p>
+                <p className="text-sm text-gray-500">Favorite Doctor</p>
+              </div>
+            </div>
+            <div className="mt-4 pt-4 border-t">
+              <p className="text-sm text-gray-600">
+                <strong>Most Consulted:</strong>{" "}
+                {dashboardStats.topSpecialization || "None"}
+              </p>
+            </div>
           </div>
         </div>
 
