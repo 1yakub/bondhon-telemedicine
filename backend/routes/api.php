@@ -59,6 +59,7 @@ Route::middleware(['web', 'auth:web'])->group(function () {
         Route::put('toggle-status', [DoctorController::class, 'toggleStatus']);
         Route::get('profile', [DoctorController::class, 'getProfile']);
         Route::put('profile', [DoctorController::class, 'updateProfile']);
+        Route::put('change-password', [DoctorController::class, 'changePassword']);
     });
 
     // Consultation Routes
@@ -77,6 +78,12 @@ Route::middleware(['web', 'auth:web'])->group(function () {
     // Admin routes (for authenticated admins)
     Route::get('/admin/stats', [AdminController::class, 'stats']);
     Route::get('/admin/doctors', [AdminController::class, 'doctors']);
+    Route::get('/admin/doctors/{id}', [AdminController::class, 'showDoctor']);
+    Route::get('/admin/doctors/{id}/consultations', [AdminController::class, 'doctorConsultations']);
+    Route::post('/admin/doctors', [AdminController::class, 'createDoctor']);
+    Route::put('/admin/doctors/{id}', [AdminController::class, 'updateDoctor']);
+    Route::put('/admin/doctors/{id}/password', [AdminController::class, 'resetDoctorPassword']);
+    Route::get('/admin/patients', [AdminController::class, 'patients']);
     Route::get('/admin/consultations', [AdminController::class, 'consultations']);
     Route::post('/admin/doctors/{id}/toggle-status', [AdminController::class, 'toggleDoctorStatus']);
     Route::get('/admin/analytics', [AdminController::class, 'analytics']);

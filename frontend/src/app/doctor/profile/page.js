@@ -10,6 +10,15 @@ export default function DoctorProfile() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [showPasswordChange, setShowPasswordChange] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState("");
+  const [passwordSuccess, setPasswordSuccess] = useState("");
+  const [passwordData, setPasswordData] = useState({
+    current_password: "",
+    new_password: "",
+    new_password_confirmation: "",
+  });
   const router = useRouter();
 
   const [formData, setFormData] = useState({
@@ -121,8 +130,17 @@ export default function DoctorProfile() {
       if (response.ok) {
         setSuccess("Profile updated successfully!");
         setDoctor(data.user);
-        // Clear success message after 3 seconds
-        setTimeout(() => setSuccess(""), 3000);
+        // Update form data with the latest information
+        setFormData({
+          name: data.user.name || "",
+          profile_photo: data.user.profile_photo || "",
+          gender: data.user.gender || "",
+          date_of_birth: data.user.date_of_birth || "",
+          specialization: data.user.doctor?.specialization || "",
+          qualifications: data.user.doctor?.qualifications || "",
+          experience_years: data.user.doctor?.experience_years || "",
+          fee_per_consultation: data.user.doctor?.fee_per_consultation || "",
+        });
       } else {
         setError(data.message || "Failed to update profile");
       }
@@ -146,6 +164,58 @@ export default function DoctorProfile() {
     }
   };
 
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+    setPasswordLoading(true);
+    setPasswordError("");
+    setPasswordSuccess("");
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/doctors/change-password`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+          body: JSON.stringify(passwordData),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setPasswordSuccess("Password changed successfully!");
+        setPasswordData({
+          current_password: "",
+          new_password: "",
+          new_password_confirmation: "",
+        });
+        // Auto-close modal after 2 seconds
+        setTimeout(() => {
+          setShowPasswordChange(false);
+          setPasswordSuccess("");
+        }, 2000);
+      } else {
+        setPasswordError(data.message || "Failed to change password");
+      }
+    } catch (err) {
+      console.error("Password change error:", err);
+      setPasswordError("Network error. Please try again.");
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handlePasswordInputChange = (e) => {
+    const { name, value } = e.target;
+    setPasswordData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -163,24 +233,27 @@ export default function DoctorProfile() {
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Bondhon</h1>
+            <Link href="/doctor/dashboard" className="flex items-center">
+              <h1 className="text-2xl font-bold text-green-600">Bondhon</h1>
               <span className="ml-2 text-sm text-gray-500">বন্ধন</span>
+              <span className="ml-4 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
+                Doctor
+              </span>
             </Link>
             <div className="flex items-center space-x-4">
+              <button
+                onClick={() => setShowPasswordChange(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Change Password
+              </button>
+              <span className="text-sm text-gray-600">Dr. {doctor?.name}</span>
               <Link
                 href="/doctor/dashboard"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
               >
-                Dashboard
+                Back to Dashboard
               </Link>
-              <span className="text-sm text-gray-600">Dr. {doctor?.name}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Logout
-              </button>
             </div>
           </div>
         </div>
@@ -423,6 +496,122 @@ export default function DoctorProfile() {
           </div>
         </form>
       </div>
+
+      {/* Password Change Modal */}
+      {showPasswordChange && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium text-gray-900">
+                  Change Password
+                </h3>
+                <button
+                  onClick={() => setShowPasswordChange(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              {passwordError && (
+                <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
+                  <p className="text-sm text-red-600">{passwordError}</p>
+                </div>
+              )}
+
+              {passwordSuccess && (
+                <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-3">
+                  <p className="text-sm text-green-600">{passwordSuccess}</p>
+                </div>
+              )}
+
+              <form onSubmit={handlePasswordChange} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Current Password
+                  </label>
+                  <input
+                    type="password"
+                    name="current_password"
+                    required
+                    value={passwordData.current_password}
+                    onChange={handlePasswordInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="new_password"
+                    required
+                    value={passwordData.new_password}
+                    onChange={handlePasswordInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    minLength="6"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Confirm New Password
+                  </label>
+                  <input
+                    type="password"
+                    name="new_password_confirmation"
+                    required
+                    value={passwordData.new_password_confirmation}
+                    onChange={handlePasswordInputChange}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    minLength="6"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 pt-4">
+                  <button
+                    type="button"
+                    onClick={() => setShowPasswordChange(false)}
+                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    disabled={passwordLoading}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={passwordLoading}
+                    className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                  >
+                    {passwordLoading ? (
+                      <div className="flex items-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Changing...
+                      </div>
+                    ) : (
+                      "Change Password"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

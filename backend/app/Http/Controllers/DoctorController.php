@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Models\Consultation;
@@ -193,6 +194,52 @@ class DoctorController extends Controller
             Log::error('Error fetching doctor stats: ' . $e->getMessage());
             return response()->json([
                 'message' => 'Failed to fetch statistics'
+            ], 500);
+        }
+    }
+
+    /**
+     * Change doctor password
+     * PUT /api/doctors/change-password
+     */
+    public function changePassword(Request $request)
+    {
+        try {
+            $user = Auth::user();
+
+            if ($user->role !== 'doctor') {
+                return response()->json(['message' => 'Only doctors can change password'], 403);
+            }
+
+            // Validate password change request
+            $validated = $request->validate([
+                'current_password' => 'required|string',
+                'new_password' => 'required|string|min:6',
+                'new_password_confirmation' => 'required|string|same:new_password',
+            ]);
+
+            // Check current password
+            if (!Hash::check($validated['current_password'], $user->password)) {
+                return response()->json([
+                    'message' => 'Current password is incorrect'
+                ], 400);
+            }
+
+            // Update password
+            $user->update([
+                'password' => Hash::make($validated['new_password'])
+            ]);
+
+            Log::info("Doctor {$user->name} changed their password");
+
+            return response()->json([
+                'message' => 'Password changed successfully'
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Error changing doctor password: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Failed to change password'
             ], 500);
         }
     }
