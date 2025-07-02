@@ -187,7 +187,7 @@ export default function PatientProfile() {
                 required
                 value={formData.name}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter your full name"
               />
             </div>
@@ -227,7 +227,7 @@ export default function PatientProfile() {
                 value={formData.date_of_birth}
                 onChange={handleInputChange}
                 max={new Date().toISOString().split("T")[0]}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               />
             </div>
 
@@ -244,7 +244,7 @@ export default function PatientProfile() {
                 name="gender"
                 value={formData.gender}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
@@ -267,7 +267,7 @@ export default function PatientProfile() {
                 rows={3}
                 value={formData.address}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
                 placeholder="Enter your full address"
               />
               <p className="mt-1 text-xs text-gray-500">
