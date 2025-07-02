@@ -143,14 +143,84 @@ export default function DoctorDashboard() {
     switch (status) {
       case "pending":
         return "bg-yellow-100 text-yellow-800";
-      case "in_progress":
+      case "confirmed":
         return "bg-blue-100 text-blue-800";
-      case "completed":
+      case "in_progress":
         return "bg-green-100 text-green-800";
+      case "completed":
+        return "bg-gray-100 text-gray-800";
       case "cancelled":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
+    }
+  };
+
+  const getStatusMessage = (status) => {
+    switch (status) {
+      case "pending":
+        return "Awaiting Payment";
+      case "confirmed":
+        return "Ready for Call";
+      case "in_progress":
+        return "In Progress";
+      case "completed":
+        return "Completed";
+      case "cancelled":
+        return "Cancelled";
+      default:
+        return status;
+    }
+  };
+
+  const renderActionButton = (consultation) => {
+    const { status, id } = consultation;
+
+    switch (status) {
+      case "pending":
+        return (
+          <span className="text-sm text-gray-500 italic">
+            Waiting for payment
+          </span>
+        );
+      case "confirmed":
+        return (
+          <Link
+            href={`/doctor/video-call/${id}`}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium"
+          >
+            Join Video Call
+          </Link>
+        );
+      case "in_progress":
+        return (
+          <Link
+            href={`/doctor/video-call/${id}`}
+            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium"
+          >
+            Continue Call
+          </Link>
+        );
+      case "completed":
+        return (
+          <Link
+            href={`/doctor/consultations/${id}`}
+            className="text-blue-600 hover:text-blue-900 text-sm"
+          >
+            View Details
+          </Link>
+        );
+      case "cancelled":
+        return <span className="text-sm text-gray-500">Cancelled</span>;
+      default:
+        return (
+          <Link
+            href={`/doctor/consultations/${id}`}
+            className="text-blue-600 hover:text-blue-900 text-sm"
+          >
+            View
+          </Link>
+        );
     }
   };
 
@@ -203,6 +273,12 @@ export default function DoctorDashboard() {
                   {statusUpdating ? "Updating..." : "Toggle"}
                 </button>
               </div>
+              <Link
+                href="/doctor/profile"
+                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
+              >
+                Profile
+              </Link>
               <span className="text-sm text-gray-600">Dr. {doctor.name}</span>
               <button
                 onClick={handleLogout}
@@ -392,11 +468,18 @@ export default function DoctorDashboard() {
                   />
                 </svg>
                 <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No consultations
+                  No consultations yet
                 </h3>
                 <p className="mt-1 text-sm text-gray-500">
-                  You don't have any consultation requests yet.
+                  You don't have any consultation requests yet. Make sure you're
+                  online to receive new consultations.
                 </p>
+                {!doctor.doctor?.is_online && (
+                  <p className="mt-2 text-sm text-orange-600 font-medium">
+                    💡 Turn on your online status to start receiving
+                    consultation requests
+                  </p>
+                )}
               </div>
             ) : (
               <div className="overflow-x-auto">
@@ -459,7 +542,7 @@ export default function DoctorDashboard() {
                               consultation.status
                             )}`}
                           >
-                            {consultation.status}
+                            {getStatusMessage(consultation.status)}
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -469,12 +552,7 @@ export default function DoctorDashboard() {
                           {formatDate(consultation.created_at)}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <Link
-                            href={`/doctor/consultations/${consultation.id}`}
-                            className="text-blue-600 hover:text-blue-900"
-                          >
-                            View
-                          </Link>
+                          {renderActionButton(consultation)}
                         </td>
                       </tr>
                     ))}
