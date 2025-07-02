@@ -1,0 +1,183 @@
+# Bondhon Telemedicine Platform - Root .gitignore
+
+# ===============================================
+# CRITICAL SECURITY - NEVER COMMIT THESE FILES
+# ===============================================
+
+# Deployment Notes (Contains sensitive server info)
+DEPLOYMENT_NOTES.md
+deployment_notes.md
+server_notes.md
+**/deployment*.md
+**/server*.md
+
+# Digital Ocean CLI Binary (37MB+ file)
+doctl.exe
+doctl
+**/doctl*
+
+# Cookies and session files
+cookies.txt
+**/cookies.txt
+
+# Environment files (Additional protection)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.staging
+**/.env
+**/.env.local
+
+# ===============================================
+# IDE AND EDITOR FILES
+# ===============================================
+
+# Cursor IDE
+.cursor/
+**/.cursor/
+
+# VSCode
+.vscode/
+**/.vscode/
+
+# JetBrains IDEs
+.idea/
+**/.idea/
+
+# Sublime Text
+*.sublime-*
+
+# ===============================================
+# OPERATING SYSTEM FILES
+# ===============================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+.Spotlight-V100
+.Trashes
+
+# Linux
+*~
+.nfs*
+
+# ===============================================
+# DEPENDENCY DIRECTORIES (Backup protection)
+# ===============================================
+
+# Node.js
+node_modules/
+**/node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# PHP Composer
+vendor/
+**/vendor/
+
+# ===============================================
+# BUILD AND CACHE DIRECTORIES
+# ===============================================
+
+# Next.js
+.next/
+**/.next/
+out/
+**/out/
+
+# Laravel
+public/build/
+**/public/build/
+public/hot/
+**/public/hot/
+
+# ===============================================
+# LOG AND TEMPORARY FILES
+# ===============================================
+
+# Log files
+*.log
+logs/
+**/logs/
+
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
+
+# Cache files
+.cache/
+**/.cache/
+
+# ===============================================
+# BACKUP AND ARCHIVE FILES
+# ===============================================
+
+# Backup files
+*.bak
+*.backup
+*.old
+*.orig
+
+# Archive files
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+
+# ===============================================
+# DEVELOPMENT AND TESTING
+# ===============================================
+
+# Coverage reports
+coverage/
+**/coverage/
+
+# Testing
+.phpunit.result.cache
+**/storage/*.key
+
+# ===============================================
+# MISCELLANEOUS
+# ===============================================
+
+# Documentation (sensitive/internal docs)
+docs/
+
+# Database files (SQLite, etc.)
+*.sqlite
+*.sqlite3
+*.db
+
+# Key files
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Certificates
+*.crt
+*.cer
+
+# ===========================================
+# NOTE: Individual projects have their own
+# .gitignore files in backend/ and frontend/
+# =========================================== 

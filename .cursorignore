@@ -1,0 +1,13 @@
+!.env
+!.env.local
+!.cursorrules
+!.cursorrules.md
+!.cursorrules.txt
+!.cursorrules.yml
+!.cursorrules.yaml
+!.cursorrules.json
+!.cursorrules.jsonc
+!.cursorrules.json5
+!.cursorrules.jsonp
+!.cursorrules.jsonl
+!laravel.log
