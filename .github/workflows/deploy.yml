@@ -113,17 +113,75 @@ jobs:
                 pm2 restart all || true
             fi
             
-            # Health check
-            echo "🏥 Running health check..."
-            sleep 5
-            if systemctl is-active --quiet nginx && systemctl is-active --quiet php8.2-fpm; then
-                echo "✅ All services are running!"
-            else
-                echo "⚠️ Some services may have issues"
-            fi
+                      # Comprehensive Health Checks
+          echo "🏥 Running comprehensive health checks..."
+          sleep 10
 
-            echo "✅ Deployment completed successfully!"
-            echo "🌐 Bondhon is now live at: http://159.223.60.129"
+          # Check service status
+          echo "🔍 Checking service status..."
+          if ! systemctl is-active --quiet nginx; then
+              echo "❌ nginx is not running!"
+              exit 1
+          fi
+
+          if ! systemctl is-active --quiet php8.2-fpm; then
+              echo "❌ PHP-FPM is not running!"
+              exit 1
+          fi
+
+          echo "✅ All services are running!"
+
+          # Test Laravel application health
+          echo "🔍 Testing Laravel application..."
+          cd /var/www/bondhon/backend
+
+          # Test Laravel can start
+          if ! php artisan --version > /dev/null 2>&1; then
+              echo "❌ Laravel artisan command failed!"
+              exit 1
+          fi
+
+          # Test database connection
+          if ! php artisan tinker --execute="DB::connection()->getPdo(); echo 'DB_OK';" 2>/dev/null | grep -q "DB_OK"; then
+              echo "❌ Laravel database connection failed!"
+              exit 1
+          fi
+
+          # Test Laravel via nginx (real world test)
+          if ! curl -f -s http://localhost > /dev/null; then
+              echo "❌ nginx → Laravel connection failed!"
+              
+              # Additional debugging
+              echo "🔍 Debugging nginx/Laravel connection..."
+              echo "nginx error logs:"
+              tail -5 /var/log/nginx/error.log 2>/dev/null || echo "No nginx error logs"
+              echo "Laravel logs:"
+              tail -5 /var/www/bondhon/backend/storage/logs/laravel.log 2>/dev/null || echo "No Laravel logs"
+              exit 1
+          fi
+
+          echo "✅ Laravel is responding through nginx!"
+
+          # Test frontend build exists
+          echo "🔍 Testing frontend build..."
+          if [ ! -d "/var/www/bondhon/frontend/.next" ]; then
+              echo "❌ Frontend build artifacts missing!"
+              exit 1
+          fi
+
+          echo "✅ Frontend build artifacts found!"
+
+          # Test if Laravel API endpoints work
+          echo "🔍 Testing Laravel API endpoints..."
+          if curl -f -s http://localhost/api > /dev/null; then
+              echo "✅ Laravel API is accessible!"
+          else
+              echo "⚠️ Laravel API may have issues (this might be expected if no /api route exists)"
+          fi
+
+          echo "✅ All health checks passed!"
+          echo "🎉 Deployment completed successfully!"
+          echo "🌐 Bondhon is now live at: http://159.223.60.129"
           ENDSSH
 
       - name: ✅ Mark Deployment Success

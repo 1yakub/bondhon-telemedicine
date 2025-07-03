@@ -65,6 +65,38 @@ jobs:
         working-directory: ./backend
         run: php artisan test
 
+      - name: 🏥 Backend Health Check
+        working-directory: ./backend
+        run: |
+          echo "🚀 Starting Laravel server..."
+          php artisan serve --host=127.0.0.1 --port=8000 &
+          SERVER_PID=$!
+
+          echo "⏳ Waiting for server to start..."
+          sleep 10
+
+          echo "🔍 Testing Laravel health..."
+          # Test basic Laravel response
+          if curl -f http://127.0.0.1:8000 > /dev/null 2>&1; then
+            echo "✅ Laravel server is responding!"
+          else
+            echo "❌ Laravel server is not responding!"
+            kill $SERVER_PID 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "🗄️ Testing database connection..."
+          if php artisan tinker --execute="DB::connection()->getPdo(); echo 'Database connected!';" | grep -q "Database connected"; then
+            echo "✅ Database connection successful!"
+          else
+            echo "❌ Database connection failed!"
+            kill $SERVER_PID 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "🛑 Stopping test server..."
+          kill $SERVER_PID 2>/dev/null || true
+
   test-frontend:
     runs-on: ubuntu-latest
 
@@ -89,3 +121,35 @@ jobs:
       - name: Run Frontend Linting
         working-directory: ./frontend
         run: npm run lint
+
+      - name: 🏥 Frontend Health Check
+        working-directory: ./frontend
+        run: |
+          echo "🚀 Starting Next.js server..."
+          npm run start &
+          FRONTEND_PID=$!
+
+          echo "⏳ Waiting for Next.js to start..."
+          sleep 15
+
+          echo "🔍 Testing Next.js health..."
+          # Test that Next.js serves the homepage
+          if curl -f http://localhost:3000 > /dev/null 2>&1; then
+            echo "✅ Next.js server is responding!"
+          else
+            echo "❌ Next.js server is not responding!"
+            kill $FRONTEND_PID 2>/dev/null || true
+            exit 1
+          fi
+
+          # Test that build was successful
+          if [ -d ".next" ]; then
+            echo "✅ Next.js build artifacts found!"
+          else
+            echo "❌ Next.js build artifacts missing!"
+            kill $FRONTEND_PID 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "🛑 Stopping test server..."
+          kill $FRONTEND_PID 2>/dev/null || true
