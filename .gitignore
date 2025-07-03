@@ -181,3 +181,5 @@ docs/
 # NOTE: Individual projects have their own
 # .gitignore files in backend/ and frontend/
 # =========================================== 
+
+.cursorignore

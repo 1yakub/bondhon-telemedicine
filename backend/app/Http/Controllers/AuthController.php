@@ -37,28 +37,51 @@ class AuthController extends Controller
         $message = "Your Bondhon verification code is: {$otp}. Valid for 5 minutes.";
 
         try {
-            $response = Http::timeout(2)->get(config('sms.bulk_sms_bd.base_url'), [
-                'api_key' => config('sms.bulk_sms_bd.api_key'),
-                'senderid' => config('sms.bulk_sms_bd.sender_id'),
-                'number' => $phone,
-                'message' => $message
-            ]);
+            // Check if we should actually send SMS (cost control)
+            $shouldSendSMS = env('APP_ENV') === 'production' && env('SMS_ENABLED', true);
 
-            if ($response->successful()) {
-                return response()->json([
-                    'message' => 'OTP sent successfully',
-                    'phone' => $phone
-                ], 200);
+            if ($shouldSendSMS) {
+                $response = Http::timeout(2)->get(config('sms.bulk_sms_bd.base_url'), [
+                    'api_key' => config('sms.bulk_sms_bd.api_key'),
+                    'senderid' => config('sms.bulk_sms_bd.sender_id'),
+                    'number' => $phone,
+                    'message' => $message
+                ]);
+
+                if ($response->successful()) {
+                    return response()->json([
+                        'message' => 'OTP sent successfully',
+                        'phone' => $phone
+                    ], 200);
+                } else {
+                    throw new \Exception('SMS service failed');
+                }
             } else {
-                throw new \Exception('SMS service failed');
+                // Development/Staging mode - don't send real SMS
+                Log::info('SMS not sent (staging mode)', [
+                    'phone' => $phone,
+                    'otp' => $otp,
+                    'sms_enabled' => env('SMS_ENABLED', true)
+                ]);
+
+                return response()->json([
+                    'message' => 'OTP sent successfully (Staging mode)',
+                    'phone' => $phone,
+                    'debug_otp' => env('APP_DEBUG') ? $otp : null
+                ], 200);
             }
         } catch (\Exception $e) {
-            // For development, we'll allow OTP without SMS
-            if (env('APP_ENV') === 'local') {
+            Log::error('SMS sending failed', [
+                'phone' => $phone,
+                'error' => $e->getMessage()
+            ]);
+
+            // Fallback for development/staging
+            if (env('APP_ENV') === 'local' || env('APP_ENV') === 'development' || !env('SMS_ENABLED', true)) {
                 return response()->json([
-                    'message' => 'OTP sent successfully (Development mode)',
+                    'message' => 'OTP sent successfully (Fallback mode)',
                     'phone' => $phone,
-                    'debug_otp' => $otp // Only in development
+                    'debug_otp' => env('APP_DEBUG') ? $otp : null
                 ], 200);
             }
 
@@ -87,7 +110,7 @@ class AuthController extends Controller
         $storedOtp = Session::get('otp_' . $phone);
 
         // In development, be more lenient with OTP validation  
-        if (env('APP_ENV') === 'local' && strlen($otp) === 6 && is_numeric($otp)) {
+        if ((env('APP_ENV') === 'local' || env('APP_ENV') === 'development') && strlen($otp) === 6 && is_numeric($otp)) {
             // Allow any 6-digit OTP in development mode
         } else {
             if (!$storedOtp || !isset($storedOtp['expires_at']) || $storedOtp['expires_at']->isPast()) {
