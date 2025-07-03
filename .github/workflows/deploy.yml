@@ -12,27 +12,30 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Deploy to DigitalOcean
-        uses: appleboy/ssh-action@v1.0.3
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.8.0
         with:
-          host: ${{ secrets.DO_HOST }}
-          username: ${{ secrets.DO_USERNAME }}
-          key: ${{ secrets.DO_SSH_KEY }}
-          port: 22
-          timeout: 300s
-          debug: true
-          script: |
-            cd /var/www/bondhon
+          ssh-private-key: ${{ secrets.DO_SSH_KEY }}
 
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to DigitalOcean
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
+            cd /var/www/bondhon
+            
             # Pull latest code
             git pull origin main
-
+            
             # Create backend .env from GitHub Secret
             cd backend
             cat > .env << 'EOF'
-            ${{ secrets.BACKEND_ENV }}
-            EOF
-
+          ${{ secrets.BACKEND_ENV }}
+          EOF
+            
             # Backend deployment
             composer install --no-dev --optimize-autoloader
             php artisan config:clear
@@ -42,19 +45,20 @@ jobs:
             php artisan view:clear
             php artisan view:cache
             php artisan migrate --force
-
+            
             # Create frontend .env.local from GitHub Secret
             cd ../frontend
             cat > .env.local << 'EOF'
-            ${{ secrets.FRONTEND_ENV }}
-            EOF
-
+          ${{ secrets.FRONTEND_ENV }}
+          EOF
+            
             # Frontend deployment  
             npm ci
             npm run build
-
+            
             # Restart services
             sudo systemctl restart nginx
             sudo pm2 restart all || true
-
+            
             echo "Deployment completed successfully!"
+          ENDSSH
