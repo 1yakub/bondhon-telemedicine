@@ -1,0 +1,57 @@
+name: Deploy to DigitalOcean
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Deploy to DigitalOcean
+        uses: appleboy/ssh-action@v0.1.5
+        with:
+          host: ${{ secrets.DO_HOST }}
+          username: ${{ secrets.DO_USERNAME }}
+          key: ${{ secrets.DO_SSH_KEY }}
+          script: |
+            cd /var/www/bondhon
+
+            # Pull latest code
+            git pull origin main
+
+            # Create backend .env from GitHub Secret
+            cd backend
+            cat > .env << 'EOF'
+            ${{ secrets.BACKEND_ENV }}
+            EOF
+
+            # Backend deployment
+            composer install --no-dev --optimize-autoloader
+            php artisan config:clear
+            php artisan config:cache
+            php artisan route:clear
+            php artisan route:cache
+            php artisan view:clear
+            php artisan view:cache
+            php artisan migrate --force
+
+            # Create frontend .env.local from GitHub Secret
+            cd ../frontend
+            cat > .env.local << 'EOF'
+            ${{ secrets.FRONTEND_ENV }}
+            EOF
+
+            # Frontend deployment  
+            npm ci
+            npm run build
+
+            # Restart services
+            sudo systemctl restart nginx
+            sudo pm2 restart all || true
+
+            echo "Deployment completed successfully!"

@@ -34,7 +34,7 @@ export default function DoctorDashboard() {
         setDoctor(userData.user);
       }
 
-      // Fetch consultations and stats in parallel
+      // Fetch consultations and stats in parallel. ok?
       await Promise.all([fetchConsultations(), fetchStats()]);
     } catch (err) {
       setError("Failed to load dashboard data");

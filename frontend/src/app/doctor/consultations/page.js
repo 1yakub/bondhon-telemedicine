@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 
+
 export default function DoctorConsultations() {
   const [consultations, setConsultations] = useState([]);
   const [filteredConsultations, setFilteredConsultations] = useState([]);
