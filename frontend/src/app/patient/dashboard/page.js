@@ -11,15 +11,22 @@ export default function PatientDashboard() {
   const [recentConsultations, setRecentConsultations] = useState([]);
   const [dashboardStats, setDashboardStats] = useState({});
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+
+  // Booking modal states
+  const [showBookingModal, setShowBookingModal] = useState(false);
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [bookingLoading, setBookingLoading] = useState(false);
+  const [bookingError, setBookingError] = useState("");
+  const [symptoms, setSymptoms] = useState("");
   const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    fetchUserData();
     fetchDoctors();
+    fetchConsultations();
   }, []);
 
-  const checkAuth = async () => {
+  const fetchUserData = async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/user`,
@@ -30,26 +37,10 @@ export default function PatientDashboard() {
 
       if (response.ok) {
         const data = await response.json();
-        if (data.user.role !== "patient") {
-          router.push("/login");
-          return;
-        }
         setUser(data.user);
-
-        // If profile is not complete, redirect to complete profile
-        if (!data.user.name) {
-          router.push("/patient/complete-profile");
-          return;
-        }
-
-        // Fetch consultations for authenticated user
-        fetchConsultations();
-      } else {
-        router.push("/login");
       }
     } catch (err) {
-      setError("Failed to check authentication");
-      router.push("/login");
+      console.error("Failed to fetch user data:", err);
     } finally {
       setLoading(false);
     }
@@ -166,15 +157,129 @@ export default function PatientDashboard() {
     };
   };
 
-  const logout = async () => {
+  const handleConsultNow = (doctor) => {
+    if (!user) {
+      // Redirect to login if not authenticated (shouldn't happen in dashboard but just in case)
+      router.push("/login");
+      return;
+    }
+
+    if (!doctor.is_online) {
+      alert("This doctor is currently offline. Please try again later.");
+      return;
+    }
+
+    // Open booking modal for authenticated users
+    setSelectedDoctor(doctor);
+    setShowBookingModal(true);
+    setBookingError("");
+    setSymptoms("");
+  };
+
+  const handleBookConsultation = async () => {
+    if (!selectedDoctor || !user) return;
+
+    console.log("Starting booking process...");
+    console.log("Selected Doctor:", selectedDoctor);
+    console.log("Symptoms:", symptoms);
+    console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+
+    setBookingLoading(true);
+    setBookingError("");
+
     try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      router.push("/");
+      // Step 1: Get CSRF token first
+      console.log("Getting CSRF token...");
+      const csrfResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL.replace(
+          "/api",
+          ""
+        )}/sanctum/csrf-cookie`,
+        {
+          credentials: "include",
+        }
+      );
+      console.log("CSRF response status:", csrfResponse.status);
+
+      // Get CSRF token from cookie
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("XSRF-TOKEN="))
+        ?.split("=")[1];
+      console.log("CSRF token found:", token ? "Yes" : "No");
+
+      // Step 2: Create consultation
+      const consultationResponse = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/consultations`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+            ...(token && { "X-XSRF-TOKEN": decodeURIComponent(token) }),
+          },
+          credentials: "include",
+          body: JSON.stringify({
+            doctor_id: selectedDoctor.id,
+            patient_symptoms: symptoms,
+            scheduled_time: new Date(Date.now() + 60000).toISOString(), // 1 minute from now
+          }),
+        }
+      );
+
+      console.log("Consultation response status:", consultationResponse.status);
+      console.log(
+        "Consultation response headers:",
+        Object.fromEntries(consultationResponse.headers.entries())
+      );
+
+      if (!consultationResponse.ok) {
+        const errorText = await consultationResponse.text();
+        console.log("Consultation error response:", errorText);
+        setBookingError(
+          `Failed to book consultation: ${consultationResponse.status}`
+        );
+        return;
+      }
+
+      const consultationData = await consultationResponse.json();
+      console.log("Consultation response data:", consultationData);
+
+      if (consultationResponse.ok) {
+        // Step 3: Initiate payment
+        const paymentResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/payments/initiate`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+              ...(token && { "X-XSRF-TOKEN": decodeURIComponent(token) }),
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              consultation_id: consultationData.consultation.id,
+            }),
+          }
+        );
+
+        const paymentData = await paymentResponse.json();
+
+        if (paymentResponse.ok && paymentData.status === "success") {
+          // Redirect to SSLCOMMERZ payment gateway
+          window.location.href = paymentData.payment_url;
+        } else {
+          setBookingError(paymentData.message || "Failed to initiate payment");
+        }
+      } else {
+        setBookingError(
+          consultationData.message || "Failed to book consultation"
+        );
+      }
     } catch (err) {
-      console.error("Logout failed:", err);
+      setBookingError("Network error. Please try again.");
+    } finally {
+      setBookingLoading(false);
     }
   };
 
@@ -201,15 +306,11 @@ export default function PatientDashboard() {
 
   const getStatusColor = (status) => {
     switch (status) {
+      case "paid":
+        return "bg-green-100 text-green-800";
       case "pending":
         return "bg-yellow-100 text-yellow-800";
-      case "confirmed":
-        return "bg-blue-100 text-blue-800";
-      case "in_progress":
-        return "bg-purple-100 text-purple-800";
-      case "completed":
-        return "bg-green-100 text-green-800";
-      case "cancelled":
+      case "failed":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
@@ -218,15 +319,11 @@ export default function PatientDashboard() {
 
   const getStatusIcon = (status) => {
     switch (status) {
+      case "paid":
+        return "✅";
       case "pending":
         return "⏳";
-      case "confirmed":
-        return "✅";
-      case "in_progress":
-        return "🔄";
-      case "completed":
-        return "🏁";
-      case "cancelled":
+      case "failed":
         return "❌";
       default:
         return "❓";
@@ -235,7 +332,7 @@ export default function PatientDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="flex items-center justify-center py-12">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
@@ -244,59 +341,11 @@ export default function PatientDashboard() {
     );
   }
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Link
-            href="/"
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-          >
-            Go Home
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Bondhon</h1>
-              <span className="ml-2 text-sm text-gray-500">বন্ধন</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/doctors"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                All Doctors
-              </Link>
-              <Link
-                href="/patient/profile"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Profile
-              </Link>
-              <button
-                onClick={logout}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <>
       {/* Dashboard Header */}
-      <div className="bg-white">
-        <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="bg-white rounded-lg shadow-sm mb-6">
+        <div className="py-6 px-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
               <h1 className="text-3xl font-bold text-gray-900">
@@ -312,339 +361,400 @@ export default function PatientDashboard() {
       </div>
 
       {/* Dashboard Content */}
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Quick Actions Card */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Quick Actions
-            </h3>
-            <div className="space-y-3">
-              <Link
-                href="/doctors"
-                className="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
-              >
-                <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-gray-900">
-                  Browse All Doctors
-                </span>
-              </Link>
-
-              <Link
-                href="/patient/consultations"
-                className="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
-              >
-                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-gray-900">
-                  My Consultations
-                </span>
-              </Link>
-
-              <Link
-                href="/patient/profile"
-                className="flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
-              >
-                <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
-                  <svg
-                    className="w-4 h-4 text-white"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                </div>
-                <span className="text-sm font-medium text-gray-900">
-                  Edit Profile
-                </span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Profile Summary Card */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              Your Profile
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  {user?.profile_photo ? (
-                    <img
-                      src={user.profile_photo}
-                      alt={user.name}
-                      className="w-12 h-12 rounded-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-xl">👤</span>
-                  )}
-                </div>
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-900">
-                    {user?.name}
-                  </p>
-                  <p className="text-sm text-gray-500">+880{user?.phone}</p>
-                </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Quick Actions Card */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Quick Actions
+          </h3>
+          <div className="space-y-3">
+            <Link
+              href="/doctors"
+              className="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+            >
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                  />
+                </svg>
               </div>
+              <span className="text-sm font-medium text-gray-900">
+                Browse All Doctors
+              </span>
+            </Link>
 
-              {user?.gender && (
-                <div className="text-sm text-gray-600">
-                  <strong>Gender:</strong>{" "}
-                  {user.gender.charAt(0).toUpperCase() + user.gender.slice(1)}
-                </div>
-              )}
-
-              {user?.date_of_birth && (
-                <div className="text-sm text-gray-600">
-                  <strong>Date of Birth:</strong>{" "}
-                  {new Date(user.date_of_birth).toLocaleDateString()}
-                </div>
-              )}
-
-              {user?.address && (
-                <div className="text-sm text-gray-600">
-                  <strong>Address:</strong> {user.address}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Online Doctors */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                Online Doctors
-              </h3>
-              <Link
-                href="/doctors"
-                className="text-sm text-blue-600 hover:text-blue-500"
-              >
-                View All
-              </Link>
-            </div>
-
-            {doctors.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No doctors online right now.
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {doctors.map((doctor) => (
-                  <div
-                    key={doctor.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center">
-                      <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                        {doctor.profile_photo ? (
-                          <img
-                            src={doctor.profile_photo}
-                            alt={doctor.name}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        ) : (
-                          <span className="text-sm">
-                            {getGenderIcon(doctor.gender)}
-                          </span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">
-                          {doctor.name}
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          {doctor.specialization}
-                        </p>
-                      </div>
-                    </div>
-                    <Link
-                      href="/doctors"
-                      className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-xs"
-                    >
-                      Consult
-                    </Link>
-                  </div>
-                ))}
+            <Link
+              href="/patient/consultations"
+              className="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+            >
+              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
               </div>
-            )}
-          </div>
+              <span className="text-sm font-medium text-gray-900">
+                My Consultations
+              </span>
+            </Link>
 
-          {/* Recent Consultations */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">
-                📋 Recent Consultations
-              </h3>
-              <Link
-                href="/patient/consultations"
-                className="text-sm text-blue-600 hover:text-blue-500"
-              >
-                View All
-              </Link>
-            </div>
-
-            {recentConsultations.length === 0 ? (
-              <p className="text-sm text-gray-500">
-                No consultations yet. Book your first consultation!
-              </p>
-            ) : (
-              <div className="space-y-3">
-                {recentConsultations.map((consultation) => (
-                  <div
-                    key={consultation.id}
-                    className="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
-                  >
-                    <div className="flex-1">
-                      <div className="flex items-center">
-                        <span className="text-sm mr-2">
-                          {getStatusIcon(consultation.status)}
-                        </span>
-                        <div>
-                          <p className="text-sm font-medium text-gray-900">
-                            Dr. {consultation.doctor?.name || "Unknown"}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {consultation.doctor?.specialization ||
-                              "General Practice"}
-                          </p>
-                          <p className="text-xs text-gray-400">
-                            {formatDate(consultation.created_at)}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <span
-                        className={`px-2 py-1 rounded text-xs font-medium ${getStatusColor(
-                          consultation.status
-                        )}`}
-                      >
-                        {consultation.status}
-                      </span>
-                      <span className="text-xs text-gray-500">
-                        ৳{consultation.amount || 0}
-                      </span>
-                    </div>
-                  </div>
-                ))}
+            <Link
+              href="/patient/profile"
+              className="flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+            >
+              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+                <svg
+                  className="w-4 h-4 text-white"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
               </div>
-            )}
-          </div>
-
-          {/* Dashboard Stats */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              📊 Your Health Summary
-            </h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">
-                  {dashboardStats.totalConsultations || 0}
-                </p>
-                <p className="text-sm text-gray-500">Total Consultations</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">
-                  {dashboardStats.thisMonth || 0}
-                </p>
-                <p className="text-sm text-gray-500">This Month</p>
-              </div>
-              <div className="text-center">
-                <p className="text-2xl font-bold text-purple-600">
-                  ৳{dashboardStats.totalSpent || 0}
-                </p>
-                <p className="text-sm text-gray-500">Total Spent</p>
-              </div>
-              <div className="text-center">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {dashboardStats.favoriteDoctor || "None"}
-                </p>
-                <p className="text-sm text-gray-500">Favorite Doctor</p>
-              </div>
-            </div>
-            <div className="mt-4 pt-4 border-t">
-              <p className="text-sm text-gray-600">
-                <strong>Most Consulted:</strong>{" "}
-                {dashboardStats.topSpecialization || "None"}
-              </p>
-            </div>
+              <span className="text-sm font-medium text-gray-900">
+                Edit Profile
+              </span>
+            </Link>
           </div>
         </div>
 
-        {/* Health Tips Section */}
-        <div className="mt-8 bg-white rounded-lg shadow-md p-6">
+        {/* Profile Summary Card */}
+        <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            💡 Health Tips for Today
+            Your Profile
           </h3>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="bg-blue-50 p-4 rounded-lg">
-              <h4 className="font-medium text-blue-900 mb-2">
-                💧 Stay Hydrated
-              </h4>
-              <p className="text-sm text-blue-700">
-                Drink at least 8 glasses of water daily for optimal health.
-              </p>
+          <div className="space-y-3">
+            <div className="flex items-center">
+              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                {user?.profile_photo ? (
+                  <img
+                    src={user.profile_photo}
+                    alt={user.name}
+                    className="w-12 h-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <span className="text-xl">👤</span>
+                )}
+              </div>
+              <div className="ml-3">
+                <p className="text-sm font-medium text-gray-900">
+                  {user?.name}
+                </p>
+                <p className="text-sm text-gray-500">+880{user?.phone}</p>
+              </div>
             </div>
-            <div className="bg-green-50 p-4 rounded-lg">
-              <h4 className="font-medium text-green-900 mb-2">
-                🚶‍♂️ Daily Exercise
-              </h4>
-              <p className="text-sm text-green-700">
-                30 minutes of physical activity can boost your immune system.
-              </p>
+
+            {user?.gender && (
+              <div className="text-sm text-gray-600">
+                <strong>Gender:</strong>{" "}
+                {user.gender.charAt(0).toUpperCase() + user.gender.slice(1)}
+              </div>
+            )}
+
+            {user?.date_of_birth && (
+              <div className="text-sm text-gray-600">
+                <strong>Age:</strong>{" "}
+                {new Date().getFullYear() -
+                  new Date(user.date_of_birth).getFullYear()}{" "}
+                years
+              </div>
+            )}
+
+            <Link
+              href="/patient/profile"
+              className="inline-flex items-center text-sm text-blue-600 hover:text-blue-500"
+            >
+              Edit Profile →
+            </Link>
+          </div>
+        </div>
+
+        {/* Health Stats Card */}
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+            Your Health Stats
+          </h3>
+          <div className="space-y-3">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Total Consultations</span>
+              <span className="text-sm font-medium text-gray-900">
+                {dashboardStats.totalConsultations}
+              </span>
             </div>
-            <div className="bg-purple-50 p-4 rounded-lg">
-              <h4 className="font-medium text-purple-900 mb-2">
-                😴 Quality Sleep
-              </h4>
-              <p className="text-sm text-purple-700">
-                7-9 hours of sleep helps your body recover and heal.
-              </p>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">This Month</span>
+              <span className="text-sm font-medium text-gray-900">
+                {dashboardStats.thisMonth}
+              </span>
             </div>
-            <div className="bg-yellow-50 p-4 rounded-lg">
-              <h4 className="font-medium text-yellow-900 mb-2">
-                🥗 Balanced Diet
-              </h4>
-              <p className="text-sm text-yellow-700">
-                Include fruits, vegetables, and proteins in every meal.
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Total Spent</span>
+              <span className="text-sm font-medium text-gray-900">
+                ৳{dashboardStats.totalSpent}
+              </span>
+            </div>
+            <div className="pt-2 border-t">
+              <p className="text-xs text-gray-500">Favorite Doctor</p>
+              <p className="text-sm font-medium text-gray-900">
+                {dashboardStats.favoriteDoctor}
               </p>
             </div>
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Online Doctors Section */}
+      {doctors.length > 0 && (
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+            Online Doctors Available Now
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {doctors.map((doctor) => (
+              <div
+                key={doctor.id}
+                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+              >
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <span className="text-xl">
+                      {getGenderIcon(doctor.gender)}
+                    </span>
+                  </div>
+                  <div className="ml-3">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      Dr. {doctor.name}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {doctor.specialization}
+                    </p>
+                  </div>
+                  <div className="ml-auto">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                      Online
+                    </span>
+                  </div>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Experience</span>
+                    <span className="font-medium">
+                      {doctor.experience_years} years
+                    </span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">Consultation Fee</span>
+                    <span className="font-medium">
+                      ৳{doctor.fee_per_consultation}
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => handleConsultNow(doctor)}
+                  disabled={!doctor.is_online}
+                  className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                    doctor.is_online
+                      ? "bg-blue-600 hover:bg-blue-700 text-white"
+                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  }`}
+                >
+                  {doctor.is_online ? "Consult Now" : "Currently Offline"}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Recent Consultations Section */}
+      {recentConsultations.length > 0 && (
+        <div className="mt-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Recent Consultations
+            </h2>
+            <Link
+              href="/patient/consultations"
+              className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+            >
+              View All →
+            </Link>
+          </div>
+          <div className="bg-white rounded-lg shadow-md overflow-hidden">
+            <div className="divide-y divide-gray-200">
+              {recentConsultations.map((consultation) => (
+                <div key={consultation.id} className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                        <span className="text-lg">
+                          {getGenderIcon(consultation.doctor?.gender)}
+                        </span>
+                      </div>
+                      <div className="ml-3">
+                        <h4 className="text-sm font-medium text-gray-900">
+                          Dr. {consultation.doctor?.name}
+                        </h4>
+                        <p className="text-sm text-gray-500">
+                          {consultation.doctor?.specialization}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="flex items-center">
+                        <span
+                          className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                            consultation.payment_status
+                          )}`}
+                        >
+                          {getStatusIcon(consultation.payment_status)}{" "}
+                          {consultation.payment_status}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {formatDate(consultation.created_at)}
+                      </p>
+                    </div>
+                  </div>
+
+                  {consultation.patient_symptoms && (
+                    <div className="mt-4">
+                      <p className="text-sm text-gray-600">
+                        <strong>Symptoms:</strong>{" "}
+                        {consultation.patient_symptoms}
+                      </p>
+                    </div>
+                  )}
+
+                  {consultation.doctor_notes && (
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-600">
+                        <strong>Doctor's Notes:</strong>{" "}
+                        {consultation.doctor_notes}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {recentConsultations.length === 0 && (
+        <div className="mt-8 text-center">
+          <div className="bg-white rounded-lg shadow-md p-12">
+            <div className="text-6xl mb-4">🩺</div>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No consultations yet
+            </h3>
+            <p className="text-gray-600 mb-6">
+              Start your health journey by consulting with our experienced
+              doctors.
+            </p>
+            <Link
+              href="/doctors"
+              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-sm font-medium"
+            >
+              Find a Doctor
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Booking Modal */}
+      {showBookingModal && selectedDoctor && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Book Consultation with Dr. {selectedDoctor.name}
+            </h3>
+
+            <div className="mb-4">
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Specialization:</strong> {selectedDoctor.specialization}
+              </p>
+              <p className="text-sm text-gray-600 mb-2">
+                <strong>Fee:</strong> ৳{selectedDoctor.fee_per_consultation}
+              </p>
+              <p className="text-sm text-gray-600">
+                <strong>Experience:</strong> {selectedDoctor.experience_years}{" "}
+                years
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <label
+                htmlFor="symptoms"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
+                Describe your symptoms (optional)
+              </label>
+              <textarea
+                id="symptoms"
+                name="symptoms"
+                rows={3}
+                value={symptoms}
+                onChange={(e) => setSymptoms(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 bg-white"
+                placeholder="Briefly describe your health concerns..."
+                style={{
+                  minHeight: "80px",
+                }}
+              />
+            </div>
+
+            {bookingError && (
+              <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
+                <p className="text-sm text-red-600">{bookingError}</p>
+              </div>
+            )}
+
+            <div className="flex space-x-3">
+              <button
+                onClick={() => setShowBookingModal(false)}
+                className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleBookConsultation}
+                disabled={bookingLoading}
+                className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium disabled:bg-gray-400"
+              >
+                {bookingLoading ? "Booking..." : "Book Consultation"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

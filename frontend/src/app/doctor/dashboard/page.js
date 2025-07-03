@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export default function DoctorDashboard() {
@@ -15,35 +14,30 @@ export default function DoctorDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [statusUpdating, setStatusUpdating] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
-    checkAuth();
+    fetchDashboardData();
   }, []);
 
-  const checkAuth = async () => {
+  const fetchDashboardData = async () => {
     try {
-      const response = await fetch(
+      // Get user info first
+      const userResponse = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/user`,
         {
           credentials: "include",
         }
       );
 
-      if (response.ok) {
-        const data = await response.json();
-        if (data.user.role === "doctor") {
-          setDoctor(data.user);
-          await Promise.all([fetchConsultations(), fetchStats()]);
-        } else {
-          router.push("/doctor/login");
-        }
-      } else {
-        router.push("/doctor/login");
+      if (userResponse.ok) {
+        const userData = await userResponse.json();
+        setDoctor(userData.user);
       }
+
+      // Fetch consultations and stats in parallel
+      await Promise.all([fetchConsultations(), fetchStats()]);
     } catch (err) {
-      router.push("/doctor/login");
+      setError("Failed to load dashboard data");
     } finally {
       setLoading(false);
     }
@@ -82,50 +76,6 @@ export default function DoctorDashboard() {
       }
     } catch (err) {
       console.error("Failed to fetch stats:", err);
-    }
-  };
-
-  const toggleOnlineStatus = async () => {
-    if (!doctor) return;
-
-    setStatusUpdating(true);
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/doctor/toggle-status`,
-        {
-          method: "POST",
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        setDoctor({
-          ...doctor,
-          doctor: {
-            ...doctor.doctor,
-            is_online: data.is_online,
-          },
-        });
-      } else {
-        setError("Failed to update status");
-      }
-    } catch (err) {
-      setError("Network error. Please try again.");
-    } finally {
-      setStatusUpdating(false);
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      router.push("/doctor/login");
-    } catch (err) {
-      router.push("/doctor/login");
     }
   };
 
@@ -187,6 +137,7 @@ export default function DoctorDashboard() {
         return (
           <Link
             href={`/doctor/video-call/${id}`}
+            target="_blank"
             className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium"
           >
             Join Video Call
@@ -196,6 +147,7 @@ export default function DoctorDashboard() {
         return (
           <Link
             href={`/doctor/video-call/${id}`}
+            target="_blank"
             className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium"
           >
             Continue Call
@@ -226,7 +178,7 @@ export default function DoctorDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading dashboard...</p>
@@ -235,227 +187,33 @@ export default function DoctorDashboard() {
     );
   }
 
-  if (!doctor) {
-    return null; // Will redirect
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/" className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Bondhon</h1>
-              <span className="ml-2 text-sm text-gray-500">বন্ধন</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span
-                  className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    doctor.doctor?.is_online
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }`}
-                >
-                  <span
-                    className={`w-2 h-2 rounded-full mr-1 ${
-                      doctor.doctor?.is_online ? "bg-green-400" : "bg-gray-400"
-                    }`}
-                  ></span>
-                  {doctor.doctor?.is_online ? "Online" : "Offline"}
-                </span>
-                <button
-                  onClick={toggleOnlineStatus}
-                  disabled={statusUpdating}
-                  className="text-sm text-blue-600 hover:text-blue-700 disabled:text-gray-400"
-                >
-                  {statusUpdating ? "Updating..." : "Toggle"}
-                </button>
-              </div>
-              <Link
-                href="/doctor/profile"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Profile
-              </Link>
-              <span className="text-sm text-gray-600">Dr. {doctor.name}</span>
-              <button
-                onClick={handleLogout}
-                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Logout
-              </button>
-            </div>
-          </div>
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      {/* Welcome Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-gray-900">
+          Welcome, Dr. {doctor?.name}
+        </h1>
+        <p className="mt-2 text-lg text-gray-600">
+          {doctor?.doctor?.specialization} • {doctor?.doctor?.experience_years}{" "}
+          years experience
+        </p>
+      </div>
+
+      {error && (
+        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+          <p className="text-sm text-red-600">{error}</p>
         </div>
-      </nav>
+      )}
 
-      {/* Dashboard Content */}
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        {/* Welcome Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Welcome, Dr. {doctor.name}
-          </h1>
-          <p className="mt-2 text-lg text-gray-600">
-            {doctor.doctor?.specialization} • {doctor.doctor?.experience_years}{" "}
-            years experience
-          </p>
-        </div>
-
-        {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-sm text-red-600">{error}</p>
-          </div>
-        )}
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-6 w-6 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Consultations
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {stats.total_consultations}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-6 w-6 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Earnings
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      ৳{stats.total_earnings}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-6 w-6 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Pending
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {stats.pending_consultations}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <svg
-                    className="h-6 w-6 text-gray-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Completed
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {stats.completed_consultations}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Consultations */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:px-6 border-b border-gray-200">
-            <h3 className="text-lg leading-6 font-medium text-gray-900">
-              Recent Consultations
-            </h3>
-            <p className="mt-1 max-w-2xl text-sm text-gray-500">
-              Latest consultation requests and ongoing sessions
-            </p>
-          </div>
-          <div className="overflow-hidden">
-            {consultations.length === 0 ? (
-              <div className="text-center py-12">
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="h-6 w-6 text-gray-400"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -464,104 +222,193 @@ export default function DoctorDashboard() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
-                  No consultations yet
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">
-                  You don't have any consultation requests yet. Make sure you're
-                  online to receive new consultations.
-                </p>
-                {!doctor.doctor?.is_online && (
-                  <p className="mt-2 text-sm text-orange-600 font-medium">
-                    💡 Turn on your online status to start receiving
-                    consultation requests
-                  </p>
-                )}
               </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Patient
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Symptoms
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amount
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {consultations.map((consultation) => (
-                      <tr key={consultation.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <div className="flex-shrink-0 h-10 w-10">
-                              <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                                <span className="text-sm font-medium text-gray-700">
-                                  {consultation.patient_name
-                                    ?.charAt(0)
-                                    .toUpperCase()}
-                                </span>
-                              </div>
-                            </div>
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">
-                                {consultation.patient_name}
-                              </div>
-                              <div className="text-sm text-gray-500">
-                                +880{consultation.patient_phone}
-                              </div>
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-900 max-w-xs truncate">
-                            {consultation.patient_symptoms ||
-                              "No symptoms provided"}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                              consultation.status
-                            )}`}
-                          >
-                            {getStatusMessage(consultation.status)}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                          ৳{consultation.fee_amount}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {formatDate(consultation.created_at)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          {renderActionButton(consultation)}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    Total Consultations
+                  </dt>
+                  <dd className="text-lg font-medium text-gray-900">
+                    {stats.total_consultations}
+                  </dd>
+                </dl>
               </div>
-            )}
+            </div>
           </div>
         </div>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-6 w-6 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
+                  />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    Total Earnings
+                  </dt>
+                  <dd className="text-lg font-medium text-gray-900">
+                    ৳{stats.total_earnings}
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-6 w-6 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    Pending Consultations
+                  </dt>
+                  <dd className="text-lg font-medium text-gray-900">
+                    {stats.pending_consultations}
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white overflow-hidden shadow rounded-lg">
+          <div className="p-5">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
+                <svg
+                  className="h-6 w-6 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"
+                  />
+                </svg>
+              </div>
+              <div className="ml-5 w-0 flex-1">
+                <dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">
+                    Completed Consultations
+                  </dt>
+                  <dd className="text-lg font-medium text-gray-900">
+                    {stats.completed_consultations}
+                  </dd>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent Consultations */}
+      <div className="bg-white shadow overflow-hidden sm:rounded-md">
+        <div className="px-4 py-5 sm:px-6">
+          <h3 className="text-lg leading-6 font-medium text-gray-900">
+            Recent Consultations
+          </h3>
+          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+            Your latest consultation appointments
+          </p>
+        </div>
+        <ul className="divide-y divide-gray-200">
+          {consultations.length === 0 ? (
+            <li className="px-4 py-4 text-center text-gray-500">
+              No consultations found
+            </li>
+          ) : (
+            consultations.slice(0, 10).map((consultation) => (
+              <li key={consultation.id} className="px-4 py-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <div className="flex-shrink-0 h-10 w-10">
+                      <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
+                        <span className="text-sm font-medium text-gray-700">
+                          {consultation.patient_name?.charAt(0).toUpperCase() ||
+                            "P"}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <div className="flex items-center">
+                        <p className="text-sm font-medium text-gray-900">
+                          {consultation.patient_name || "Unknown Patient"}
+                        </p>
+                        <span
+                          className={`ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(
+                            consultation.status
+                          )}`}
+                        >
+                          {getStatusMessage(consultation.status)}
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-500">
+                        {formatDate(consultation.scheduled_time)}
+                      </p>
+                      {consultation.patient_symptoms && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          Symptoms: {consultation.patient_symptoms}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm font-medium text-gray-900">
+                      ৳{consultation.fee}
+                    </span>
+                    {renderActionButton(consultation)}
+                  </div>
+                </div>
+              </li>
+            ))
+          )}
+        </ul>
+        {consultations.length > 10 && (
+          <div className="bg-gray-50 px-4 py-3 text-center">
+            <Link
+              href="/doctor/consultations"
+              className="text-sm text-blue-600 hover:text-blue-700"
+            >
+              View all consultations
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

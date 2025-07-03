@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 
 export default function DoctorProfile() {
   const [doctor, setDoctor] = useState(null);
@@ -19,7 +17,6 @@ export default function DoctorProfile() {
     new_password: "",
     new_password_confirmation: "",
   });
-  const router = useRouter();
 
   const [formData, setFormData] = useState({
     // User fields
@@ -35,33 +32,8 @@ export default function DoctorProfile() {
   });
 
   useEffect(() => {
-    checkAuth();
+    fetchProfile();
   }, []);
-
-  const checkAuth = async () => {
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/user`,
-        {
-          credentials: "include",
-        }
-      );
-
-      if (response.ok) {
-        const data = await response.json();
-        if (data.user.role === "doctor") {
-          await fetchProfile();
-        } else {
-          router.push("/doctor/login");
-        }
-      } else {
-        router.push("/doctor/login");
-      }
-    } catch (err) {
-      console.error("Auth check error:", err);
-      router.push("/doctor/login");
-    }
-  };
 
   const fetchProfile = async () => {
     try {
@@ -152,18 +124,6 @@ export default function DoctorProfile() {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-        method: "POST",
-        credentials: "include",
-      });
-      router.push("/doctor/login");
-    } catch (err) {
-      router.push("/doctor/login");
-    }
-  };
-
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     setPasswordLoading(true);
@@ -218,7 +178,7 @@ export default function DoctorProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Loading profile...</p>
@@ -228,37 +188,7 @@ export default function DoctorProfile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Link href="/doctor/dashboard" className="flex items-center">
-              <h1 className="text-2xl font-bold text-green-600">Bondhon</h1>
-              <span className="ml-2 text-sm text-gray-500">বন্ধন</span>
-              <span className="ml-4 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                Doctor
-              </span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <button
-                onClick={() => setShowPasswordChange(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Change Password
-              </button>
-              <span className="text-sm text-gray-600">Dr. {doctor?.name}</span>
-              <Link
-                href="/doctor/dashboard"
-                className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Back to Dashboard
-              </Link>
-            </div>
-          </div>
-        </div>
-      </nav>
-
+    <>
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
         <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -270,6 +200,14 @@ export default function DoctorProfile() {
               <p className="mt-2 text-lg text-gray-600">
                 Update your personal and professional information.
               </p>
+            </div>
+            <div className="mt-4 md:mt-0">
+              <button
+                onClick={() => setShowPasswordChange(true)}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              >
+                Change Password
+              </button>
             </div>
           </div>
         </div>
@@ -407,7 +345,7 @@ export default function DoctorProfile() {
                     value={formData.specialization}
                     onChange={handleInputChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                    placeholder="e.g., Cardiology, General Medicine"
+                    placeholder="Cardiology, Neurology, etc."
                   />
                 </div>
 
@@ -422,9 +360,9 @@ export default function DoctorProfile() {
                     type="number"
                     name="experience_years"
                     id="experience_years"
+                    required
                     min="0"
                     max="50"
-                    required
                     value={formData.experience_years}
                     onChange={handleInputChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -437,181 +375,154 @@ export default function DoctorProfile() {
                     htmlFor="fee_per_consultation"
                     className="block text-sm font-medium text-gray-700"
                   >
-                    Consultation Fee (BDT) *
+                    Consultation Fee (৳) *
                   </label>
                   <input
                     type="number"
                     name="fee_per_consultation"
                     id="fee_per_consultation"
-                    min="0"
-                    max="10000"
-                    step="0.01"
                     required
+                    min="0"
                     value={formData.fee_per_consultation}
                     onChange={handleInputChange}
                     className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="500"
                   />
                 </div>
-              </div>
 
-              <div>
-                <label
-                  htmlFor="qualifications"
-                  className="block text-sm font-medium text-gray-700"
-                >
-                  Qualifications & Education
-                </label>
-                <textarea
-                  name="qualifications"
-                  id="qualifications"
-                  rows={4}
-                  value={formData.qualifications}
-                  onChange={handleInputChange}
-                  className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="MBBS, MD (Cardiology), Fellowship in Interventional Cardiology..."
-                />
-                <p className="mt-1 text-xs text-gray-500">
-                  List your degrees, certifications, and medical qualifications.
-                </p>
+                <div className="sm:col-span-2">
+                  <label
+                    htmlFor="qualifications"
+                    className="block text-sm font-medium text-gray-700"
+                  >
+                    Qualifications
+                  </label>
+                  <textarea
+                    name="qualifications"
+                    id="qualifications"
+                    rows={4}
+                    value={formData.qualifications}
+                    onChange={handleInputChange}
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="MBBS, MD (Cardiology), Fellowship in Interventional Cardiology..."
+                  />
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3">
-            <Link
-              href="/doctor/dashboard"
-              className="bg-gray-300 hover:bg-gray-400 text-gray-700 px-6 py-2 rounded-md text-sm font-medium"
-            >
-              Cancel
-            </Link>
+          {/* Save Button */}
+          <div className="flex justify-end">
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-sm font-medium disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-md text-sm font-medium"
             >
-              {submitting ? "Saving..." : "Save Changes"}
+              {submitting ? "Updating..." : "Update Profile"}
             </button>
           </div>
         </form>
       </div>
 
-      {/* Password Change Modal */}
+      {/* Change Password Modal */}
       {showPasswordChange && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
-                  Change Password
-                </h3>
-                <button
-                  onClick={() => setShowPasswordChange(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              Change Password
+            </h3>
 
-              {passwordError && (
-                <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
-                  <p className="text-sm text-red-600">{passwordError}</p>
-                </div>
-              )}
-
-              {passwordSuccess && (
-                <div className="mb-4 bg-green-50 border border-green-200 rounded-md p-3">
-                  <p className="text-sm text-green-600">{passwordSuccess}</p>
-                </div>
-              )}
-
-              <form onSubmit={handlePasswordChange} className="space-y-4">
+            <form onSubmit={handlePasswordChange}>
+              <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="current_password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Current Password
                   </label>
                   <input
                     type="password"
                     name="current_password"
+                    id="current_password"
                     required
                     value={passwordData.current_password}
                     onChange={handlePasswordInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="new_password"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     New Password
                   </label>
                   <input
                     type="password"
                     name="new_password"
+                    id="new_password"
                     required
+                    minLength={8}
                     value={passwordData.new_password}
                     onChange={handlePasswordInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                    minLength="6"
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label
+                    htmlFor="new_password_confirmation"
+                    className="block text-sm font-medium text-gray-700"
+                  >
                     Confirm New Password
                   </label>
                   <input
                     type="password"
                     name="new_password_confirmation"
+                    id="new_password_confirmation"
                     required
+                    minLength={8}
                     value={passwordData.new_password_confirmation}
                     onChange={handlePasswordInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
-                    minLength="6"
+                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 </div>
+              </div>
 
-                <div className="flex justify-end space-x-3 pt-4">
-                  <button
-                    type="button"
-                    onClick={() => setShowPasswordChange(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                    disabled={passwordLoading}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={passwordLoading}
-                    className="px-4 py-2 border border-transparent rounded-md text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                  >
-                    {passwordLoading ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Changing...
-                      </div>
-                    ) : (
-                      "Change Password"
-                    )}
-                  </button>
+              {passwordError && (
+                <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-3">
+                  <p className="text-sm text-red-600">{passwordError}</p>
                 </div>
-              </form>
-            </div>
+              )}
+
+              {passwordSuccess && (
+                <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-3">
+                  <p className="text-sm text-green-600">{passwordSuccess}</p>
+                </div>
+              )}
+
+              <div className="flex space-x-3 mt-6">
+                <button
+                  type="button"
+                  onClick={() => setShowPasswordChange(false)}
+                  className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={passwordLoading}
+                  className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium disabled:bg-gray-400"
+                >
+                  {passwordLoading ? "Changing..." : "Change Password"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
