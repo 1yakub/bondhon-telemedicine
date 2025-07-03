@@ -52,12 +52,19 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
             echo "🚀 Starting deployment to Bondhon Production Server..."
 
-            # Navigate to project directory
-            cd /var/www/bondhon
-            
-            # Pull latest changes
-            echo "📥 Pulling latest changes..."
-            git pull origin main
+                      # Navigate to project directory
+          cd /var/www/bondhon
+
+          # Fix git ownership issue
+          echo "🔐 Fixing git ownership permissions..."
+          git config --global --add safe.directory /var/www/bondhon
+
+          # Ensure proper ownership of the entire project
+          chown -R www-data:www-data /var/www/bondhon
+
+          # Pull latest changes
+          echo "📥 Pulling latest changes..."
+          git pull origin main
             
             # Create backend .env from GitHub Secret
             echo "⚙️ Updating backend environment..."
@@ -96,17 +103,54 @@ jobs:
             npm ci --production=false
             npm run build
             
-            # Fix file permissions (CRITICAL!)
-            echo "🔐 Setting proper file permissions..."
-            chown -R www-data:www-data /var/www/bondhon/backend/storage
-            chown -R www-data:www-data /var/www/bondhon/backend/bootstrap/cache
-            chmod -R 755 /var/www/bondhon/backend/storage
-            chmod -R 755 /var/www/bondhon/backend/bootstrap/cache
+                      # Fix file permissions (CRITICAL!)
+          echo "🔐 Setting proper file permissions..."
+          chown -R www-data:www-data /var/www/bondhon/backend/storage
+          chown -R www-data:www-data /var/www/bondhon/backend/bootstrap/cache
+          chown -R www-data:www-data /var/www/bondhon/backend/public
+          chmod -R 755 /var/www/bondhon/backend/storage
+          chmod -R 755 /var/www/bondhon/backend/bootstrap/cache
+          chmod -R 755 /var/www/bondhon/backend/public
+
+          # Ensure Laravel's public/index.php exists and is accessible
+          echo "🔍 Verifying Laravel public directory..."
+          if [ ! -f "/var/www/bondhon/backend/public/index.php" ]; then
+            echo "❌ Laravel public/index.php missing!"
+            exit 1
+          fi
+          echo "✅ Laravel public directory verified!"
             
-            # Restart services properly
-            echo "🔄 Restarting web services..."
-            systemctl restart nginx
-            systemctl restart php8.2-fpm
+                      # Fix nginx configuration for Laravel
+          echo "⚙️ Checking and fixing nginx configuration..."
+
+          # Check if nginx is pointing to wrong upstream (port 3000)
+          if grep -q "proxy_pass.*:3000" /etc/nginx/sites-available/default 2>/dev/null; then
+            echo "🔧 Fixing nginx proxy configuration (removing port 3000 proxy)..."
+            # Backup original config
+            cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.backup
+            
+            # Create Laravel-compatible nginx configuration
+            echo "server { listen 80 default_server; root /var/www/bondhon/backend/public; index index.php index.html; server_name _; location / { try_files \$uri \$uri/ /index.php?\$query_string; } location /api { try_files \$uri \$uri/ /index.php?\$query_string; } location ~ \.php\$ { include fastcgi_params; fastcgi_pass unix:/var/run/php/php8.2-fpm.sock; fastcgi_index index.php; fastcgi_param SCRIPT_FILENAME \$document_root\$fastcgi_script_name; } location ~ /\.ht { deny all; } }" > /etc/nginx/sites-available/default
+            echo "✅ nginx configuration updated!"
+          else
+            echo "ℹ️ nginx configuration appears correct"
+          fi
+
+          # Test nginx configuration
+          echo "🔍 Testing nginx configuration..."
+          if ! nginx -t; then
+            echo "❌ nginx configuration is invalid! Restoring backup..."
+            if [ -f /etc/nginx/sites-available/default.backup ]; then
+              cp /etc/nginx/sites-available/default.backup /etc/nginx/sites-available/default
+              nginx -t
+            fi
+            exit 1
+          fi
+
+          # Restart services properly
+          echo "🔄 Restarting web services..."
+          systemctl restart nginx
+          systemctl restart php8.2-fpm
             
             # Restart PM2 if exists
             if command -v pm2 &> /dev/null; then
@@ -147,9 +191,10 @@ jobs:
               exit 1
           fi
 
-          # Test Laravel via nginx (real world test)
+                    # Test Laravel via nginx (real world test)
+          echo "🔍 Testing Laravel through nginx..."
           if ! curl -f -s http://localhost > /dev/null; then
-              echo "❌ nginx → Laravel connection failed!"
+            echo "❌ nginx → Laravel connection failed!"
               
               # Additional debugging
               echo "🔍 Debugging nginx/Laravel connection..."
