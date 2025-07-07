@@ -87,14 +87,36 @@ jobs:
             echo "📦 Installing backend dependencies..."
             composer install --no-dev --optimize-autoloader --no-interaction
             
-            # Laravel optimization
-            echo "🧹 Optimizing Laravel application..."
+            # Clear any existing config cache BEFORE setting up environment
+            echo "🧹 Clearing existing Laravel caches..."
+            php artisan config:clear || true
+            php artisan cache:clear || true
+            php artisan route:clear || true
+            php artisan view:clear || true
+
+            # Create frontend environment file from secret
+            echo "🔧 Setting up frontend environment..."
+            cd ../frontend
+          ENDSSH
+          
+          # Write frontend environment content
+          echo "$FRONTEND_ENV_CONTENT" | ssh ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} 'cat > /var/www/bondhon/frontend/.env.local'
+          
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
+            cd /var/www/bondhon/backend
+            
+            # Laravel optimization AFTER environment is set
+            echo "🧹 Optimizing Laravel application with new environment..."
             php artisan config:cache
             php artisan route:cache
             php artisan view:cache
             php artisan migrate --force --no-interaction
 
-            # Create frontend environment file from secret
+            # Verify environment is loaded correctly
+            echo "🔍 Verifying environment configuration..."
+            php artisan tinker --execute="echo 'APP_ENV: ' . env('APP_ENV') . PHP_EOL; echo 'APP_DEBUG: ' . (env('APP_DEBUG') ? 'true' : 'false') . PHP_EOL;"
+
+            # Frontend deployment
             echo "🔧 Setting up frontend environment..."
             cd ../frontend
           ENDSSH
