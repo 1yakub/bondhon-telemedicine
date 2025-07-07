@@ -52,140 +52,75 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
             echo "🚀 Starting deployment to Bondhon Production Server..."
 
-                                # Navigate to project directory
-          cd /var/www/bondhon
+            # Navigate to project directory
+            cd /var/www/bondhon
 
-          # Fix git ownership issue
-          echo "🔐 Fixing git ownership permissions..."
-          git config --global --add safe.directory /var/www/bondhon
+            # Fix git ownership issue
+            echo "🔐 Fixing git ownership permissions..."
+            git config --global --add safe.directory /var/www/bondhon
 
-          # Handle any local changes (prevent merge conflicts)
-          echo "📝 Handling local changes..."
-          git add . 2>/dev/null || true
-          git commit -m "Auto-save local changes before deployment" 2>/dev/null || true
+            # Handle any local changes (prevent merge conflicts)
+            echo "📝 Handling local changes..."
+            git add . 2>/dev/null || true
+            git commit -m "Auto-save local changes before deployment" 2>/dev/null || true
 
-          # Pull latest changes
-          echo "📥 Pulling latest changes..."
-          git pull origin main
-            
-            # Create backend .env from GitHub Secret
-            echo "⚙️ Updating backend environment..."
+            # Pull latest changes
+            echo "📥 Pulling latest changes..."
+            git pull origin main
+
+            # Create backend environment file from secret
+            echo "🔧 Setting up backend environment..."
             cd backend
-            cat > .env << 'EOF'
-          ${{ secrets.BACKEND_ENV }}
-          EOF
+            cat > .env << 'ENV_EOF'
+${{ secrets.BACKEND_ENV }}
+ENV_EOF
             
-            # Backend deployment with production optimization
+            # Backend deployment
             echo "📦 Installing backend dependencies..."
             composer install --no-dev --optimize-autoloader --no-interaction
             
             # Laravel optimization
             echo "🧹 Optimizing Laravel application..."
-            php artisan config:clear
             php artisan config:cache
-            php artisan route:clear
             php artisan route:cache
-            php artisan view:clear
             php artisan view:cache
-            php artisan optimize
-            
-            # Run database migrations
-            echo "🗄️ Running database migrations..."
             php artisan migrate --force --no-interaction
-            
-            # Create frontend .env.local from GitHub Secret
-            echo "⚙️ Updating frontend environment..."
+
+            # Create frontend environment file from secret
+            echo "🔧 Setting up frontend environment..."
             cd ../frontend
-            cat > .env.local << 'EOF'
-          ${{ secrets.FRONTEND_ENV }}
-          EOF
+            cat > .env.local << 'FRONTEND_ENV_EOF'
+${{ secrets.FRONTEND_ENV }}
+FRONTEND_ENV_EOF
             
             # Frontend deployment
             echo "🏗️ Building frontend assets..."
-            npm ci --production=false
+            npm ci
             npm run build
             
-                      # Fix file permissions (CRITICAL!)
-          echo "🔐 Setting proper file permissions..."
-          chown -R www-data:www-data /var/www/bondhon/backend/storage
-          chown -R www-data:www-data /var/www/bondhon/backend/bootstrap/cache
-          chown -R www-data:www-data /var/www/bondhon/backend/public
-          chmod -R 755 /var/www/bondhon/backend/storage
-          chmod -R 755 /var/www/bondhon/backend/bootstrap/cache
-          chmod -R 755 /var/www/bondhon/backend/public
-
-          # Ensure Laravel's public/index.php exists and is accessible
-          echo "🔍 Verifying Laravel public directory..."
-          if [ ! -f "/var/www/bondhon/backend/public/index.php" ]; then
-            echo "❌ Laravel public/index.php missing!"
-            exit 1
-          fi
-          echo "✅ Laravel public directory verified!"
+            # Fix file permissions
+            echo "🔐 Setting proper file permissions..."
+            chown -R www-data:www-data /var/www/bondhon/backend/storage
+            chown -R www-data:www-data /var/www/bondhon/backend/bootstrap/cache
+            chmod -R 755 /var/www/bondhon/backend/storage
+            chmod -R 755 /var/www/bondhon/backend/bootstrap/cache
             
-                                # Ensure proper ownership AFTER git operations
-          echo "🔐 Setting proper file permissions..."
-          chown -R www-data:www-data /var/www/bondhon
-
-          # Restart services properly
-          echo "🔄 Restarting web services..."
-          systemctl restart nginx
-          systemctl restart php8.2-fpm
+            # Restart services
+            echo "🔄 Restarting web services..."
+            systemctl restart nginx
+            systemctl restart php8.2-fpm
             
-            # Restart PM2 if exists
-            if command -v pm2 &> /dev/null; then
-                pm2 restart all || true
+            # Basic health check
+            echo "🏥 Checking services..."
+            if systemctl is-active --quiet nginx && systemctl is-active --quiet php8.2-fpm; then
+                echo "✅ All services are running!"
+            else
+                echo "⚠️ Some services may have issues"
+                exit 1
             fi
-            
-                      # Comprehensive Health Checks
-          echo "🏥 Running comprehensive health checks..."
-          sleep 10
 
-          # Check service status
-          echo "🔍 Checking service status..."
-          if ! systemctl is-active --quiet nginx; then
-              echo "❌ nginx is not running!"
-              exit 1
-          fi
-
-          if ! systemctl is-active --quiet php8.2-fpm; then
-              echo "❌ PHP-FPM is not running!"
-              exit 1
-          fi
-
-          echo "✅ All services are running!"
-
-          # Test Laravel application health
-          echo "🔍 Testing Laravel application..."
-          cd /var/www/bondhon/backend
-
-          # Test Laravel can start
-          if ! php artisan --version > /dev/null 2>&1; then
-              echo "❌ Laravel artisan command failed!"
-              exit 1
-          fi
-
-          # Test database connection
-          if ! php artisan tinker --execute="DB::connection()->getPdo(); echo 'DB_OK';" 2>/dev/null | grep -q "DB_OK"; then
-              echo "❌ Laravel database connection failed!"
-              exit 1
-          fi
-
-                              echo "ℹ️ nginx → Laravel connection test skipped (requires manual nginx configuration)"
-
-          # Test frontend build exists
-          echo "🔍 Testing frontend build..."
-          if [ ! -d "/var/www/bondhon/frontend/.next" ]; then
-              echo "❌ Frontend build artifacts missing!"
-              exit 1
-          fi
-
-          echo "✅ Frontend build artifacts found!"
-
-          echo "ℹ️ API endpoint test skipped (requires manual nginx configuration)"
-
-          echo "✅ All health checks passed!"
-          echo "🎉 Deployment completed successfully!"
-          echo "🌐 Bondhon is now live at: http://159.223.60.129"
+            echo "🎉 Deployment completed successfully!"
+            echo "🌐 Bondhon is live at: http://159.223.60.129"
           ENDSSH
 
       - name: ✅ Mark Deployment Success

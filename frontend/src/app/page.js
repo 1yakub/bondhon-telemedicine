@@ -40,7 +40,7 @@ export default function Home() {
         <div className="text-center">
           <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
             Healthcare at Your
-            <span className="text-blue-600"> Hands</span>
+            <span className="text-blue-600">      </span>
           </h2>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Connect with qualified doctors instantly through video
