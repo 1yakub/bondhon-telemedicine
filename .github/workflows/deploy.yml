@@ -105,6 +105,10 @@ jobs:
           ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
             cd /var/www/bondhon/backend
             
+            # Force PHP-FPM restart to reload new environment variables
+            echo "🔄 Restarting PHP-FPM to reload environment variables..."
+            systemctl restart php8.2-fpm
+            
             # Laravel optimization AFTER environment is set
             echo "🧹 Optimizing Laravel application with new environment..."
             php artisan config:cache
