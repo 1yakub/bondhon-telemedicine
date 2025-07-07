@@ -110,6 +110,12 @@ jobs:
             npm ci
             npm run build
             
+            # Restart frontend service
+            echo "🔄 Restarting frontend service..."
+            pkill -f "next" || true
+            nohup npm start > /dev/null 2>&1 &
+            sleep 3
+            
             # Fix file permissions
             echo "🔐 Setting proper file permissions..."
             chown -R www-data:www-data /var/www/bondhon/backend/storage
