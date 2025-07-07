@@ -48,6 +48,9 @@ jobs:
           ssh-keyscan -H ${{ secrets.DO_HOST }} >> ~/.ssh/known_hosts
 
       - name: 🚀 Deploy to Production Server
+        env:
+          BACKEND_ENV_CONTENT: ${{ secrets.BACKEND_ENV }}
+          FRONTEND_ENV_CONTENT: ${{ secrets.FRONTEND_ENV }}
         run: |
           ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
             echo "🚀 Starting deployment to Bondhon Production Server..."
@@ -72,8 +75,13 @@ jobs:
             echo "🔧 Setting up backend environment..."
             cd backend
             cat > .env << 'BACKEND_ENV_END'
-${{ secrets.BACKEND_ENV }}
-BACKEND_ENV_END
+          ENDSSH
+          
+          # Write backend environment content
+          echo "$BACKEND_ENV_CONTENT" | ssh ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} 'cat >> /var/www/bondhon/backend/.env'
+          
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
+            cd /var/www/bondhon/backend
             
             # Backend deployment
             echo "📦 Installing backend dependencies..."
@@ -89,9 +97,13 @@ BACKEND_ENV_END
             # Create frontend environment file from secret
             echo "🔧 Setting up frontend environment..."
             cd ../frontend
-            cat > .env.local << 'FRONTEND_ENV_END'
-${{ secrets.FRONTEND_ENV }}
-FRONTEND_ENV_END
+          ENDSSH
+          
+          # Write frontend environment content
+          echo "$FRONTEND_ENV_CONTENT" | ssh ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} 'cat > /var/www/bondhon/frontend/.env.local'
+          
+          ssh -o StrictHostKeyChecking=no ${{ secrets.DO_USERNAME }}@${{ secrets.DO_HOST }} << 'ENDSSH'
+            cd /var/www/bondhon/frontend
             
             # Frontend deployment
             echo "🏗️ Building frontend assets..."
