@@ -71,9 +71,9 @@ jobs:
             # Create backend environment file from secret
             echo "🔧 Setting up backend environment..."
             cd backend
-            cat > .env << 'ENV_EOF'
+            cat > .env << 'BACKEND_ENV_END'
 ${{ secrets.BACKEND_ENV }}
-ENV_EOF
+BACKEND_ENV_END
             
             # Backend deployment
             echo "📦 Installing backend dependencies..."
@@ -89,9 +89,9 @@ ENV_EOF
             # Create frontend environment file from secret
             echo "🔧 Setting up frontend environment..."
             cd ../frontend
-            cat > .env.local << 'FRONTEND_ENV_EOF'
+            cat > .env.local << 'FRONTEND_ENV_END'
 ${{ secrets.FRONTEND_ENV }}
-FRONTEND_ENV_EOF
+FRONTEND_ENV_END
             
             # Frontend deployment
             echo "🏗️ Building frontend assets..."
