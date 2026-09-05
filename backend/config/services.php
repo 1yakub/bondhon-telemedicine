@@ -31,4 +31,10 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    // SSLCommerz. Sandbox store by default; set SSLCOMMERZ_SANDBOX=false with live credentials.
+    'sslcommerz' => [
+        'store_id' => env('SSLCOMMERZ_STORE_ID'),
+        'store_password' => env('SSLCOMMERZ_STORE_PASSWORD'),
+        'sandbox' => (bool) env('SSLCOMMERZ_SANDBOX', true),
+    ],
 ];

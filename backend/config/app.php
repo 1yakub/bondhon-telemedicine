@@ -56,6 +56,11 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    // Public demo: sign in codes are shown on screen instead of sent by SMS; data resets nightly.
+    'demo' => (bool) env('APP_DEMO', false),
+
+    'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
+
     'asset_url' => env('ASSET_URL'),
 
     /*

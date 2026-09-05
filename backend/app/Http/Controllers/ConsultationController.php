@@ -68,7 +68,7 @@ class ConsultationController extends Controller
 
             return response()->json([
                 'message' => 'Failed to fetch consultations',
-                'error' => env('APP_ENV') === 'local' ? $e->getMessage() : 'Internal server error'
+                'error' => config('app.env') === 'local' ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
@@ -154,7 +154,7 @@ class ConsultationController extends Controller
 
             return response()->json([
                 'message' => 'Failed to book consultation',
-                'error' => env('APP_ENV') === 'local' ? $e->getMessage() : 'Internal server error'
+                'error' => config('app.env') === 'local' ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }
@@ -276,7 +276,7 @@ class ConsultationController extends Controller
 
             return response()->json([
                 'message' => 'Consultation not found',
-                'error' => env('APP_ENV') === 'local' ? $e->getMessage() : 'Not found'
+                'error' => config('app.env') === 'local' ? $e->getMessage() : 'Not found'
             ], 404);
         }
     }
@@ -321,7 +321,7 @@ class ConsultationController extends Controller
 
             return response()->json([
                 'message' => 'Failed to cancel consultation',
-                'error' => env('APP_ENV') === 'local' ? $e->getMessage() : 'Internal server error'
+                'error' => config('app.env') === 'local' ? $e->getMessage() : 'Internal server error'
             ], 500);
         }
     }

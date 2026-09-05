@@ -20,6 +20,6 @@ class Authenticate extends Middleware
         }
 
         // For web routes, redirect to frontend login
-        return env('FRONTEND_URL', 'http://localhost:3000') . '/login';
+        return config('app.frontend_url') . '/login';
     }
 }

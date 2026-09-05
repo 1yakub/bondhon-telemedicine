@@ -22,6 +22,11 @@ export default function SiteFooter() {
         <div className="text-slate">
           <p className="font-semibold text-ink">About this demo</p>
           <p className="mt-2">Bondhon is a telemedicine platform built in Bangladesh. This is a working demo: video calls run on Agora, payments are in test mode, and the data resets every night.</p>
+          {process.env.NEXT_PUBLIC_DEMO === "true" && (
+            <p className="mt-3 rounded-control bg-paper p-3 text-sm">
+              Try it: sign in as a patient with any Bangladeshi mobile number, the code appears on screen. Doctor: <span className="font-semibold text-ink">ahmed@bondhon.com</span>, Admin: <span className="font-semibold text-ink">admin@bondhon.com</span>, password for both is shown on their sign in pages.
+            </p>
+          )}
         </div>
       </div>
       <div className="border-t border-rule">

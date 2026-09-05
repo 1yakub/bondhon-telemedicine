@@ -38,7 +38,7 @@ class AuthController extends Controller
 
         try {
             // Check if we should actually send SMS (cost control)
-            $shouldSendSMS = env('APP_ENV') === 'production' && env('SMS_ENABLED', true);
+            $shouldSendSMS = config('app.env') === 'production' && config('sms.enabled', true) && ! config('app.demo');
 
             if ($shouldSendSMS) {
                 $response = Http::timeout(2)->get(config('sms.bulk_sms_bd.base_url'), [
@@ -61,13 +61,13 @@ class AuthController extends Controller
                 Log::info('SMS not sent (staging mode)', [
                     'phone' => $phone,
                     'otp' => $otp,
-                    'sms_enabled' => env('SMS_ENABLED', true)
+                    'sms_enabled' => config('sms.enabled', true)
                 ]);
 
                 return response()->json([
                     'message' => 'OTP sent successfully (Staging mode)',
                     'phone' => $phone,
-                    'debug_otp' => env('APP_DEBUG') ? $otp : null
+                    'debug_otp' => (config('app.debug') || config('app.demo')) ? $otp : null
                 ], 200);
             }
         } catch (\Exception $e) {
@@ -77,11 +77,11 @@ class AuthController extends Controller
             ]);
 
             // Fallback for development/staging
-            if (env('APP_ENV') === 'local' || env('APP_ENV') === 'development' || !env('SMS_ENABLED', true)) {
+            if (config('app.env') === 'local' || config('app.env') === 'development' || !config('sms.enabled', true)) {
                 return response()->json([
                     'message' => 'OTP sent successfully (Fallback mode)',
                     'phone' => $phone,
-                    'debug_otp' => env('APP_DEBUG') ? $otp : null
+                    'debug_otp' => (config('app.debug') || config('app.demo')) ? $otp : null
                 ], 200);
             }
 
@@ -110,7 +110,7 @@ class AuthController extends Controller
         $storedOtp = Session::get('otp_' . $phone);
 
         // In development, be more lenient with OTP validation  
-        if ((env('APP_ENV') === 'local' || env('APP_ENV') === 'development') && strlen($otp) === 6 && is_numeric($otp)) {
+        if ((config('app.env') === 'local' || config('app.env') === 'development') && strlen($otp) === 6 && is_numeric($otp)) {
             // Allow any 6-digit OTP in development mode
         } else {
             if (!$storedOtp || !isset($storedOtp['expires_at']) || $storedOtp['expires_at']->isPast()) {
@@ -154,7 +154,7 @@ class AuthController extends Controller
         $needsProfileCompletion = empty($user->name);
 
         // Debug information in development
-        if (env('APP_ENV') === 'local') {
+        if (config('app.env') === 'local') {
             Log::info('OTP Login successful', [
                 'user_id' => $user->id,
                 'session_id' => Session::getId(),
@@ -170,7 +170,7 @@ class AuthController extends Controller
             'redirect_to' => $needsProfileCompletion
                 ? '/patient/complete-profile'
                 : '/patient/dashboard',
-            'debug' => env('APP_ENV') === 'local' ? [
+            'debug' => config('app.env') === 'local' ? [
                 'session_id' => Session::getId(),
                 'auth_check' => Auth::check()
             ] : null
@@ -249,7 +249,7 @@ class AuthController extends Controller
         $user = Auth::user();
 
         // Enhanced debug information in development
-        if (env('APP_ENV') === 'local') {
+        if (config('app.env') === 'local') {
             Log::info('Auth check debug', [
                 'headers' => $request->headers->all(),
                 'cookies' => $request->cookies->all(),
@@ -266,7 +266,7 @@ class AuthController extends Controller
         if (!$user) {
             return response()->json([
                 'message' => 'Unauthenticated',
-                'debug' => env('APP_ENV') === 'local' ? [
+                'debug' => config('app.env') === 'local' ? [
                     'session_id' => Session::getId(),
                     'auth_id' => Auth::id(),
                     'session_auth' => $sessionAuth ? 'exists' : 'missing',

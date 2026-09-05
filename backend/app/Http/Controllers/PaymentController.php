@@ -47,15 +47,15 @@ class PaymentController extends Controller
 
             // SSLCOMMERZ configuration
             $sslc_data = [
-                'store_id' => env('SSLCOMMERZ_STORE_ID', 'bondh68640bd8a7195'),
-                'store_passwd' => env('SSLCOMMERZ_STORE_PASSWORD', 'bondh68640bd8a7195@ssl'),
+                'store_id' => config('services.sslcommerz.store_id'),
+                'store_passwd' => config('services.sslcommerz.store_password'),
                 'total_amount' => $consultation->fee_amount,
                 'currency' => 'BDT',
                 'tran_id' => 'BONDHON_' . $consultation->id . '_' . time(),
-                'success_url' => env('APP_URL', 'http://localhost:8000') . '/api/payments/success',
-                'fail_url' => env('APP_URL', 'http://localhost:8000') . '/api/payments/fail',
-                'cancel_url' => env('APP_URL', 'http://localhost:8000') . '/api/payments/cancel',
-                'ipn_url' => env('APP_URL', 'http://localhost:8000') . '/api/payments/ipn',
+                'success_url' => config('app.url') . '/api/payments/success',
+                'fail_url' => config('app.url') . '/api/payments/fail',
+                'cancel_url' => config('app.url') . '/api/payments/cancel',
+                'ipn_url' => config('app.url') . '/api/payments/ipn',
 
                 // Customer Information
                 'cus_name' => $user->name,
@@ -113,13 +113,13 @@ class PaymentController extends Controller
             ]);
 
             // Determine SSLCOMMERZ endpoint based on environment
-            $sslc_endpoint = env('SSLCOMMERZ_TESTMODE', true)
+            $sslc_endpoint = config('services.sslcommerz.sandbox')
                 ? 'https://sandbox.sslcommerz.com/gwprocess/v4/api.php'
                 : 'https://securepay.sslcommerz.com/gwprocess/v4/api.php';
 
             // Make request to SSLCOMMERZ
             $response = Http::withOptions([
-                'verify' => env('APP_ENV') === 'production', // Only verify SSL in production
+                'verify' => config('app.env') === 'production', // Only verify SSL in production
             ])->asForm()->post($sslc_endpoint, $sslc_data);
 
             if ($response->successful()) {
@@ -180,7 +180,7 @@ class PaymentController extends Controller
             if ($status === 'VALID') {
                 // For sandbox/test mode, we can trust SSLCOMMERZ callback
                 // For production, we should always validate server-to-server
-                if (env('SSLCOMMERZ_TESTMODE', true)) {
+                if (config('services.sslcommerz.sandbox')) {
                     Log::info('Using simplified validation for test mode');
                     $validation = ['status' => 'VALID', 'amount' => $amount];
                 } else {
@@ -233,7 +233,7 @@ class PaymentController extends Controller
                         }
 
                         // Redirect to frontend success page
-                        return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/success?' . http_build_query([
+                        return redirect(config('app.frontend_url') . '/payment/success?' . http_build_query([
                             'tran_id' => $tran_id,
                             'amount' => $amount,
                             'status' => 'VALID',
@@ -245,7 +245,7 @@ class PaymentController extends Controller
             }
 
             // Redirect to frontend failure page
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+            return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                 'tran_id' => $tran_id,
                 'amount' => $amount,
                 'status' => 'FAILED',
@@ -255,7 +255,7 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             Log::error('Payment success callback error: ' . $e->getMessage());
             // Redirect to frontend failure page
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+            return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                 'tran_id' => $request->input('tran_id'),
                 'amount' => $request->input('amount'),
                 'status' => 'ERROR',
@@ -295,7 +295,7 @@ class PaymentController extends Controller
                     ]);
 
                     // Redirect to frontend failure page with session restored flag
-                    return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+                    return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                         'tran_id' => $tran_id,
                         'amount' => $request->input('amount'),
                         'status' => 'FAILED',
@@ -307,7 +307,7 @@ class PaymentController extends Controller
             }
 
             // Redirect to frontend failure page (without session restoration)
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+            return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                 'tran_id' => $tran_id,
                 'amount' => $request->input('amount'),
                 'status' => 'FAILED',
@@ -317,7 +317,7 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             Log::error('Payment failure callback error: ' . $e->getMessage());
             // Redirect to frontend failure page
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+            return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                 'tran_id' => $request->input('tran_id'),
                 'amount' => $request->input('amount'),
                 'status' => 'ERROR',
@@ -357,7 +357,7 @@ class PaymentController extends Controller
                     ]);
 
                     // Redirect to frontend failure page for cancellation with session restored flag
-                    return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+                    return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                         'tran_id' => $tran_id,
                         'amount' => $request->input('amount'),
                         'status' => 'CANCELLED',
@@ -369,7 +369,7 @@ class PaymentController extends Controller
             }
 
             // Redirect to frontend failure page for cancellation (without session restoration)
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+            return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                 'tran_id' => $tran_id,
                 'amount' => $request->input('amount'),
                 'status' => 'CANCELLED',
@@ -379,7 +379,7 @@ class PaymentController extends Controller
         } catch (\Exception $e) {
             Log::error('Payment cancellation callback error: ' . $e->getMessage());
             // Redirect to frontend failure page
-            return redirect(env('FRONTEND_URL', 'http://localhost:3000') . '/payment/fail?' . http_build_query([
+            return redirect(config('app.frontend_url') . '/payment/fail?' . http_build_query([
                 'tran_id' => $request->input('tran_id'),
                 'amount' => $request->input('amount'),
                 'status' => 'ERROR',
@@ -451,19 +451,19 @@ class PaymentController extends Controller
             Log::info('Validating transaction', ['val_id' => $val_id, 'amount' => $amount]);
 
             $validation_data = [
-                'store_id' => env('SSLCOMMERZ_STORE_ID', 'bondh68640bd8a7195'),
-                'store_passwd' => env('SSLCOMMERZ_STORE_PASSWORD', 'bondh68640bd8a7195@ssl'),
+                'store_id' => config('services.sslcommerz.store_id'),
+                'store_passwd' => config('services.sslcommerz.store_password'),
                 'val_id' => $val_id,
                 'format' => 'json',
             ];
 
-            $validation_endpoint = env('SSLCOMMERZ_TESTMODE', true)
+            $validation_endpoint = config('services.sslcommerz.sandbox')
                 ? 'https://sandbox.sslcommerz.com/validator/api/validationserverAPI.php'
                 : 'https://securepay.sslcommerz.com/validator/api/validationserverAPI.php';
 
             // SSLCOMMERZ validation should be GET request with query parameters
             $response = Http::withOptions([
-                'verify' => env('APP_ENV') === 'production', // Only verify SSL in production
+                'verify' => config('app.env') === 'production', // Only verify SSL in production
             ])->get($validation_endpoint, $validation_data);
 
             if ($response->successful()) {
