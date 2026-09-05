@@ -112,17 +112,17 @@ export default function AdminConsultations() {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-saffron-100 text-ink";
       case "confirmed":
-        return "bg-blue-100 text-blue-800";
+        return "bg-teal-50 text-teal-700";
       case "in_progress":
-        return "bg-purple-100 text-purple-800";
+        return "bg-saffron-100 text-saffron-600";
       case "completed":
-        return "bg-green-100 text-green-800";
+        return "bg-teal-50 text-teal-700";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-saffron-100 text-danger";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
     }
   };
 
@@ -182,8 +182,8 @@ export default function AdminConsultations() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading consultations...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading consultations...</p>
         </div>
       </div>
     );
@@ -193,26 +193,26 @@ export default function AdminConsultations() {
     <>
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-ink">
           Consultation Management
         </h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <p className="mt-2 text-lg text-slate">
           Monitor and manage all platform consultations
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-6 bg-saffron-100 border border-danger rounded-control p-4">
+          <p className="text-sm text-danger">{error}</p>
         </div>
       )}
 
       {/* Filters */}
-      <div className="bg-white shadow-sm rounded-lg mb-6">
+      <div className="bg-white rounded-control mb-6">
         <div className="px-6 py-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-ink-2 mb-1">
                 Search Consultations
               </label>
               <input
@@ -220,17 +220,17 @@ export default function AdminConsultations() {
                 placeholder="Search by patient, doctor, or ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-ink-2 mb-1">
                 Status Filter
               </label>
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Awaiting Payment</option>
@@ -241,13 +241,13 @@ export default function AdminConsultations() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
+              <label className="block text-sm font-medium text-ink-2 mb-1">
                 Date Filter
               </label>
               <select
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
               >
                 <option value="all">All Time</option>
                 <option value="today">Today</option>
@@ -261,7 +261,7 @@ export default function AdminConsultations() {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-6">
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -281,10 +281,10 @@ export default function AdminConsultations() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.total}
                   </dd>
                 </dl>
@@ -293,7 +293,7 @@ export default function AdminConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -313,10 +313,10 @@ export default function AdminConsultations() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Revenue
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     ৳{stats.revenue}
                   </dd>
                 </dl>
@@ -325,7 +325,7 @@ export default function AdminConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -345,10 +345,10 @@ export default function AdminConsultations() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Pending
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.pending}
                   </dd>
                 </dl>
@@ -357,7 +357,7 @@ export default function AdminConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -377,10 +377,10 @@ export default function AdminConsultations() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Completed
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.completed}
                   </dd>
                 </dl>
@@ -389,7 +389,7 @@ export default function AdminConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -409,10 +409,10 @@ export default function AdminConsultations() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Cancelled
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.cancelled}
                   </dd>
                 </dl>
@@ -423,9 +423,9 @@ export default function AdminConsultations() {
       </div>
 
       {/* Consultations Table */}
-      <div className="bg-white shadow-sm rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+      <div className="bg-white rounded-control">
+        <div className="px-6 py-4 border-b border-rule">
+          <h3 className="text-lg font-medium text-ink">
             Consultations ({filteredConsultations.length})
           </h3>
         </div>
@@ -433,7 +433,7 @@ export default function AdminConsultations() {
           {filteredConsultations.length === 0 ? (
             <div className="text-center py-12">
               <svg
-                className="mx-auto h-12 w-12 text-gray-400"
+                className="mx-auto h-12 w-12 text-slate-2"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -445,65 +445,65 @@ export default function AdminConsultations() {
                   d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                 />
               </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">
+              <h3 className="mt-2 text-sm font-medium text-ink">
                 No consultations found
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-slate">
                 {searchTerm || statusFilter !== "all" || dateFilter !== "all"
                   ? "Try adjusting your search filters."
                   : "Consultations will appear here once they are created."}
               </p>
             </div>
           ) : (
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-rule">
+              <thead className="bg-mist">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     ID
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     Patient
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     Doctor
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     Date & Time
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     Amount
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                     Action
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-rule">
                 {filteredConsultations.map((consultation) => (
-                  <tr key={consultation.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <tr key={consultation.id} className="hover:bg-mist">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-ink">
                       #{consultation.id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-ink">
                         {consultation.patient_name || "Anonymous"}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-slate">
                         +880{consultation.patient_phone}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-medium text-ink">
                         {consultation.doctor_name}
                       </div>
-                      <div className="text-sm text-gray-500">
+                      <div className="text-sm text-slate">
                         {consultation.doctor_specialization || "General"}
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                       {formatDate(consultation.created_at)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -515,30 +515,29 @@ export default function AdminConsultations() {
                         {getStatusText(consultation.status)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                       {consultation.payment_amount ? (
                         <span
                           className={`${
                             consultation.ssl_payment_status === "VALID"
-                              ? "text-green-600 font-medium"
-                              : "text-gray-500"
+                              ? "text-teal-600 font-medium"
+                              : "text-slate"
                           }`}
                         >
                           ৳{consultation.payment_amount}
                           {consultation.ssl_payment_status === "VALID" && (
-                            <span className="ml-1 text-xs text-green-500">
-                              ✓
-                            </span>
+                            <span className="ml-1 text-xs text-teal-600">
+                                                          </span>
                           )}
                         </span>
                       ) : (
-                        <span className="text-gray-400">-</span>
+                        <span className="text-slate-2">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <button
                         onClick={() => openDetailsModal(consultation)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-teal-600 hover:text-teal-700"
                       >
                         View Details
                       </button>
@@ -553,16 +552,16 @@ export default function AdminConsultations() {
 
       {/* Consultation Details Modal */}
       {showDetailsModal && selectedConsultation && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-3xl shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-slate bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-full max-w-3xl shadow-lift rounded-control bg-white">
             <div className="mt-3">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-ink">
                   Consultation Details - #{selectedConsultation.id}
                 </h3>
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-slate-2 hover:text-slate"
                 >
                   <svg
                     className="w-6 h-6"
@@ -583,25 +582,25 @@ export default function AdminConsultations() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Patient Information */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-3">
+                  <h4 className="text-md font-semibold text-ink mb-3">
                     Patient Information
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700">Name:</span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="font-medium text-ink-2">Name:</span>
+                      <span className="ml-2 text-ink">
                         {selectedConsultation.patient_name || "Anonymous"}
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">Phone:</span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="font-medium text-ink-2">Phone:</span>
+                      <span className="ml-2 text-ink">
                         +880{selectedConsultation.patient_phone}
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">Gender:</span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="font-medium text-ink-2">Gender:</span>
+                      <span className="ml-2 text-ink">
                         {selectedConsultation.patient_gender || "Not specified"}
                       </span>
                     </div>
@@ -610,30 +609,30 @@ export default function AdminConsultations() {
 
                 {/* Doctor Information */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-3">
+                  <h4 className="text-md font-semibold text-ink mb-3">
                     Doctor Information
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700">Name:</span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="font-medium text-ink-2">Name:</span>
+                      <span className="ml-2 text-ink">
                         {selectedConsultation.doctor_name}
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-ink-2">
                         Specialization:
                       </span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="ml-2 text-ink">
                         {selectedConsultation.doctor_specialization ||
                           "General"}
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-ink-2">
                         Consultation Fee:
                       </span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="ml-2 text-ink">
                         ৳{selectedConsultation.fee_per_consultation || "0"}
                       </span>
                     </div>
@@ -642,12 +641,12 @@ export default function AdminConsultations() {
 
                 {/* Consultation Details */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-3">
+                  <h4 className="text-md font-semibold text-ink mb-3">
                     Consultation Details
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700">Status:</span>
+                      <span className="font-medium text-ink-2">Status:</span>
                       <span
                         className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
                           selectedConsultation.status
@@ -657,18 +656,18 @@ export default function AdminConsultations() {
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-ink-2">
                         Created:
                       </span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="ml-2 text-ink">
                         {formatDate(selectedConsultation.created_at)}
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-ink-2">
                         Last Updated:
                       </span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="ml-2 text-ink">
                         {formatDate(selectedConsultation.updated_at)}
                       </span>
                     </div>
@@ -677,27 +676,27 @@ export default function AdminConsultations() {
 
                 {/* Payment Information */}
                 <div>
-                  <h4 className="text-md font-semibold text-gray-900 mb-3">
+                  <h4 className="text-md font-semibold text-ink mb-3">
                     Payment Information
                   </h4>
                   <div className="space-y-2 text-sm">
                     <div>
-                      <span className="font-medium text-gray-700">Amount:</span>
-                      <span className="ml-2 text-gray-900">
+                      <span className="font-medium text-ink-2">Amount:</span>
+                      <span className="ml-2 text-ink">
                         {selectedConsultation.payment_amount
                           ? `৳${selectedConsultation.payment_amount}`
                           : "Not paid"}
                       </span>
                     </div>
                     <div>
-                      <span className="font-medium text-gray-700">
+                      <span className="font-medium text-ink-2">
                         Payment Status:
                       </span>
                       <span
                         className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${
                           selectedConsultation.ssl_payment_status === "VALID"
-                            ? "bg-green-100 text-green-800"
-                            : "bg-red-100 text-red-800"
+                            ? "bg-teal-50 text-teal-700"
+                            : "bg-saffron-100 text-danger"
                         }`}
                       >
                         {selectedConsultation.ssl_payment_status || "Pending"}
@@ -705,10 +704,10 @@ export default function AdminConsultations() {
                     </div>
                     {selectedConsultation.transaction_id && (
                       <div>
-                        <span className="font-medium text-gray-700">
+                        <span className="font-medium text-ink-2">
                           Transaction ID:
                         </span>
-                        <span className="ml-2 text-gray-900 font-mono text-xs">
+                        <span className="ml-2 text-ink font-mono text-xs">
                           {selectedConsultation.transaction_id}
                         </span>
                       </div>
@@ -720,7 +719,7 @@ export default function AdminConsultations() {
               <div className="flex justify-end mt-6">
                 <button
                   onClick={() => setShowDetailsModal(false)}
-                  className="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-md text-sm font-medium"
+                  className="px-4 py-2 bg-slate hover:bg-ink-2 text-white rounded-control text-sm font-medium"
                 >
                   Close
                 </button>

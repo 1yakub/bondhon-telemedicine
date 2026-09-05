@@ -1,200 +1,91 @@
 import Link from "next/link";
+import Image from "next/image";
+import { Phone, Stethoscope, Video, ShieldCheck, Clock, Wallet } from "lucide-react";
+import SiteHeader from "../components/site/SiteHeader";
+import SiteFooter from "../components/site/SiteFooter";
+import PhoneStart from "../components/site/PhoneStart";
+import DoctorsPreview from "../components/site/DoctorsPreview";
+
+export const revalidate = 0;
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-green-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-2xl font-bold text-blue-600">Bondhon</h1>
-              <span className="ml-2 text-sm text-gray-500">বন্ধন</span>
-            </div>
-            <div className="flex items-center space-x-4">
-              <Link
-                href="/doctors"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Browse Doctors
-              </Link>
-              <Link
-                href="/login"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-              >
-                Login
-              </Link>
-              <Link
-                href="/doctor/login"
-                className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium"
-              >
-                Doctor Login
-              </Link>
-            </div>
+    <div className="min-h-screen bg-paper">
+      <SiteHeader />
+      <main id="content">
+        {/* Hero: one photo, one sentence in both languages, the phone number field right here */}
+        <section className="mx-auto grid max-w-6xl items-center gap-10 px-5 pb-16 pt-10 md:grid-cols-2 md:pt-16">
+          <div>
+            <h1 className="text-display font-bold tracking-tight text-ink">
+              A doctor on video,<br />from your phone.
+            </h1>
+            <p lang="bn" className="mt-3 text-title font-semibold text-teal-600">আপনার ফোন থেকেই ভিডিওতে ডাক্তার দেখান।</p>
+            <p className="measure mt-5 text-lg text-slate">
+              Sign in with your mobile number. Pick a doctor who is online. Pay the fee. The call starts in your browser, no app to install.
+            </p>
+            <PhoneStart />
+            <ul className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-slate">
+              <li className="inline-flex items-center gap-2"><Clock className="h-4 w-4 text-teal-600" /> Usually under 10 minutes</li>
+              <li className="inline-flex items-center gap-2"><Wallet className="h-4 w-4 text-teal-600" /> From ৳500 a visit</li>
+              <li className="inline-flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-teal-600" /> Your call is private</li>
+            </ul>
           </div>
-        </div>
-      </nav>
-
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center">
-          <h2 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6">
-            Healthcare at Your
-            <span className="text-blue-600">      </span>
-          </h2>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
-            Connect with qualified doctors instantly through video
-            consultations. Get medical advice from the comfort of your home in
-            Bangladesh.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link
-              href="/doctors"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-medium shadow-lg transform hover:scale-105 transition-all"
-            >
-              Browse Available Doctors
-            </Link>
-            <Link
-              href="/login"
-              className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg text-lg font-medium shadow-lg transform hover:scale-105 transition-all"
-            >
-              Start Consultation
-            </Link>
+          <div className="relative overflow-hidden rounded-card bg-mist-2 shadow-lift">
+            <Image src="/images/hero.jpg" alt="A woman at home on a video call with a doctor, on her phone" width={1200} height={900} priority className="h-full w-full object-cover" />
           </div>
-        </div>
+        </section>
 
-        {/* Features Section */}
-        <div className="grid md:grid-cols-3 gap-8 mt-16">
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-blue-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                />
-              </svg>
+        {/* How it works */}
+        <section id="how" className="bg-mist">
+          <div className="mx-auto max-w-6xl px-5 py-16">
+            <h2 className="text-title font-bold text-ink">Three steps to a doctor</h2>
+            <p lang="bn" className="mt-1 text-lg text-teal-600">তিন ধাপে ডাক্তার</p>
+            <ol className="mt-8 grid gap-6 md:grid-cols-3">
+              {[
+                { Icon: Phone, en: "Sign in with your number", bn: "নম্বর দিয়ে লগইন", text: "We send a six digit code by SMS. No password, no email." },
+                { Icon: Stethoscope, en: "Pick a doctor who is online", bn: "অনলাইন ডাক্তার বেছে নিন", text: "See the specialty, years of experience and the fee before you choose." },
+                { Icon: Video, en: "Pay and start the call", bn: "ফি দিয়ে কল শুরু করুন", text: "Pay with bKash, card or bank. The video call opens right here in your browser." },
+              ].map((s, i) => (
+                <li key={s.en} className="rounded-card bg-paper p-6 shadow-lift">
+                  <div className="flex items-center gap-3">
+                    <span className="grid h-11 w-11 place-items-center rounded-full bg-teal-50 text-teal-600"><s.Icon className="h-5 w-5" /></span>
+                    <span className="text-sm font-semibold text-slate">Step {i + 1}</span>
+                  </div>
+                  <h3 className="mt-4 text-xl font-bold text-ink">{s.en}</h3>
+                  <p lang="bn" className="text-teal-600">{s.bn}</p>
+                  <p className="mt-2 text-slate">{s.text}</p>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </section>
+
+        {/* Doctors online right now, from the API */}
+        <section className="mx-auto max-w-6xl px-5 py-16">
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="text-title font-bold text-ink">Doctors on Bondhon</h2>
+              <p lang="bn" className="mt-1 text-lg text-teal-600">বন্ধনের ডাক্তাররা</p>
             </div>
-            <h3 className="text-xl font-semibold mb-2">Video Consultations</h3>
-            <p className="text-gray-600">
-              High-quality video calls with experienced doctors
+            <Link href="/doctors" className="tap inline-flex items-center rounded-control border border-rule px-5 font-semibold text-ink hover:border-teal-600 hover:text-teal-600">See all doctors</Link>
+          </div>
+          <DoctorsPreview />
+        </section>
+
+        {/* Plain promise band */}
+        <section className="bg-ink text-white">
+          <div className="mx-auto grid max-w-6xl gap-8 px-5 py-14 md:grid-cols-2 md:items-center">
+            <div>
+              <h2 className="text-title font-bold">Made for the whole family</h2>
+              <p lang="bn" className="mt-1 text-lg text-saffron-500">পরিবারের সবার জন্য</p>
+            </div>
+            <p className="text-lg text-white/80">
+              Big buttons, few words, Bangla and English side by side. Someone who reads little can still reach a doctor with three taps. Children and parents can be booked from one account.
             </p>
           </div>
-
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-green-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Affordable Pricing</h3>
-            <p className="text-gray-600">
-              Transparent pricing starting from ৳500 per consultation
-            </p>
-          </div>
-
-          <div className="bg-white p-6 rounded-xl shadow-md text-center">
-            <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg
-                className="w-8 h-8 text-purple-600"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-            </div>
-            <h3 className="text-xl font-semibold mb-2">Qualified Doctors</h3>
-            <p className="text-gray-600">
-              MBBS qualified doctors with years of experience
-            </p>
-          </div>
-        </div>
-
-        {/* How it Works */}
-        <div className="mt-16 text-center">
-          <h3 className="text-3xl font-bold text-gray-900 mb-8">
-            How It Works
-          </h3>
-          <div className="grid md:grid-cols-4 gap-6">
-            <div className="flex flex-col items-center">
-              <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">
-                1
-              </div>
-              <h4 className="font-semibold mb-2">Browse Doctors</h4>
-              <p className="text-gray-600 text-sm">
-                Choose from our qualified doctors by specialization
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">
-                2
-              </div>
-              <h4 className="font-semibold mb-2">Book & Pay</h4>
-              <p className="text-gray-600 text-sm">
-                Select a time and make secure payment
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">
-                3
-              </div>
-              <h4 className="font-semibold mb-2">Video Call</h4>
-              <p className="text-gray-600 text-sm">
-                Connect with your doctor via video call
-              </p>
-            </div>
-            <div className="flex flex-col items-center">
-              <div className="bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mb-4">
-                4
-              </div>
-              <h4 className="font-semibold mb-2">Get Treatment</h4>
-              <p className="text-gray-600 text-sm">
-                Receive medical advice and prescriptions
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA Section */}
-        <div className="mt-16 bg-white rounded-2xl p-8 shadow-lg text-center">
-          <h3 className="text-2xl font-bold text-gray-900 mb-4">
-            Ready to Get Started?
-          </h3>
-          <p className="text-gray-600 mb-6">
-            Join thousands of patients who trust Bondhon for their healthcare
-            needs.
-          </p>
-          <Link
-            href="/doctors"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-medium shadow-lg inline-block transform hover:scale-105 transition-all"
-          >
-            Browse Available Doctors
-          </Link>
-        </div>
+        </section>
       </main>
+      <SiteFooter />
     </div>
   );
 }

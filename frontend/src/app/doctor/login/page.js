@@ -56,31 +56,31 @@ export default function DoctorLogin() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-green-50 to-blue-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-linear-to-br flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         {/* Header */}
         <div className="text-center">
           <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-green-600">Bondhon</h1>
-            <span className="text-sm text-gray-500 ml-2">বন্ধন</span>
+            <h1 className="text-3xl font-bold text-teal-600">Bondhon</h1>
+            <span className="text-sm text-slate ml-2">বন্ধন</span>
           </Link>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+          <h2 className="mt-6 text-3xl font-extrabold text-ink">
             Doctor Portal
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
+          <p className="mt-2 text-sm text-slate">
             Sign in to your doctor account
           </p>
         </div>
 
         {/* Login Form */}
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="bg-white p-8 rounded-lg shadow-md">
+          <div className="bg-white p-8 rounded-control shadow-lift">
             <div className="space-y-4">
               {/* Email */}
               <div>
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-ink-2"
                 >
                   Email Address
                 </label>
@@ -90,7 +90,7 @@ export default function DoctorLogin() {
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-hidden focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full px-3 py-3 border border-rule placeholder:text-slate-2 text-ink rounded-control focus:outline-hidden focus:ring-green-500 focus:border-teal-100 focus:z-10 sm:text-sm"
                   placeholder="Enter your email address"
                   value={formData.email}
                   onChange={handleInputChange}
@@ -101,7 +101,7 @@ export default function DoctorLogin() {
               <div>
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium text-gray-700"
+                  className="block text-sm font-medium text-ink-2"
                 >
                   Password
                 </label>
@@ -111,7 +111,7 @@ export default function DoctorLogin() {
                   type="password"
                   autoComplete="current-password"
                   required
-                  className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-hidden focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none relative block w-full px-3 py-3 border border-rule placeholder:text-slate-2 text-ink rounded-control focus:outline-hidden focus:ring-green-500 focus:border-teal-100 focus:z-10 sm:text-sm"
                   placeholder="Enter your password"
                   value={formData.password}
                   onChange={handleInputChange}
@@ -120,8 +120,8 @@ export default function DoctorLogin() {
 
               {/* Error Message */}
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                  <p className="text-sm text-red-600">{error}</p>
+                <div className="bg-saffron-100 border border-danger rounded-control p-3">
+                  <p className="text-sm text-danger">{error}</p>
                 </div>
               )}
 
@@ -129,7 +129,7 @@ export default function DoctorLogin() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+                className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-control text-white bg-teal-600 hover:bg-teal-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-slate-2 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <div className="flex items-center">
@@ -145,7 +145,7 @@ export default function DoctorLogin() {
               <div className="text-center">
                 <a
                   href="#"
-                  className="text-sm text-green-600 hover:text-green-500"
+                  className="text-sm text-teal-600 hover:text-teal-600"
                 >
                   Forgot your password?
                 </a>
@@ -156,34 +156,34 @@ export default function DoctorLogin() {
 
         {/* Navigation Links */}
         <div className="text-center space-y-2">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-slate">
             Are you a patient?{" "}
             <Link
               href="/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-teal-600 hover:text-teal-600"
             >
               Patient Login
             </Link>
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-slate">
             Need admin access?{" "}
             <Link
               href="/admin/login"
-              className="font-medium text-purple-600 hover:text-purple-500"
+              className="font-medium text-saffron-600 hover:text-saffron-600"
             >
               Admin Login
             </Link>
           </p>
           <Link
             href="/"
-            className="inline-block text-sm text-gray-500 hover:text-gray-700"
+            className="inline-block text-sm text-slate hover:text-ink-2"
           >
             ← Back to Home
           </Link>
         </div>
 
         {/* Info Card */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-teal-50 border border-teal-100 rounded-control p-4">
           <div className="flex">
             <div className="shrink-0">
               <svg
@@ -199,10 +199,10 @@ export default function DoctorLogin() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">
+              <h3 className="text-sm font-medium text-teal-700">
                 Doctor Portal Access
               </h3>
-              <div className="mt-2 text-sm text-green-700">
+              <div className="mt-2 text-sm text-teal-700">
                 <p>
                   Use the email and password provided by your administrator to
                   access your doctor dashboard. If you don't have credentials,

@@ -102,7 +102,7 @@ export default function DoctorConsultations() {
       const filterDate = new Date(dateFilter).toDateString();
       filtered = filtered.filter(
         (consultation) =>
-          new Date(consultation.scheduled_time).toDateString() === filterDate
+          new Date((consultation.scheduled_at || consultation.created_at)).toDateString() === filterDate
       );
     }
 
@@ -122,17 +122,17 @@ export default function DoctorConsultations() {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-saffron-100 text-ink";
       case "confirmed":
-        return "bg-blue-100 text-blue-800";
+        return "bg-teal-50 text-teal-700";
       case "in_progress":
-        return "bg-green-100 text-green-800";
+        return "bg-teal-50 text-teal-700";
       case "completed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-saffron-100 text-danger";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
     }
   };
 
@@ -159,7 +159,7 @@ export default function DoctorConsultations() {
     switch (status) {
       case "pending":
         return (
-          <span className="text-sm text-gray-500 italic">
+          <span className="text-sm text-slate italic">
             Waiting for payment
           </span>
         );
@@ -168,7 +168,7 @@ export default function DoctorConsultations() {
           <Link
             href={`/doctor/video-call/${id}`}
             target="_blank"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
+            className="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
           >
             Join Video Call
           </Link>
@@ -178,19 +178,19 @@ export default function DoctorConsultations() {
           <Link
             href={`/doctor/video-call/${id}`}
             target="_blank"
-            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
+            className="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
           >
             Continue Call
           </Link>
         );
       case "completed":
         return (
-          <span className="text-sm text-green-600 font-medium">
+          <span className="text-sm text-teal-600 font-medium">
             Consultation Completed
           </span>
         );
       case "cancelled":
-        return <span className="text-sm text-gray-500">Cancelled</span>;
+        return <span className="text-sm text-slate">Cancelled</span>;
       default:
         return null;
     }
@@ -198,39 +198,39 @@ export default function DoctorConsultations() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading consultations...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading consultations...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Consultations</h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <h1 className="text-3xl font-bold text-ink">Consultations</h1>
+        <p className="mt-2 text-lg text-slate">
           Manage all your patient consultations and appointments
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-6 bg-saffron-100 border border-danger rounded-control p-4">
+          <p className="text-sm text-danger">{error}</p>
         </div>
       )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-4">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-gray-400"
+                  className="h-6 w-6 text-slate-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -245,10 +245,10 @@ export default function DoctorConsultations() {
               </div>
               <div className="ml-3 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.total}
                   </dd>
                 </dl>
@@ -257,7 +257,7 @@ export default function DoctorConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-4">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -277,10 +277,10 @@ export default function DoctorConsultations() {
               </div>
               <div className="ml-3 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Today
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.today}
                   </dd>
                 </dl>
@@ -289,7 +289,7 @@ export default function DoctorConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-4">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -309,10 +309,10 @@ export default function DoctorConsultations() {
               </div>
               <div className="ml-3 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Pending
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.pending}
                   </dd>
                 </dl>
@@ -321,7 +321,7 @@ export default function DoctorConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-4">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -341,10 +341,10 @@ export default function DoctorConsultations() {
               </div>
               <div className="ml-3 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Confirmed
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.confirmed}
                   </dd>
                 </dl>
@@ -353,7 +353,7 @@ export default function DoctorConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-4">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -373,10 +373,10 @@ export default function DoctorConsultations() {
               </div>
               <div className="ml-3 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Completed
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.completed}
                   </dd>
                 </dl>
@@ -385,7 +385,7 @@ export default function DoctorConsultations() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-4">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -405,10 +405,10 @@ export default function DoctorConsultations() {
               </div>
               <div className="ml-3 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Cancelled
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.cancelled}
                   </dd>
                 </dl>
@@ -419,9 +419,9 @@ export default function DoctorConsultations() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white shadow-sm rounded-lg mb-6">
+      <div className="bg-white rounded-control mb-6">
         <div className="px-6 py-4">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+          <h3 className="text-lg font-medium text-ink mb-4">
             Filter Consultations
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -429,7 +429,7 @@ export default function DoctorConsultations() {
             <div>
               <label
                 htmlFor="search"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-ink-2 mb-2"
               >
                 Search Patient
               </label>
@@ -439,7 +439,7 @@ export default function DoctorConsultations() {
                 placeholder="Search by name, phone, or symptoms..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               />
             </div>
 
@@ -447,7 +447,7 @@ export default function DoctorConsultations() {
             <div>
               <label
                 htmlFor="status"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-ink-2 mb-2"
               >
                 Status
               </label>
@@ -455,7 +455,7 @@ export default function DoctorConsultations() {
                 id="status"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               >
                 <option value="">All Statuses</option>
                 <option value="pending">Pending</option>
@@ -470,7 +470,7 @@ export default function DoctorConsultations() {
             <div>
               <label
                 htmlFor="date"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-ink-2 mb-2"
               >
                 Date
               </label>
@@ -479,7 +479,7 @@ export default function DoctorConsultations() {
                 id="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
               />
             </div>
           </div>
@@ -493,7 +493,7 @@ export default function DoctorConsultations() {
                   setStatusFilter("");
                   setDateFilter("");
                 }}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-teal-600 hover:text-teal-700"
               >
                 Clear all filters
               </button>
@@ -503,18 +503,18 @@ export default function DoctorConsultations() {
       </div>
 
       {/* Consultations List */}
-      <div className="bg-white shadow-sm overflow-hidden sm:rounded-md">
+      <div className="bg-white overflow-hidden sm:rounded-control">
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className="text-lg leading-6 font-medium text-ink">
             Consultations
-            <span className="ml-2 text-sm text-gray-500">
+            <span className="ml-2 text-sm text-slate">
               ({filteredConsultations.length} of {consultations.length})
             </span>
           </h3>
         </div>
-        <ul className="divide-y divide-gray-200">
+        <ul className="divide-y divide-rule">
           {filteredConsultations.length === 0 ? (
-            <li className="px-4 py-8 text-center text-gray-500">
+            <li className="px-4 py-8 text-center text-slate">
               {consultations.length === 0
                 ? "No consultations found"
                 : "No consultations match your filters"}
@@ -525,8 +525,8 @@ export default function DoctorConsultations() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="shrink-0 h-10 w-10">
-                      <div className="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
-                        <span className="text-sm font-medium text-blue-600">
+                      <div className="h-10 w-10 rounded-full bg-teal-50 flex items-center justify-center">
+                        <span className="text-sm font-medium text-teal-600">
                           {consultation.patient_name?.charAt(0).toUpperCase() ||
                             "P"}
                         </span>
@@ -534,7 +534,7 @@ export default function DoctorConsultations() {
                     </div>
                     <div className="ml-4">
                       <div className="flex items-center">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-ink">
                           {consultation.patient_name || "Unknown Patient"}
                         </p>
                         <span
@@ -546,17 +546,17 @@ export default function DoctorConsultations() {
                         </span>
                       </div>
                       <div className="mt-1">
-                        <p className="text-sm text-gray-500">
-                          📅 {formatDate(consultation.scheduled_time)}
+                        <p className="text-sm text-slate">
+                          {formatDate((consultation.scheduled_at || consultation.created_at))}
                         </p>
                         {consultation.patient_phone && (
-                          <p className="text-sm text-gray-500">
-                            📞 +880{consultation.patient_phone}
+                          <p className="text-sm text-slate">
+                            +880{consultation.patient_phone}
                           </p>
                         )}
                         {consultation.patient_symptoms && (
-                          <p className="text-sm text-gray-600 mt-1">
-                            💬 {consultation.patient_symptoms}
+                          <p className="text-sm text-slate mt-1">
+                            {consultation.patient_symptoms}
                           </p>
                         )}
                       </div>
@@ -564,10 +564,10 @@ export default function DoctorConsultations() {
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="text-right">
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-ink">
                         ৳{consultation.fee}
                       </p>
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-slate">
                         ID: #{consultation.id}
                       </p>
                     </div>

@@ -192,17 +192,17 @@ export default function AdminDoctorDetails() {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-saffron-100 text-ink";
       case "confirmed":
-        return "bg-blue-100 text-blue-800";
+        return "bg-teal-50 text-teal-700";
       case "in_progress":
-        return "bg-purple-100 text-purple-800";
+        return "bg-saffron-100 text-saffron-600";
       case "completed":
-        return "bg-green-100 text-green-800";
+        return "bg-teal-50 text-teal-700";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-saffron-100 text-danger";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
     }
   };
 
@@ -211,8 +211,8 @@ export default function AdminDoctorDetails() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading doctor details...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading doctor details...</p>
         </div>
       </div>
     );
@@ -226,7 +226,7 @@ export default function AdminDoctorDetails() {
           <li className="inline-flex items-center">
             <Link
               href="/admin/dashboard"
-              className="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600"
+              className="inline-flex items-center text-sm font-medium text-ink-2 hover:text-teal-600"
             >
               Dashboard
             </Link>
@@ -234,7 +234,7 @@ export default function AdminDoctorDetails() {
           <li>
             <div className="flex items-center">
               <svg
-                className="w-6 h-6 text-gray-400"
+                className="w-6 h-6 text-slate-2"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -246,7 +246,7 @@ export default function AdminDoctorDetails() {
               </svg>
               <Link
                 href="/admin/doctors"
-                className="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2"
+                className="ml-1 text-sm font-medium text-ink-2 hover:text-teal-600 md:ml-2"
               >
                 Doctors
               </Link>
@@ -255,7 +255,7 @@ export default function AdminDoctorDetails() {
           <li>
             <div className="flex items-center">
               <svg
-                className="w-6 h-6 text-gray-400"
+                className="w-6 h-6 text-slate-2"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -265,7 +265,7 @@ export default function AdminDoctorDetails() {
                   clipRule="evenodd"
                 ></path>
               </svg>
-              <span className="ml-1 text-sm font-medium text-gray-500 md:ml-2">
+              <span className="ml-1 text-sm font-medium text-slate md:ml-2">
                 Dr. {doctor.name}
               </span>
             </div>
@@ -277,10 +277,10 @@ export default function AdminDoctorDetails() {
       <div className="mb-8">
         <div className="flex justify-between items-start">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <h1 className="text-3xl font-bold text-ink">
               Dr. {doctor.name}
             </h1>
-            <p className="mt-2 text-lg text-gray-600">
+            <p className="mt-2 text-lg text-slate">
               {doctor.specialization} • {doctor.experience_years} years
               experience
             </p>
@@ -289,15 +289,15 @@ export default function AdminDoctorDetails() {
             <span
               className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${
                 doctor.is_online
-                  ? "bg-green-100 text-green-800"
-                  : "bg-gray-100 text-gray-800"
+                  ? "bg-teal-50 text-teal-700"
+                  : "bg-mist text-ink"
               }`}
             >
               {doctor.is_online ? "Online" : "Offline"}
             </span>
             <button
               onClick={toggleOnlineStatus}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+              className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium"
             >
               Set {doctor.is_online ? "Offline" : "Online"}
             </button>
@@ -306,14 +306,14 @@ export default function AdminDoctorDetails() {
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-6 bg-saffron-100 border border-danger rounded-control p-4">
+          <p className="text-sm text-danger">{error}</p>
         </div>
       )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -333,10 +333,10 @@ export default function AdminDoctorDetails() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Consultations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {doctor.statistics.total_consultations}
                   </dd>
                 </dl>
@@ -345,7 +345,7 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -365,10 +365,10 @@ export default function AdminDoctorDetails() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     This Month
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {doctor.statistics.monthly_consultations}
                   </dd>
                 </dl>
@@ -377,12 +377,12 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-purple-400"
+                  className="h-6 w-6 text-saffron-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -397,10 +397,10 @@ export default function AdminDoctorDetails() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Earnings
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     ৳{doctor.statistics.total_earnings}
                   </dd>
                 </dl>
@@ -409,7 +409,7 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -429,10 +429,10 @@ export default function AdminDoctorDetails() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Avg Rating
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {doctor.statistics.average_rating || "N/A"}
                   </dd>
                 </dl>
@@ -441,12 +441,12 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-indigo-400"
+                  className="h-6 w-6 text-teal-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -461,10 +461,10 @@ export default function AdminDoctorDetails() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Unique Patients
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {doctor.statistics.unique_patients}
                   </dd>
                 </dl>
@@ -475,14 +475,14 @@ export default function AdminDoctorDetails() {
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200 mb-6">
+      <div className="border-b border-rule mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab("overview")}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === "overview"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-teal-500 text-teal-600"
+                : "border-transparent text-slate hover:text-ink-2 hover:border-rule"
             }`}
           >
             Profile Overview
@@ -491,8 +491,8 @@ export default function AdminDoctorDetails() {
             onClick={() => setActiveTab("consultations")}
             className={`py-2 px-1 border-b-2 font-medium text-sm ${
               activeTab === "consultations"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-teal-500 text-teal-600"
+                : "border-transparent text-slate hover:text-ink-2 hover:border-rule"
             }`}
           >
             Recent Consultations
@@ -502,9 +502,9 @@ export default function AdminDoctorDetails() {
 
       {/* Tab Content */}
       {activeTab === "overview" && (
-        <div className="bg-white shadow-sm rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-            <h3 className="text-lg font-medium text-gray-900">
+        <div className="bg-white rounded-control">
+          <div className="px-6 py-4 border-b border-rule flex justify-between items-center">
+            <h3 className="text-lg font-medium text-ink">
               Doctor Profile
             </h3>
             <div className="flex space-x-3">
@@ -512,13 +512,13 @@ export default function AdminDoctorDetails() {
                 <>
                   <button
                     onClick={() => setEditMode(true)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                    className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium"
                   >
                     Edit Profile
                   </button>
                   <button
                     onClick={() => setShowPasswordModal(true)}
-                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                    className="bg-slate hover:bg-ink-2 text-white px-4 py-2 rounded-control text-sm font-medium"
                   >
                     Reset Password
                   </button>
@@ -528,7 +528,7 @@ export default function AdminDoctorDetails() {
                   <button
                     onClick={handleSaveEdit}
                     disabled={saving}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium disabled:opacity-50"
+                    className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium disabled:opacity-50"
                   >
                     {saving ? "Saving..." : "Save Changes"}
                   </button>
@@ -537,7 +537,7 @@ export default function AdminDoctorDetails() {
                       setEditMode(false);
                       setEditData(doctor);
                     }}
-                    className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                    className="bg-slate hover:bg-ink-2 text-white px-4 py-2 rounded-control text-sm font-medium"
                   >
                     Cancel
                   </button>
@@ -549,12 +549,12 @@ export default function AdminDoctorDetails() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Personal Information */}
               <div>
-                <h4 className="text-md font-semibold text-gray-900 mb-4">
+                <h4 className="text-md font-semibold text-ink mb-4">
                   Personal Information
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Full Name
                     </label>
                     {editMode ? (
@@ -563,14 +563,14 @@ export default function AdminDoctorDetails() {
                         name="name"
                         value={editData.name || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">{doctor.name}</p>
+                      <p className="text-ink">{doctor.name}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Email
                     </label>
                     {editMode ? (
@@ -579,14 +579,14 @@ export default function AdminDoctorDetails() {
                         name="email"
                         value={editData.email || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">{doctor.email}</p>
+                      <p className="text-ink">{doctor.email}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Phone
                     </label>
                     {editMode ? (
@@ -595,16 +595,16 @@ export default function AdminDoctorDetails() {
                         name="phone"
                         value={editData.phone || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">
+                      <p className="text-ink">
                         {doctor.phone || "Not provided"}
                       </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Gender
                     </label>
                     {editMode ? (
@@ -612,7 +612,7 @@ export default function AdminDoctorDetails() {
                         name="gender"
                         value={editData.gender || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       >
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
@@ -620,7 +620,7 @@ export default function AdminDoctorDetails() {
                         <option value="other">Other</option>
                       </select>
                     ) : (
-                      <p className="text-gray-900">
+                      <p className="text-ink">
                         {doctor.gender || "Not specified"}
                       </p>
                     )}
@@ -630,12 +630,12 @@ export default function AdminDoctorDetails() {
 
               {/* Professional Information */}
               <div>
-                <h4 className="text-md font-semibold text-gray-900 mb-4">
+                <h4 className="text-md font-semibold text-ink mb-4">
                   Professional Information
                 </h4>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Specialization
                     </label>
                     {editMode ? (
@@ -644,16 +644,16 @@ export default function AdminDoctorDetails() {
                         name="specialization"
                         value={editData.specialization || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">
+                      <p className="text-ink">
                         {doctor.specialization || "Not specified"}
                       </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Experience (years)
                     </label>
                     {editMode ? (
@@ -663,16 +663,16 @@ export default function AdminDoctorDetails() {
                         value={editData.experience_years || ""}
                         onChange={handleEditChange}
                         min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">
+                      <p className="text-ink">
                         {doctor.experience_years || "Not specified"}
                       </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Consultation Fee (৳)
                     </label>
                     {editMode ? (
@@ -683,16 +683,16 @@ export default function AdminDoctorDetails() {
                         onChange={handleEditChange}
                         min="0"
                         step="50"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">
+                      <p className="text-ink">
                         ৳{doctor.fee_per_consultation || "Not set"}
                       </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-ink-2 mb-1">
                       Qualifications
                     </label>
                     {editMode ? (
@@ -701,10 +701,10 @@ export default function AdminDoctorDetails() {
                         value={editData.qualifications || ""}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                       />
                     ) : (
-                      <p className="text-gray-900">
+                      <p className="text-ink">
                         {doctor.qualifications || "Not provided"}
                       </p>
                     )}
@@ -717,9 +717,9 @@ export default function AdminDoctorDetails() {
       )}
 
       {activeTab === "consultations" && (
-        <div className="bg-white shadow-sm rounded-lg">
-          <div className="px-6 py-4 border-b border-gray-200">
-            <h3 className="text-lg font-medium text-gray-900">
+        <div className="bg-white rounded-control">
+          <div className="px-6 py-4 border-b border-rule">
+            <h3 className="text-lg font-medium text-ink">
               Recent Consultations ({consultations.length})
             </h3>
           </div>
@@ -727,7 +727,7 @@ export default function AdminDoctorDetails() {
             {consultations.length === 0 ? (
               <div className="text-center py-12">
                 <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
+                  className="mx-auto h-12 w-12 text-slate-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -739,43 +739,43 @@ export default function AdminDoctorDetails() {
                     d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-                <h3 className="mt-2 text-sm font-medium text-gray-900">
+                <h3 className="mt-2 text-sm font-medium text-ink">
                   No consultations yet
                 </h3>
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-sm text-slate">
                   This doctor hasn't had any consultations yet.
                 </p>
               </div>
             ) : (
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+              <table className="min-w-full divide-y divide-rule">
+                <thead className="bg-mist">
                   <tr>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                       Patient
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                       Date & Time
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                       Status
                     </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th className="px-6 py-3 text-left text-xs font-medium text-slate uppercase tracking-wider">
                       Amount
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody className="bg-white divide-y divide-rule">
                   {consultations.map((consultation) => (
-                    <tr key={consultation.id} className="hover:bg-gray-50">
+                    <tr key={consultation.id} className="hover:bg-mist">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">
+                        <div className="text-sm font-medium text-ink">
                           {consultation.patient_name || "Anonymous"}
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-slate">
                           +880{consultation.patient_phone}
                         </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                         {formatDate(consultation.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -787,7 +787,7 @@ export default function AdminDoctorDetails() {
                           {consultation.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-ink">
                         ৳{consultation.fee_amount || "0"}
                       </td>
                     </tr>
@@ -801,16 +801,16 @@ export default function AdminDoctorDetails() {
 
       {/* Password Reset Modal */}
       {showPasswordModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-slate bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lift rounded-control bg-white">
             <div className="mt-3">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-medium text-gray-900">
+                <h3 className="text-lg font-medium text-ink">
                   Reset Doctor Password
                 </h3>
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
+                  className="text-slate-2 hover:text-slate"
                 >
                   <svg
                     className="w-6 h-6"
@@ -829,14 +829,14 @@ export default function AdminDoctorDetails() {
               </div>
 
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="block text-sm font-medium text-ink-2 mb-2">
                   New Password
                 </label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500 text-ink bg-white"
                   placeholder="Enter new password (min 6 characters)"
                 />
               </div>
@@ -844,14 +844,14 @@ export default function AdminDoctorDetails() {
               <div className="flex justify-end space-x-3">
                 <button
                   onClick={() => setShowPasswordModal(false)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="px-4 py-2 border border-rule rounded-control text-sm font-medium text-ink-2 hover:bg-mist"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleResetPassword}
                   disabled={passwordLoading || !newPassword}
-                  className="px-4 py-2 bg-red-600 border border-transparent rounded-md text-sm font-medium text-white hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-danger border border-transparent rounded-control text-sm font-medium text-white hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {passwordLoading ? "Resetting..." : "Reset Password"}
                 </button>

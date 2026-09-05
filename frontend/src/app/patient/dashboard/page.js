@@ -284,9 +284,9 @@ export default function PatientDashboard() {
   };
 
   const getGenderIcon = (gender) => {
-    if (gender === "male") return "👨‍⚕️";
-    if (gender === "female") return "👩‍⚕️";
-    return "🩺";
+    if (gender === "male") return "";
+    if (gender === "female") return "";
+    return "";
   };
 
   const formatDate = (dateString) => {
@@ -307,26 +307,26 @@ export default function PatientDashboard() {
   const getStatusColor = (status) => {
     switch (status) {
       case "paid":
-        return "bg-green-100 text-green-800";
+        return "bg-teal-50 text-teal-700";
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-saffron-100 text-ink";
       case "failed":
-        return "bg-red-100 text-red-800";
+        return "bg-saffron-100 text-danger";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
       case "paid":
-        return "✅";
+        return "";
       case "pending":
         return "⏳";
       case "failed":
-        return "❌";
+        return "";
       default:
-        return "❓";
+        return "";
     }
   };
 
@@ -334,8 +334,8 @@ export default function PatientDashboard() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -344,14 +344,13 @@ export default function PatientDashboard() {
   return (
     <>
       {/* Dashboard Header */}
-      <div className="bg-white rounded-lg shadow-xs mb-6">
+      <div className="bg-white rounded-control mb-6">
         <div className="py-6 px-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl font-bold text-gray-900">
-                Welcome back, {user?.name || "Patient"}! 👋
-              </h1>
-              <p className="mt-2 text-lg text-gray-600">
+              <h1 className="text-3xl font-bold text-ink">
+                Welcome back, {user?.name || "Patient"}!               </h1>
+              <p className="mt-2 text-lg text-slate">
                 Your health is our priority. Book a consultation with our
                 doctors.
               </p>
@@ -363,16 +362,16 @@ export default function PatientDashboard() {
       {/* Dashboard Content */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Quick Actions Card */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-control shadow-lift p-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">
             Quick Actions
           </h3>
           <div className="space-y-3">
             <Link
               href="/doctors"
-              className="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors"
+              className="flex items-center p-3 bg-teal-50 hover:bg-teal-50 rounded-control transition-colors"
             >
-              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center mr-3">
+              <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center mr-3">
                 <svg
                   className="w-4 h-4 text-white"
                   fill="none"
@@ -387,16 +386,16 @@ export default function PatientDashboard() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-ink">
                 Browse All Doctors
               </span>
             </Link>
 
             <Link
               href="/patient/consultations"
-              className="flex items-center p-3 bg-green-50 hover:bg-green-100 rounded-lg transition-colors"
+              className="flex items-center p-3 bg-teal-50 hover:bg-teal-50 rounded-control transition-colors"
             >
-              <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center mr-3">
+              <div className="w-8 h-8 bg-teal-600 rounded-full flex items-center justify-center mr-3">
                 <svg
                   className="w-4 h-4 text-white"
                   fill="none"
@@ -411,16 +410,16 @@ export default function PatientDashboard() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-ink">
                 My Consultations
               </span>
             </Link>
 
             <Link
               href="/patient/profile"
-              className="flex items-center p-3 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+              className="flex items-center p-3 bg-saffron-100 hover:bg-saffron-100 rounded-control transition-colors"
             >
-              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center mr-3">
+              <div className="w-8 h-8 bg-saffron-500 rounded-full flex items-center justify-center mr-3">
                 <svg
                   className="w-4 h-4 text-white"
                   fill="none"
@@ -435,7 +434,7 @@ export default function PatientDashboard() {
                   />
                 </svg>
               </div>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm font-medium text-ink">
                 Edit Profile
               </span>
             </Link>
@@ -443,13 +442,13 @@ export default function PatientDashboard() {
         </div>
 
         {/* Profile Summary Card */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-control shadow-lift p-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">
             Your Profile
           </h3>
           <div className="space-y-3">
             <div className="flex items-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center">
                 {user?.profile_photo ? (
                   <img
                     src={user.profile_photo}
@@ -457,26 +456,26 @@ export default function PatientDashboard() {
                     className="w-12 h-12 rounded-full object-cover"
                   />
                 ) : (
-                  <span className="text-xl">👤</span>
+                  <span className="text-xl"></span>
                 )}
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-900">
+                <p className="text-sm font-medium text-ink">
                   {user?.name}
                 </p>
-                <p className="text-sm text-gray-500">+880{user?.phone}</p>
+                <p className="text-sm text-slate">+880{user?.phone}</p>
               </div>
             </div>
 
             {user?.gender && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-slate">
                 <strong>Gender:</strong>{" "}
                 {user.gender.charAt(0).toUpperCase() + user.gender.slice(1)}
               </div>
             )}
 
             {user?.date_of_birth && (
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-slate">
                 <strong>Age:</strong>{" "}
                 {new Date().getFullYear() -
                   new Date(user.date_of_birth).getFullYear()}{" "}
@@ -486,7 +485,7 @@ export default function PatientDashboard() {
 
             <Link
               href="/patient/profile"
-              className="inline-flex items-center text-sm text-blue-600 hover:text-blue-500"
+              className="inline-flex items-center text-sm text-teal-600 hover:text-teal-600"
             >
               Edit Profile →
             </Link>
@@ -494,32 +493,32 @@ export default function PatientDashboard() {
         </div>
 
         {/* Health Stats Card */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
+        <div className="bg-white rounded-control shadow-lift p-6">
+          <h3 className="text-lg font-semibold text-ink mb-4">
             Your Health Stats
           </h3>
           <div className="space-y-3">
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Total Consultations</span>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm text-slate">Total Consultations</span>
+              <span className="text-sm font-medium text-ink">
                 {dashboardStats.totalConsultations}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">This Month</span>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm text-slate">This Month</span>
+              <span className="text-sm font-medium text-ink">
                 {dashboardStats.thisMonth}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-sm text-gray-600">Total Spent</span>
-              <span className="text-sm font-medium text-gray-900">
+              <span className="text-sm text-slate">Total Spent</span>
+              <span className="text-sm font-medium text-ink">
                 ৳{dashboardStats.totalSpent}
               </span>
             </div>
             <div className="pt-2 border-t">
-              <p className="text-xs text-gray-500">Favorite Doctor</p>
-              <p className="text-sm font-medium text-gray-900">
+              <p className="text-xs text-slate">Favorite Doctor</p>
+              <p className="text-sm font-medium text-ink">
                 {dashboardStats.favoriteDoctor}
               </p>
             </div>
@@ -530,31 +529,31 @@ export default function PatientDashboard() {
       {/* Online Doctors Section */}
       {doctors.length > 0 && (
         <div className="mt-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
+          <h2 className="text-2xl font-bold text-ink mb-6">
             Online Doctors Available Now
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {doctors.map((doctor) => (
               <div
                 key={doctor.id}
-                className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                className="bg-white rounded-control shadow-lift p-6 hover:shadow-lift transition-"
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                  <div className="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center">
                     <span className="text-xl">
                       {getGenderIcon(doctor.gender)}
                     </span>
                   </div>
                   <div className="ml-3">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-ink">
                       Dr. {doctor.name}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-slate">
                       {doctor.specialization}
                     </p>
                   </div>
                   <div className="ml-auto">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-teal-50 text-teal-700">
                       Online
                     </span>
                   </div>
@@ -562,13 +561,13 @@ export default function PatientDashboard() {
 
                 <div className="space-y-2 mb-4">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Experience</span>
+                    <span className="text-slate">Experience</span>
                     <span className="font-medium">
                       {doctor.experience_years} years
                     </span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Consultation Fee</span>
+                    <span className="text-slate">Consultation Fee</span>
                     <span className="font-medium">
                       ৳{doctor.fee_per_consultation}
                     </span>
@@ -578,10 +577,10 @@ export default function PatientDashboard() {
                 <button
                   onClick={() => handleConsultNow(doctor)}
                   disabled={!doctor.is_online}
-                  className={`w-full py-2 px-4 rounded-md text-sm font-medium transition-colors ${
+                  className={`w-full py-2 px-4 rounded-control text-sm font-medium transition-colors ${
                     doctor.is_online
-                      ? "bg-blue-600 hover:bg-blue-700 text-white"
-                      : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      ? "bg-teal-600 hover:bg-teal-700 text-white"
+                      : "bg-mist-2 text-slate cursor-not-allowed"
                   }`}
                 >
                   {doctor.is_online ? "Consult Now" : "Currently Offline"}
@@ -596,32 +595,32 @@ export default function PatientDashboard() {
       {recentConsultations.length > 0 && (
         <div className="mt-8">
           <div className="flex justify-between items-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">
+            <h2 className="text-2xl font-bold text-ink">
               Recent Consultations
             </h2>
             <Link
               href="/patient/consultations"
-              className="text-blue-600 hover:text-blue-500 text-sm font-medium"
+              className="text-teal-600 hover:text-teal-600 text-sm font-medium"
             >
               View All →
             </Link>
           </div>
-          <div className="bg-white rounded-lg shadow-md overflow-hidden">
-            <div className="divide-y divide-gray-200">
+          <div className="bg-white rounded-control shadow-lift overflow-hidden">
+            <div className="divide-y divide-rule">
               {recentConsultations.map((consultation) => (
                 <div key={consultation.id} className="p-6">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                      <div className="w-10 h-10 bg-teal-50 rounded-full flex items-center justify-center">
                         <span className="text-lg">
                           {getGenderIcon(consultation.doctor?.gender)}
                         </span>
                       </div>
                       <div className="ml-3">
-                        <h4 className="text-sm font-medium text-gray-900">
+                        <h4 className="text-sm font-medium text-ink">
                           Dr. {consultation.doctor?.name}
                         </h4>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-slate">
                           {consultation.doctor?.specialization}
                         </p>
                       </div>
@@ -637,7 +636,7 @@ export default function PatientDashboard() {
                           {consultation.payment_status}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500 mt-1">
+                      <p className="text-sm text-slate mt-1">
                         {formatDate(consultation.created_at)}
                       </p>
                     </div>
@@ -645,7 +644,7 @@ export default function PatientDashboard() {
 
                   {consultation.patient_symptoms && (
                     <div className="mt-4">
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-slate">
                         <strong>Symptoms:</strong>{" "}
                         {consultation.patient_symptoms}
                       </p>
@@ -654,7 +653,7 @@ export default function PatientDashboard() {
 
                   {consultation.doctor_notes && (
                     <div className="mt-2">
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-slate">
                         <strong>Doctor's Notes:</strong>{" "}
                         {consultation.doctor_notes}
                       </p>
@@ -670,18 +669,18 @@ export default function PatientDashboard() {
       {/* Empty State */}
       {recentConsultations.length === 0 && (
         <div className="mt-8 text-center">
-          <div className="bg-white rounded-lg shadow-md p-12">
-            <div className="text-6xl mb-4">🩺</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+          <div className="bg-white rounded-control shadow-lift p-12">
+            <div className="text-6xl mb-4"></div>
+            <h3 className="text-lg font-medium text-ink mb-2">
               No consultations yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-slate mb-6">
               Start your health journey by consulting with our experienced
               doctors.
             </p>
             <Link
               href="/doctors"
-              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-sm font-medium"
+              className="bg-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-control text-sm font-medium"
             >
               Find a Doctor
             </Link>
@@ -692,19 +691,19 @@ export default function PatientDashboard() {
       {/* Booking Modal */}
       {showBookingModal && selectedDoctor && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-control max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-ink mb-4">
               Book Consultation with Dr. {selectedDoctor.name}
             </h3>
 
             <div className="mb-4">
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-slate mb-2">
                 <strong>Specialization:</strong> {selectedDoctor.specialization}
               </p>
-              <p className="text-sm text-gray-600 mb-2">
+              <p className="text-sm text-slate mb-2">
                 <strong>Fee:</strong> ৳{selectedDoctor.fee_per_consultation}
               </p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-slate">
                 <strong>Experience:</strong> {selectedDoctor.experience_years}{" "}
                 years
               </p>
@@ -713,7 +712,7 @@ export default function PatientDashboard() {
             <div className="mb-4">
               <label
                 htmlFor="symptoms"
-                className="block text-sm font-medium text-gray-700 mb-2"
+                className="block text-sm font-medium text-ink-2 mb-2"
               >
                 Describe your symptoms (optional)
               </label>
@@ -723,7 +722,7 @@ export default function PatientDashboard() {
                 rows={3}
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none text-ink bg-white"
                 placeholder="Briefly describe your health concerns..."
                 style={{
                   minHeight: "80px",
@@ -732,22 +731,22 @@ export default function PatientDashboard() {
             </div>
 
             {bookingError && (
-              <div className="mb-4 bg-red-50 border border-red-200 rounded-md p-3">
-                <p className="text-sm text-red-600">{bookingError}</p>
+              <div className="mb-4 bg-saffron-100 border border-danger rounded-control p-3">
+                <p className="text-sm text-danger">{bookingError}</p>
               </div>
             )}
 
             <div className="flex space-x-3">
               <button
                 onClick={() => setShowBookingModal(false)}
-                className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                className="flex-1 py-2 px-4 border border-rule rounded-control text-sm font-medium text-ink-2 hover:bg-mist"
               >
                 Cancel
               </button>
               <button
                 onClick={handleBookConsultation}
                 disabled={bookingLoading}
-                className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium disabled:bg-gray-400"
+                className="flex-1 py-2 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-control text-sm font-medium disabled:bg-slate-2"
               >
                 {bookingLoading ? "Booking..." : "Book Consultation"}
               </button>

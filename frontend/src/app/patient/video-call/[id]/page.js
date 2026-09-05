@@ -70,10 +70,10 @@ export default function PatientVideoCall() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-mist">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading consultation...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto"></div>
+          <p className="mt-4 text-slate">Loading consultation...</p>
         </div>
       </div>
     );
@@ -81,22 +81,22 @@ export default function PatientVideoCall() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="flex items-center justify-center min-h-screen bg-mist">
         <div className="text-center max-w-md mx-auto">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-sm mb-4">
+          <div className="bg-saffron-100 border border-danger text-danger px-4 py-3 rounded-sm mb-4">
             <p className="font-bold">Unable to Join Video Call</p>
             <p>{error}</p>
           </div>
           <div className="space-y-2">
             <button
               onClick={fetchConsultationDetails}
-              className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700 mr-2"
+              className="bg-teal-600 text-white px-4 py-2 rounded-sm hover:bg-teal-700 mr-2"
             >
               Retry
             </button>
             <button
               onClick={() => router.push("/patient/consultations")}
-              className="bg-gray-600 text-white px-4 py-2 rounded-sm hover:bg-gray-700"
+              className="bg-slate text-white px-4 py-2 rounded-sm hover:bg-ink-2"
             >
               Back to Consultations
             </button>
@@ -113,17 +113,17 @@ export default function PatientVideoCall() {
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-lg font-semibold">
-              Video Consultation with Dr. {consultation.doctor.name}
+              Video Consultation with Dr. {consultation.doctor?.name}
             </h1>
-            <p className="text-sm text-gray-300">
+            <p className="text-sm text-slate-2">
               {consultation.specialization} •{" "}
-              {new Date(consultation.appointment_date).toLocaleDateString()} at{" "}
+              {new Date((consultation.scheduled_at || consultation.created_at)).toLocaleDateString()} at{" "}
               {consultation.appointment_time}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-sm text-green-400">✅ Paid Consultation</p>
-            <p className="text-xs text-gray-300">ID: {consultationId}</p>
+            <p className="text-sm text-green-400">Paid Consultation</p>
+            <p className="text-xs text-slate-2">ID: {consultationId}</p>
           </div>
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function PatientVideoCall() {
       {/* Emergency Exit Button */}
       <button
         onClick={() => router.push("/patient/consultations")}
-        className="absolute top-20 right-4 z-20 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-sm text-sm"
+        className="absolute top-20 right-4 z-20 bg-danger hover:opacity-90 text-white px-3 py-1 rounded-sm text-sm"
       >
         Exit
       </button>

@@ -146,29 +146,29 @@ export default function CompleteProfile() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-mist flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-green-50">
+    <div className="min-h-screen bg-mist">
       {/* Navigation */}
-      <nav className="bg-white shadow-xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="bg-white">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
               <Link href="/">
-                <h1 className="text-2xl font-bold text-blue-600">Bondhon</h1>
-                <span className="ml-2 text-sm text-gray-500">বন্ধন</span>
+                <h1 className="text-2xl font-bold text-teal-600">Bondhon</h1>
+                <span className="ml-2 text-sm text-slate">বন্ধন</span>
               </Link>
             </div>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600">+880{user?.phone}</span>
+              <span className="text-sm text-slate">+880{user?.phone}</span>
               <button
                 onClick={() => {
                   fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
@@ -176,7 +176,7 @@ export default function CompleteProfile() {
                     credentials: "include",
                   }).then(() => router.push("/"));
                 }}
-                className="text-gray-700 hover:text-red-600 px-3 py-2 rounded-md text-sm font-medium"
+                className="text-ink-2 hover:text-danger px-3 py-2 rounded-control text-sm font-medium"
               >
                 Logout
               </button>
@@ -187,8 +187,8 @@ export default function CompleteProfile() {
 
       {/* Main Content */}
       <div className="max-w-2xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-md overflow-hidden">
-          <div className="px-8 py-6 bg-blue-600">
+        <div className="bg-white rounded-control shadow-lift overflow-hidden">
+          <div className="px-8 py-6 bg-teal-600">
             <h1 className="text-2xl font-bold text-white">
               Complete Your Profile
             </h1>
@@ -203,7 +203,7 @@ export default function CompleteProfile() {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-ink-2"
               >
                 Full Name *
               </label>
@@ -214,7 +214,7 @@ export default function CompleteProfile() {
                 required
                 value={formData.name}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
                 placeholder="Enter your full name"
               />
             </div>
@@ -223,7 +223,7 @@ export default function CompleteProfile() {
             <div>
               <label
                 htmlFor="date_of_birth"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-ink-2"
               >
                 Date of Birth
               </label>
@@ -234,7 +234,7 @@ export default function CompleteProfile() {
                 value={formData.date_of_birth}
                 onChange={handleInputChange}
                 max={new Date().toISOString().split("T")[0]}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
               />
             </div>
 
@@ -242,7 +242,7 @@ export default function CompleteProfile() {
             <div>
               <label
                 htmlFor="gender"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-ink-2"
               >
                 Gender
               </label>
@@ -251,7 +251,7 @@ export default function CompleteProfile() {
                 name="gender"
                 value={formData.gender}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
               >
                 <option value="">Select gender</option>
                 <option value="male">Male</option>
@@ -264,7 +264,7 @@ export default function CompleteProfile() {
             <div>
               <label
                 htmlFor="address"
-                className="block text-sm font-medium text-gray-700"
+                className="block text-sm font-medium text-ink-2"
               >
                 Address
               </label>
@@ -274,10 +274,10 @@ export default function CompleteProfile() {
                 rows={3}
                 value={formData.address}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 border border-rule rounded-control focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
                 placeholder="Enter your full address"
               />
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-slate">
                 This helps doctors understand your location for better care
                 recommendations.
               </p>
@@ -285,8 +285,8 @@ export default function CompleteProfile() {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                <p className="text-sm text-red-600">{error}</p>
+              <div className="bg-saffron-100 border border-danger rounded-control p-3">
+                <p className="text-sm text-danger">{error}</p>
               </div>
             )}
 
@@ -294,14 +294,14 @@ export default function CompleteProfile() {
             <div className="flex items-center justify-between pt-4">
               <Link
                 href="/login"
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="text-sm text-slate hover:text-ink-2"
               >
                 Back to login
               </Link>
               <button
                 type="submit"
                 disabled={!formData.name || submitting}
-                className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white px-6 py-2 rounded-md text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                className="bg-teal-600 hover:bg-teal-700 disabled:bg-slate-2 disabled:cursor-not-allowed text-white px-6 py-2 rounded-control text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
               >
                 {submitting ? (
                   <div className="flex items-center">
@@ -317,7 +317,7 @@ export default function CompleteProfile() {
         </div>
 
         {/* Info Card */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mt-8 bg-teal-50 border border-teal-500 rounded-control p-4">
           <div className="flex">
             <div className="shrink-0">
               <svg
@@ -333,10 +333,10 @@ export default function CompleteProfile() {
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-blue-800">
+              <h3 className="text-sm font-medium text-teal-700">
                 Why do we need this information?
               </h3>
-              <div className="mt-2 text-sm text-blue-700">
+              <div className="mt-2 text-sm text-teal-700">
                 <p>
                   Your profile information helps our doctors provide better care
                   by understanding your background and medical context. All

@@ -96,8 +96,8 @@ export default function PatientProfile() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading profile...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading profile...</p>
         </div>
       </div>
     );
@@ -105,8 +105,8 @@ export default function PatientProfile() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <div className="bg-white rounded-lg shadow-md overflow-hidden">
-        <div className="px-8 py-6 bg-blue-600">
+      <div className="bg-white rounded-control shadow-lift overflow-hidden">
+        <div className="px-8 py-6 bg-teal-600">
           <h1 className="text-2xl font-bold text-white">Edit Your Profile</h1>
           <p className="text-blue-100 mt-2">
             Keep your information up to date for better healthcare service.
@@ -116,13 +116,13 @@ export default function PatientProfile() {
         <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
           {/* Success/Error Messages */}
           {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-sm mb-4">
+            <div className="bg-teal-50 border border-teal-100 text-teal-700 px-4 py-3 rounded-sm mb-4">
               {success}
             </div>
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm mb-4">
+            <div className="bg-saffron-100 border border-danger text-danger px-4 py-3 rounded-sm mb-4">
               {error}
             </div>
           )}
@@ -131,7 +131,7 @@ export default function PatientProfile() {
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-ink-2"
             >
               Full Name *
             </label>
@@ -142,7 +142,7 @@ export default function PatientProfile() {
               required
               value={formData.name}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
               placeholder="Enter your full name"
             />
           </div>
@@ -151,7 +151,7 @@ export default function PatientProfile() {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-ink-2"
             >
               Phone Number
             </label>
@@ -160,9 +160,9 @@ export default function PatientProfile() {
               id="phone"
               value={`+880${user?.phone || ""}`}
               disabled
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="mt-1 block w-full px-3 py-2 border border-rule rounded-control bg-mist text-slate cursor-not-allowed"
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-sm text-slate">
               Phone number cannot be changed. Contact support if needed.
             </p>
           </div>
@@ -171,7 +171,7 @@ export default function PatientProfile() {
           <div>
             <label
               htmlFor="date_of_birth"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-ink-2"
             >
               Date of Birth
             </label>
@@ -181,7 +181,7 @@ export default function PatientProfile() {
               name="date_of_birth"
               value={formData.date_of_birth}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
             />
           </div>
 
@@ -189,7 +189,7 @@ export default function PatientProfile() {
           <div>
             <label
               htmlFor="gender"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-ink-2"
             >
               Gender
             </label>
@@ -198,7 +198,7 @@ export default function PatientProfile() {
               name="gender"
               value={formData.gender}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
             >
               <option value="">Select gender</option>
               <option value="male">Male</option>
@@ -211,7 +211,7 @@ export default function PatientProfile() {
           <div>
             <label
               htmlFor="address"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-ink-2"
             >
               Address
             </label>
@@ -221,17 +221,17 @@ export default function PatientProfile() {
               rows={3}
               value={formData.address}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-rule rounded-control text-ink bg-white focus:outline-hidden focus:ring-teal-500 focus:border-teal-500"
               placeholder="Enter your full address"
             />
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end pt-6 border-t border-gray-200">
+          <div className="flex justify-end pt-6 border-t border-rule">
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-md text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="bg-teal-600 hover:bg-teal-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-control text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:ring-offset-2"
             >
               {submitting ? (
                 <div className="flex items-center">
@@ -246,28 +246,28 @@ export default function PatientProfile() {
         </form>
 
         {/* Profile Summary */}
-        <div className="px-8 py-6 bg-gray-50 border-t border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">
+        <div className="px-8 py-6 bg-mist border-t border-rule">
+          <h3 className="text-lg font-medium text-ink mb-4">
             Profile Summary
           </h3>
           <div className="grid md:grid-cols-2 gap-4 text-sm">
             <div>
-              <span className="font-medium text-gray-700">Name:</span>
-              <p className="text-gray-900">{user?.name || "Not provided"}</p>
+              <span className="font-medium text-ink-2">Name:</span>
+              <p className="text-ink">{user?.name || "Not provided"}</p>
             </div>
             <div>
-              <span className="font-medium text-gray-700">Phone:</span>
-              <p className="text-gray-900">+880{user?.phone}</p>
+              <span className="font-medium text-ink-2">Phone:</span>
+              <p className="text-ink">+880{user?.phone}</p>
             </div>
             <div>
-              <span className="font-medium text-gray-700">Gender:</span>
-              <p className="text-gray-900 capitalize">
+              <span className="font-medium text-ink-2">Gender:</span>
+              <p className="text-ink capitalize">
                 {user?.gender || "Not provided"}
               </p>
             </div>
             <div>
-              <span className="font-medium text-gray-700">Age:</span>
-              <p className="text-gray-900">
+              <span className="font-medium text-ink-2">Age:</span>
+              <p className="text-ink">
                 {user?.date_of_birth
                   ? `${
                       new Date().getFullYear() -
@@ -277,8 +277,8 @@ export default function PatientProfile() {
               </p>
             </div>
             <div className="md:col-span-2">
-              <span className="font-medium text-gray-700">Address:</span>
-              <p className="text-gray-900">{user?.address || "Not provided"}</p>
+              <span className="font-medium text-ink-2">Address:</span>
+              <p className="text-ink">{user?.address || "Not provided"}</p>
             </div>
           </div>
         </div>

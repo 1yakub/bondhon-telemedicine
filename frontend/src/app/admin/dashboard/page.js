@@ -46,8 +46,8 @@ export default function AdminDashboard() {
   if (loading) {
     return (
       <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading dashboard statistics...</p>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+        <p className="text-slate">Loading dashboard statistics...</p>
       </div>
     );
   }
@@ -56,21 +56,21 @@ export default function AdminDashboard() {
     <>
       {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <h1 className="text-3xl font-bold text-ink">Admin Dashboard</h1>
+        <p className="mt-2 text-lg text-slate">
           Manage your telemedicine platform
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-6 bg-saffron-100 border border-danger rounded-control p-4">
+          <p className="text-sm text-danger">{error}</p>
         </div>
       )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -90,10 +90,10 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Doctors
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.total_doctors}
                   </dd>
                 </dl>
@@ -102,7 +102,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -122,10 +122,10 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Patients
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.total_patients}
                   </dd>
                 </dl>
@@ -134,12 +134,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-purple-400"
+                  className="h-6 w-6 text-saffron-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -154,10 +154,10 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Consultations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.total_consultations}
                   </dd>
                 </dl>
@@ -166,7 +166,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -186,10 +186,10 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Revenue
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     ৳{stats.total_revenue}
                   </dd>
                 </dl>
@@ -198,7 +198,7 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
@@ -218,10 +218,10 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Online Doctors
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.online_doctors}
                   </dd>
                 </dl>
@@ -230,12 +230,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-orange-400"
+                  className="h-6 w-6 text-saffron-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -250,10 +250,10 @@ export default function AdminDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Pending Consultations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.pending_consultations}
                   </dd>
                 </dl>
@@ -264,11 +264,11 @@ export default function AdminDashboard() {
       </div>
 
       {/* Platform Overview */}
-      <div className="bg-white shadow-sm rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+      <div className="bg-white rounded-control p-6">
+        <h3 className="text-lg font-medium text-ink mb-4">
           Platform Overview
         </h3>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-slate">
           <p className="mb-2">Welcome to the Bondhon Admin Dashboard!</p>
           <p className="mb-2">
             • <strong>{stats.total_doctors}</strong> doctors registered on the
@@ -289,11 +289,11 @@ export default function AdminDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
             <Link
               href="/admin/doctors"
-              className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="block p-4 border border-rule rounded-control hover:bg-mist transition-colors"
             >
               <div className="flex items-center">
                 <svg
-                  className="h-6 w-6 text-blue-600 mr-3"
+                  className="h-6 w-6 text-teal-600 mr-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -305,22 +305,22 @@ export default function AdminDashboard() {
                     d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                   />
                 </svg>
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-ink">
                   Manage Doctors
                 </span>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-slate mt-1">
                 View, create, and manage doctor accounts
               </p>
             </Link>
 
             <Link
               href="/admin/patients"
-              className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="block p-4 border border-rule rounded-control hover:bg-mist transition-colors"
             >
               <div className="flex items-center">
                 <svg
-                  className="h-6 w-6 text-green-600 mr-3"
+                  className="h-6 w-6 text-teal-600 mr-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -332,20 +332,20 @@ export default function AdminDashboard() {
                     d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
                   />
                 </svg>
-                <span className="font-medium text-gray-900">View Patients</span>
+                <span className="font-medium text-ink">View Patients</span>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-slate mt-1">
                 Browse patient profiles and activity
               </p>
             </Link>
 
             <Link
               href="/admin/consultations"
-              className="block p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+              className="block p-4 border border-rule rounded-control hover:bg-mist transition-colors"
             >
               <div className="flex items-center">
                 <svg
-                  className="h-6 w-6 text-purple-600 mr-3"
+                  className="h-6 w-6 text-saffron-600 mr-3"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -357,9 +357,9 @@ export default function AdminDashboard() {
                     d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
                   />
                 </svg>
-                <span className="font-medium text-gray-900">Consultations</span>
+                <span className="font-medium text-ink">Consultations</span>
               </div>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-slate mt-1">
                 Monitor all platform consultations
               </p>
             </Link>

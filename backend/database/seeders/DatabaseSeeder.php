@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
 
         // Create Test Doctors
         $doctor1 = User::create([
-            'name' => 'Dr. Ahmed Rahman',
+            'name' => 'Ahmed Rahman',
             'phone' => '01700000001',
             'email' => 'ahmed@bondhon.com',
             'password' => Hash::make('doctor123'),
@@ -47,7 +47,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $doctor2 = User::create([
-            'name' => 'Dr. Fatima Khatun',
+            'name' => 'Fatima Khatun',
             'phone' => '01700000002',
             'email' => 'fatima@bondhon.com',
             'password' => Hash::make('doctor123'),
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $doctor3 = User::create([
-            'name' => 'Dr. Mohammad Ali',
+            'name' => 'Mohammad Ali',
             'phone' => '01700000003',
             'email' => 'ali@bondhon.com',
             'password' => Hash::make('doctor123'),

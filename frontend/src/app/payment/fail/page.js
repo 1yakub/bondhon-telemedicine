@@ -92,10 +92,10 @@ function PaymentFailedContent() {
 
   if (loading || !authChecked) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-mist flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-danger mx-auto mb-4"></div>
+          <p className="text-slate">
             {loading
               ? "Processing payment result..."
               : "Checking authentication..."}
@@ -106,12 +106,12 @@ function PaymentFailedContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-md p-8 text-center">
+    <div className="min-h-screen bg-mist flex items-center justify-center">
+      <div className="max-w-md mx-auto bg-white rounded-control shadow-lift p-8 text-center">
         {/* Error Icon */}
-        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100 mb-4">
+        <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-saffron-100 mb-4">
           <svg
-            className="h-6 w-6 text-red-600"
+            className="h-6 w-6 text-danger"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -127,23 +127,23 @@ function PaymentFailedContent() {
         </div>
 
         {/* Error Message */}
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
+        <h1 className="text-2xl font-bold text-ink mb-2">
           Payment Failed
         </h1>
-        <p className="text-gray-600 mb-6">
+        <p className="text-slate mb-6">
           Unfortunately, your payment could not be processed.
         </p>
 
         {/* Payment Details */}
         {paymentData && (
-          <div className="bg-red-50 rounded-lg p-4 mb-6 text-left">
+          <div className="bg-saffron-100 rounded-control p-4 mb-6 text-left">
             <h3 className="font-semibold text-red-900 mb-2">
               Payment Details:
             </h3>
             <div className="space-y-1 text-sm">
               {paymentData.transactionId && (
                 <div className="flex justify-between">
-                  <span className="text-red-700">Transaction ID:</span>
+                  <span className="text-danger">Transaction ID:</span>
                   <span className="font-mono text-red-900 text-xs">
                     {paymentData.transactionId}
                   </span>
@@ -151,19 +151,19 @@ function PaymentFailedContent() {
               )}
               {paymentData.amount && (
                 <div className="flex justify-between">
-                  <span className="text-red-700">Amount:</span>
+                  <span className="text-danger">Amount:</span>
                   <span className="font-semibold text-red-900">
                     ৳{paymentData.amount}
                   </span>
                 </div>
               )}
               <div className="flex justify-between">
-                <span className="text-red-700">Status:</span>
-                <span className="font-semibold text-red-600">Failed</span>
+                <span className="text-danger">Status:</span>
+                <span className="font-semibold text-danger">Failed</span>
               </div>
               {paymentData.failedReason && (
                 <div className="mt-2">
-                  <span className="text-red-700">Reason:</span>
+                  <span className="text-danger">Reason:</span>
                   <p className="text-red-900 text-xs mt-1">
                     {paymentData.failedReason}
                   </p>
@@ -174,11 +174,11 @@ function PaymentFailedContent() {
         )}
 
         {/* Help Text */}
-        <div className="bg-yellow-50 rounded-lg p-4 mb-6">
+        <div className="bg-saffron-100 rounded-control p-4 mb-6">
           <h3 className="font-semibold text-yellow-900 mb-2">
             What can you do?
           </h3>
-          <ul className="text-yellow-700 text-sm text-left space-y-1">
+          <ul className="text-ink text-sm text-left space-y-1">
             <li>• Try booking the consultation again</li>
             <li>• Check your card details and try again</li>
             <li>• Try a different payment method</li>
@@ -190,7 +190,7 @@ function PaymentFailedContent() {
         <div className="flex flex-col gap-3 w-full">
           {/* Debug info in development */}
           {process.env.NODE_ENV === "development" && (
-            <div className="text-xs text-gray-500 mb-2 p-2 bg-gray-100 rounded-sm">
+            <div className="text-xs text-slate mb-2 p-2 bg-mist rounded-sm">
               Debug: isLoggedIn={isLoggedIn.toString()}, authChecked=
               {authChecked.toString()}, restored_session=
               {searchParams.get("restored_session") || "null"}
@@ -200,19 +200,19 @@ function PaymentFailedContent() {
             <>
               <Link
                 href="/doctors"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
+                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Try Again - Book Consultation
               </Link>
               <Link
                 href="/patient/dashboard"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
+                className="w-full bg-mist-2 hover:bg-mist-2 text-ink font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Go to Dashboard
               </Link>
               <Link
                 href="/patient/consultations"
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-sm transition duration-200 block text-center"
+                className="w-full bg-mist hover:bg-mist-2 text-ink-2 font-bold py-2 px-4 rounded-sm transition duration-200 block text-center"
               >
                 View My Consultations
               </Link>
@@ -221,13 +221,13 @@ function PaymentFailedContent() {
             <>
               <Link
                 href="/login?redirect=/doctors&message=Login to try booking again"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
+                className="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Login & Try Again
               </Link>
               <Link
                 href="/doctors"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
+                className="w-full bg-mist-2 hover:bg-mist-2 text-ink font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Browse Doctors
               </Link>
@@ -236,15 +236,15 @@ function PaymentFailedContent() {
         </div>
 
         {/* Auto-redirect Notice */}
-        <p className="text-xs text-gray-500 mt-4">
+        <p className="text-xs text-slate mt-4">
           {isLoggedIn || searchParams.get("restored_session") === "true"
             ? `You will be automatically redirected to browse doctors in 8 seconds.`
             : `You will be automatically redirected to browse doctors in 8 seconds.`}
         </p>
 
         {/* Support Notice */}
-        <div className="mt-6 pt-4 border-t border-gray-200">
-          <p className="text-xs text-gray-500">
+        <div className="mt-6 pt-4 border-t border-rule">
+          <p className="text-xs text-slate">
             Need help? Contact our support team for assistance with your
             payment.
           </p>

@@ -1,305 +1,114 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
+import Logo from "../../components/brand/Logo";
 
-export default function PatientLogin() {
+const isValidPhone = (p) => /^01[3-9]\d{8}$/.test(p);
+const api = (path, init) =>
+  fetch(`${process.env.NEXT_PUBLIC_API_URL}${path}`, {
+    credentials: "include",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    ...init,
+  });
+
+function PatientLogin() {
+  const params = useSearchParams();
+  const router = useRouter();
   const [step, setStep] = useState("phone");
   const [phone, setPhone] = useState("");
   const [otp, setOtp] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [debugOtp, setDebugOtp] = useState("");
-  const router = useRouter();
 
-  const sendOtp = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError("");
+  // The home page hands the number over; skip straight to the code
+  useEffect(() => {
+    const p = params.get("phone");
+    if (p && isValidPhone(p)) { setPhone(p); sendOtp(null, p); }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const sendOtp = async (e, number = phone) => {
+    e?.preventDefault();
+    setLoading(true); setError("");
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/send-otp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ phone }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setStep("otp");
-        // Show debug OTP in development
-        if (data.debug_otp) {
-          setDebugOtp(data.debug_otp);
-        }
-      } else {
-        setError(data.message || "Failed to send OTP");
-      }
-    } catch (err) {
-      setError("Network error. Please check your connection.");
-    } finally {
-      setLoading(false);
-    }
+      const res = await api("/auth/send-otp", { method: "POST", body: JSON.stringify({ phone: number }) });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) { setStep("otp"); if (data.debug_otp) setDebugOtp(String(data.debug_otp)); }
+      else setError(data.message || "We could not send the code. Try again.");
+    } catch { setError("No connection. Check your internet and try again."); }
+    finally { setLoading(false); }
   };
 
   const verifyOtp = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setError("");
-
+    setLoading(true); setError("");
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/verify-otp`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include", // Important for session cookies
-          body: JSON.stringify({ phone, otp }),
-        }
-      );
-
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log("OTP verification successful:", data);
-        // Smart redirect logic based on profile completion
-        if (data.needs_profile_completion) {
-          // Add a longer delay to ensure session is properly saved
-          console.log("Redirecting to profile completion in 1 second...");
-          setTimeout(() => {
-            router.push("/patient/complete-profile");
-          }, 1000);
-        } else {
-          console.log("Redirecting to dashboard in 1 second...");
-          setTimeout(() => {
-            router.push("/patient/dashboard");
-          }, 1000);
-        }
-      } else {
-        setError(data.message || "Invalid OTP");
-      }
-    } catch (err) {
-      setError("Network error. Please check your connection.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const formatPhoneNumber = (value) => {
-    // Remove non-digits
-    const digits = value.replace(/\D/g, "");
-
-    // Limit to 11 digits for Bangladesh
-    if (digits.length > 11) return phone;
-
-    return digits;
-  };
-
-  const isValidPhone = (phoneNumber) => {
-    // Bangladesh mobile number validation
-    return /^01[3-9]\d{8}$/.test(phoneNumber);
+      const res = await api("/auth/verify-otp", { method: "POST", body: JSON.stringify({ phone, otp }) });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok) router.push(data.needs_profile_completion ? "/patient/complete-profile" : "/patient/dashboard");
+      else setError(data.message || "That code is not right. Check the SMS and try again.");
+    } catch { setError("No connection. Check your internet and try again."); }
+    finally { setLoading(false); }
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-blue-50 to-green-50 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        {/* Header */}
-        <div className="text-center">
-          <Link href="/" className="inline-block">
-            <h1 className="text-3xl font-bold text-blue-600">Bondhon</h1>
-            <span className="text-sm text-gray-500 ml-2">বন্ধন</span>
-          </Link>
-          <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
-            Welcome Back
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            {step === "phone"
-              ? "Enter your phone number to get started"
-              : "Enter the verification code sent to your phone"}
-          </p>
-        </div>
-
-        {/* Phone Number Step */}
-        {step === "phone" && (
-          <form className="mt-8 space-y-6" onSubmit={sendOtp}>
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <div className="space-y-4">
-                <div>
-                  <label
-                    htmlFor="phone"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Mobile Number
-                  </label>
-                  <div className="mt-1 relative">
-                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                      <span className="text-gray-500 text-sm">+880</span>
-                    </div>
-                    <input
-                      id="phone"
-                      name="phone"
-                      type="tel"
-                      required
-                      className="appearance-none relative block w-full pl-16 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                      placeholder="01xxxxxxxxx"
-                      value={phone}
-                      onChange={(e) =>
-                        setPhone(formatPhoneNumber(e.target.value))
-                      }
-                    />
-                  </div>
-                  <p className="mt-1 text-xs text-gray-500">
-                    Enter your 11-digit mobile number (e.g., 01712345678)
-                  </p>
-                  {!isValidPhone(phone) && phone.length > 0 && (
-                    <p className="mt-1 text-xs text-red-500">
-                      Must start with 01 followed by 3,4,5,6,7,8, or 9 (e.g.,
-                      013, 017, 019)
-                    </p>
-                  )}
-                </div>
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                    <p className="text-sm text-red-600">{error}</p>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={!isValidPhone(phone) || loading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Sending OTP...
-                    </div>
-                  ) : (
-                    "Send OTP"
-                  )}
-                </button>
+    <div className="min-h-screen bg-mist">
+      <div className="mx-auto flex min-h-screen max-w-md flex-col px-5 py-8">
+        <Logo />
+        <div className="my-auto rounded-card bg-paper p-6 shadow-lift sm:p-8">
+          {step === "phone" ? (
+            <form onSubmit={sendOtp}>
+              <h1 className="text-2xl font-bold text-ink">Sign in with your number</h1>
+              <p lang="bn" className="mt-1 text-lg text-teal-600">আপনার মোবাইল নম্বর দিন</p>
+              <p className="mt-3 text-slate">We send a six digit code by SMS. No password.</p>
+              <label htmlFor="phone" className="mt-6 block font-semibold text-ink">Mobile number <span lang="bn" className="font-medium text-slate">মোবাইল নম্বর</span></label>
+              <div className="mt-2 flex items-center rounded-control border border-rule focus-within:border-teal-600">
+                <span className="pl-4 text-slate">+88</span>
+                <input id="phone" type="tel" inputMode="numeric" autoComplete="tel-national" autoFocus placeholder="01XXXXXXXXX" value={phone}
+                  onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 11))}
+                  className="tap w-full bg-transparent px-2 text-xl tracking-wide text-ink placeholder:text-slate-2 focus:outline-none" />
               </div>
-            </div>
-          </form>
-        )}
-
-        {/* OTP Verification Step */}
-        {step === "otp" && (
-          <form className="mt-8 space-y-6" onSubmit={verifyOtp}>
-            <div className="bg-white p-8 rounded-lg shadow-md">
-              <div className="space-y-4">
-                <div className="text-center">
-                  <p className="text-sm text-gray-600">
-                    We sent a verification code to
-                  </p>
-                  <p className="font-medium text-gray-900">+88{phone}</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setStep("phone");
-                      setOtp("");
-                      setError("");
-                      setDebugOtp("");
-                    }}
-                    className="mt-1 text-sm text-blue-600 hover:text-blue-500"
-                  >
-                    Change number
-                  </button>
-                </div>
-
-                {debugOtp && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-md p-3">
-                    <p className="text-sm text-yellow-800">
-                      <strong>Development Mode:</strong> Your OTP is{" "}
-                      <strong>{debugOtp}</strong>
-                    </p>
-                  </div>
-                )}
-
-                <div>
-                  <label
-                    htmlFor="otp"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Verification Code
-                  </label>
-                  <input
-                    id="otp"
-                    name="otp"
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    maxLength={6}
-                    required
-                    className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm text-center text-2xl tracking-widest"
-                    placeholder="000000"
-                    value={otp}
-                    onChange={(e) =>
-                      setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                    }
-                  />
-                </div>
-
-                {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-md p-3">
-                    <p className="text-sm text-red-600">{error}</p>
-                  </div>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={otp.length !== 6 || loading}
-                  className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
-                >
-                  {loading ? (
-                    <div className="flex items-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Verifying...
-                    </div>
-                  ) : (
-                    "Verify & Continue"
-                  )}
-                </button>
-
-                <button
-                  type="button"
-                  onClick={() => {
-                    setStep("phone");
-                    setOtp("");
-                    setError("");
-                    setDebugOtp("");
-                  }}
-                  className="w-full text-sm text-blue-600 hover:text-blue-500 underline"
-                >
-                  Resend OTP
-                </button>
-              </div>
-            </div>
-          </form>
-        )}
-
-        {/* Footer */}
-        <div className="text-center">
-          <p className="text-sm text-gray-500">
-            Are you a doctor?{" "}
-            <Link
-              href="/doctor/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
-            >
-              Login here
-            </Link>
-          </p>
+              {phone.length > 0 && !isValidPhone(phone) && <p className="mt-2 text-sm text-danger">Eleven digits, starting with 013 to 019.</p>}
+              {error && <p role="alert" className="mt-3 rounded-control bg-saffron-100 px-4 py-3 text-ink">{error}</p>}
+              <button type="submit" disabled={!isValidPhone(phone) || loading} className="tap mt-6 w-full rounded-control bg-teal-600 text-lg font-semibold text-white hover:bg-teal-700 disabled:opacity-40">
+                {loading ? "Sending…" : <>Send code <span lang="bn" className="font-medium">কোড পাঠান</span></>}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={verifyOtp}>
+              <button type="button" onClick={() => { setStep("phone"); setOtp(""); setError(""); setDebugOtp(""); }} className="inline-flex items-center gap-1 text-slate hover:text-teal-600">
+                <ArrowLeft className="h-4 w-4" /> Change number
+              </button>
+              <h1 className="mt-4 text-2xl font-bold text-ink">Enter the code</h1>
+              <p lang="bn" className="mt-1 text-lg text-teal-600">কোডটি লিখুন</p>
+              <p className="mt-3 text-slate">We sent it by SMS to <span className="font-semibold text-ink">+88{phone}</span>.</p>
+              {debugOtp && <p className="mt-3 rounded-control bg-saffron-100 px-4 py-3 text-ink">Demo mode, no SMS is sent. Your code is <strong className="tracking-widest">{debugOtp}</strong>.</p>}
+              <label htmlFor="otp" className="mt-6 block font-semibold text-ink">Six digit code <span lang="bn" className="font-medium text-slate">ছয় সংখ্যার কোড</span></label>
+              <input id="otp" type="text" inputMode="numeric" pattern="[0-9]*" maxLength={6} autoComplete="one-time-code" autoFocus placeholder="••••••" value={otp}
+                onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                className="tap mt-2 w-full rounded-control border border-rule px-4 text-center text-3xl tracking-[0.5em] text-ink placeholder:text-slate-2 focus:border-teal-600 focus:outline-none" />
+              {error && <p role="alert" className="mt-3 rounded-control bg-saffron-100 px-4 py-3 text-ink">{error}</p>}
+              <button type="submit" disabled={otp.length !== 6 || loading} className="tap mt-6 w-full rounded-control bg-teal-600 text-lg font-semibold text-white hover:bg-teal-700 disabled:opacity-40">
+                {loading ? "Checking…" : <>Sign in <span lang="bn" className="font-medium">লগইন</span></>}
+              </button>
+            </form>
+          )}
         </div>
+        <p className="mt-6 text-center text-slate">
+          Are you a doctor? <Link href="/doctor/login" className="font-semibold text-teal-600 hover:underline">Doctor sign in</Link>
+        </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-mist" />}>
+      <PatientLogin />
+    </Suspense>
   );
 }

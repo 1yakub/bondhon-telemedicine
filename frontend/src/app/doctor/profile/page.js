@@ -180,8 +180,8 @@ export default function DoctorProfile() {
     return (
       <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading profile...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading profile...</p>
         </div>
       </div>
     );
@@ -190,21 +190,21 @@ export default function DoctorProfile() {
   return (
     <>
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="bg-white border-b border-rule">
         <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-ink">
                 Profile Management
               </h1>
-              <p className="mt-2 text-lg text-gray-600">
+              <p className="mt-2 text-lg text-slate">
                 Update your personal and professional information.
               </p>
             </div>
             <div className="mt-4 md:mt-0">
               <button
                 onClick={() => setShowPasswordChange(true)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium"
               >
                 Change Password
               </button>
@@ -216,25 +216,25 @@ export default function DoctorProfile() {
       {/* Content */}
       <div className="max-w-4xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-sm text-red-600">{error}</p>
+          <div className="mb-6 bg-saffron-100 border border-danger rounded-control p-4">
+            <p className="text-sm text-danger">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="mb-6 bg-green-50 border border-green-200 rounded-md p-4">
-            <p className="text-sm text-green-600">{success}</p>
+          <div className="mb-6 bg-teal-50 border border-teal-100 rounded-control p-4">
+            <p className="text-sm text-teal-600">{success}</p>
           </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-8">
           {/* Personal Information */}
-          <div className="bg-white shadow-sm rounded-lg">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white rounded-control">
+            <div className="px-6 py-4 border-b border-rule">
+              <h3 className="text-lg font-medium text-ink">
                 Personal Information
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-slate">
                 Basic information about you.
               </p>
             </div>
@@ -243,7 +243,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="name"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Full Name *
                   </label>
@@ -254,7 +254,7 @@ export default function DoctorProfile() {
                     required
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="Dr. John Doe"
                   />
                 </div>
@@ -262,7 +262,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="gender"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Gender
                   </label>
@@ -271,7 +271,7 @@ export default function DoctorProfile() {
                     id="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   >
                     <option value="">Select Gender</option>
                     <option value="male">Male</option>
@@ -283,7 +283,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="date_of_birth"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Date of Birth
                   </label>
@@ -293,14 +293,14 @@ export default function DoctorProfile() {
                     id="date_of_birth"
                     value={formData.date_of_birth}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="profile_photo"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Profile Photo URL
                   </label>
@@ -310,7 +310,7 @@ export default function DoctorProfile() {
                     id="profile_photo"
                     value={formData.profile_photo}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="https://example.com/photo.jpg"
                   />
                 </div>
@@ -319,12 +319,12 @@ export default function DoctorProfile() {
           </div>
 
           {/* Professional Information */}
-          <div className="bg-white shadow-sm rounded-lg">
-            <div className="px-6 py-4 border-b border-gray-200">
-              <h3 className="text-lg font-medium text-gray-900">
+          <div className="bg-white rounded-control">
+            <div className="px-6 py-4 border-b border-rule">
+              <h3 className="text-lg font-medium text-ink">
                 Professional Information
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-slate">
                 Your medical practice details and qualifications.
               </p>
             </div>
@@ -333,7 +333,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="specialization"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Specialization *
                   </label>
@@ -344,7 +344,7 @@ export default function DoctorProfile() {
                     required
                     value={formData.specialization}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="Cardiology, Neurology, etc."
                   />
                 </div>
@@ -352,7 +352,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="experience_years"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Years of Experience *
                   </label>
@@ -365,7 +365,7 @@ export default function DoctorProfile() {
                     max="50"
                     value={formData.experience_years}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="5"
                   />
                 </div>
@@ -373,7 +373,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="fee_per_consultation"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Consultation Fee (৳) *
                   </label>
@@ -385,7 +385,7 @@ export default function DoctorProfile() {
                     min="0"
                     value={formData.fee_per_consultation}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="500"
                   />
                 </div>
@@ -393,7 +393,7 @@ export default function DoctorProfile() {
                 <div className="sm:col-span-2">
                   <label
                     htmlFor="qualifications"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Qualifications
                   </label>
@@ -403,7 +403,7 @@ export default function DoctorProfile() {
                     rows={4}
                     value={formData.qualifications}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                     placeholder="MBBS, MD (Cardiology), Fellowship in Interventional Cardiology..."
                   />
                 </div>
@@ -416,7 +416,7 @@ export default function DoctorProfile() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-6 py-2 rounded-md text-sm font-medium"
+              className="bg-teal-600 hover:bg-teal-700 disabled:bg-slate-2 text-white px-6 py-2 rounded-control text-sm font-medium"
             >
               {submitting ? "Updating..." : "Update Profile"}
             </button>
@@ -427,8 +427,8 @@ export default function DoctorProfile() {
       {/* Change Password Modal */}
       {showPasswordChange && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-lg max-w-md w-full p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          <div className="bg-white rounded-control max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-ink mb-4">
               Change Password
             </h3>
 
@@ -437,7 +437,7 @@ export default function DoctorProfile() {
                 <div>
                   <label
                     htmlFor="current_password"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Current Password
                   </label>
@@ -448,14 +448,14 @@ export default function DoctorProfile() {
                     required
                     value={passwordData.current_password}
                     onChange={handlePasswordInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="new_password"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     New Password
                   </label>
@@ -467,14 +467,14 @@ export default function DoctorProfile() {
                     minLength={8}
                     value={passwordData.new_password}
                     onChange={handlePasswordInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
 
                 <div>
                   <label
                     htmlFor="new_password_confirmation"
-                    className="block text-sm font-medium text-gray-700"
+                    className="block text-sm font-medium text-ink-2"
                   >
                     Confirm New Password
                   </label>
@@ -486,20 +486,20 @@ export default function DoctorProfile() {
                     minLength={8}
                     value={passwordData.new_password_confirmation}
                     onChange={handlePasswordInputChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md px-3 py-2 text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className="mt-1 block w-full border border-rule rounded-control px-3 py-2 text-ink bg-white focus:outline-hidden focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                   />
                 </div>
               </div>
 
               {passwordError && (
-                <div className="mt-4 bg-red-50 border border-red-200 rounded-md p-3">
-                  <p className="text-sm text-red-600">{passwordError}</p>
+                <div className="mt-4 bg-saffron-100 border border-danger rounded-control p-3">
+                  <p className="text-sm text-danger">{passwordError}</p>
                 </div>
               )}
 
               {passwordSuccess && (
-                <div className="mt-4 bg-green-50 border border-green-200 rounded-md p-3">
-                  <p className="text-sm text-green-600">{passwordSuccess}</p>
+                <div className="mt-4 bg-teal-50 border border-teal-100 rounded-control p-3">
+                  <p className="text-sm text-teal-600">{passwordSuccess}</p>
                 </div>
               )}
 
@@ -507,14 +507,14 @@ export default function DoctorProfile() {
                 <button
                   type="button"
                   onClick={() => setShowPasswordChange(false)}
-                  className="flex-1 py-2 px-4 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
+                  className="flex-1 py-2 px-4 border border-rule rounded-control text-sm font-medium text-ink-2 hover:bg-mist"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={passwordLoading}
-                  className="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-medium disabled:bg-gray-400"
+                  className="flex-1 py-2 px-4 bg-teal-600 hover:bg-teal-700 text-white rounded-control text-sm font-medium disabled:bg-slate-2"
                 >
                   {passwordLoading ? "Changing..." : "Change Password"}
                 </button>

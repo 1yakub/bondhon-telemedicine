@@ -38,15 +38,15 @@ export default function PatientConsultations() {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800 border-yellow-200";
+        return "bg-saffron-100 text-ink border-saffron-500";
       case "confirmed":
-        return "bg-blue-100 text-blue-800 border-blue-200";
+        return "bg-teal-50 text-teal-700 border-teal-500";
       case "completed":
-        return "bg-green-100 text-green-800 border-green-200";
+        return "bg-teal-50 text-teal-700 border-teal-100";
       case "cancelled":
-        return "bg-red-100 text-red-800 border-red-200";
+        return "bg-saffron-100 text-danger border-danger";
       default:
-        return "bg-gray-100 text-gray-800 border-gray-200";
+        return "bg-mist text-ink border-rule";
     }
   };
 
@@ -55,13 +55,13 @@ export default function PatientConsultations() {
       case "pending":
         return "⏳";
       case "confirmed":
-        return "✅";
+        return "";
       case "completed":
-        return "🏁";
+        return "";
       case "cancelled":
-        return "❌";
+        return "";
       default:
-        return "❓";
+        return "";
     }
   };
 
@@ -77,8 +77,8 @@ export default function PatientConsultations() {
     return (
       <div className="flex items-center justify-center py-12">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading consultations...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading consultations...</p>
         </div>
       </div>
     );
@@ -87,12 +87,12 @@ export default function PatientConsultations() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm mb-4">
+        <div className="bg-saffron-100 border border-danger text-danger px-4 py-3 rounded-sm mb-4">
           {error}
         </div>
         <button
           onClick={fetchConsultations}
-          className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700"
+          className="bg-teal-600 text-white px-4 py-2 rounded-sm hover:bg-teal-700"
         >
           Try Again
         </button>
@@ -103,21 +103,21 @@ export default function PatientConsultations() {
   return (
     <>
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-xs mb-6">
+      <div className="bg-white rounded-control mb-6">
         <div className="py-6 px-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
-              <h1 className="text-3xl font-bold text-gray-900">
+              <h1 className="text-3xl font-bold text-ink">
                 My Consultations
               </h1>
-              <p className="mt-2 text-lg text-gray-600">
+              <p className="mt-2 text-lg text-slate">
                 Track your healthcare consultations and appointments.
               </p>
             </div>
             <div className="mt-4 md:mt-0">
               <Link
                 href="/doctors"
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium inline-flex items-center"
+                className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium inline-flex items-center"
               >
                 <svg
                   className="w-4 h-4 mr-2"
@@ -142,10 +142,10 @@ export default function PatientConsultations() {
       {/* Content */}
       {consultations.length === 0 ? (
         <div className="text-center py-12">
-          <div className="bg-white rounded-lg shadow-xs p-12">
-            <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+          <div className="bg-white rounded-control p-12">
+            <div className="w-16 h-16 mx-auto mb-4 bg-teal-50 rounded-full flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-blue-600"
+                className="w-8 h-8 text-teal-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -158,16 +158,16 @@ export default function PatientConsultations() {
                 />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
+            <h3 className="text-lg font-medium text-ink mb-2">
               No consultations yet
             </h3>
-            <p className="text-gray-600 mb-6">
+            <p className="text-slate mb-6">
               You haven't booked any consultations yet. Start your health
               journey by consulting with our experienced doctors.
             </p>
             <Link
               href="/doctors"
-              className="bg-blue-600 hover:bg-blue-700 text-white py-3 px-6 rounded-md text-sm font-medium"
+              className="bg-teal-600 hover:bg-teal-700 text-white py-3 px-6 rounded-control text-sm font-medium"
             >
               Browse Doctors
             </Link>
@@ -180,14 +180,14 @@ export default function PatientConsultations() {
             return (
               <div
                 key={consultation.id}
-                className="bg-white rounded-lg shadow-xs border border-gray-200 overflow-hidden"
+                className="bg-white rounded-control border border-rule overflow-hidden"
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                      <div className="w-12 h-12 bg-teal-50 rounded-full flex items-center justify-center">
                         <svg
-                          className="w-6 h-6 text-blue-600"
+                          className="w-6 h-6 text-teal-600"
                           fill="none"
                           stroke="currentColor"
                           viewBox="0 0 24 24"
@@ -201,10 +201,10 @@ export default function PatientConsultations() {
                         </svg>
                       </div>
                       <div className="ml-4">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                        <h3 className="text-lg font-semibold text-ink">
                           Dr. {consultation.doctor?.name || "Unknown Doctor"}
                         </h3>
-                        <p className="text-sm text-gray-600">
+                        <p className="text-sm text-slate">
                           {consultation.doctor?.specialization ||
                             "General Practice"}
                         </p>
@@ -224,10 +224,10 @@ export default function PatientConsultations() {
 
                   <div className="grid md:grid-cols-2 gap-4 mb-4">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                      <h4 className="text-sm font-medium text-ink mb-2">
                         Consultation Details
                       </h4>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm text-slate">
                         <p>
                           <span className="font-medium">Date:</span> {date}
                         </p>
@@ -243,10 +243,10 @@ export default function PatientConsultations() {
                           <span
                             className={
                               consultation.payment_status === "paid"
-                                ? "text-green-600"
+                                ? "text-teal-600"
                                 : consultation.payment_status === "pending"
-                                ? "text-yellow-600"
-                                : "text-red-600"
+                                ? "text-saffron-600"
+                                : "text-danger"
                             }
                           >
                             {consultation.payment_status || "unknown"}
@@ -256,10 +256,10 @@ export default function PatientConsultations() {
                     </div>
 
                     <div>
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                      <h4 className="text-sm font-medium text-ink mb-2">
                         Doctor Information
                       </h4>
-                      <div className="space-y-1 text-sm text-gray-600">
+                      <div className="space-y-1 text-sm text-slate">
                         <p>
                           <span className="font-medium">Experience:</span>{" "}
                           {consultation.doctor?.experience_years || "N/A"} years
@@ -278,10 +278,10 @@ export default function PatientConsultations() {
 
                   {consultation.patient_symptoms && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                      <h4 className="text-sm font-medium text-ink mb-2">
                         Symptoms Described
                       </h4>
-                      <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-md">
+                      <p className="text-sm text-slate bg-mist p-3 rounded-control">
                         {consultation.patient_symptoms}
                       </p>
                     </div>
@@ -289,10 +289,10 @@ export default function PatientConsultations() {
 
                   {consultation.doctor_notes && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                      <h4 className="text-sm font-medium text-ink mb-2">
                         Doctor's Notes
                       </h4>
-                      <p className="text-sm text-gray-600 bg-blue-50 p-3 rounded-md">
+                      <p className="text-sm text-slate bg-teal-50 p-3 rounded-control">
                         {consultation.doctor_notes}
                       </p>
                     </div>
@@ -300,30 +300,30 @@ export default function PatientConsultations() {
 
                   {consultation.doctor_prescription && (
                     <div className="mb-4">
-                      <h4 className="text-sm font-medium text-gray-900 mb-2">
+                      <h4 className="text-sm font-medium text-ink mb-2">
                         Prescription
                       </h4>
-                      <p className="text-sm text-gray-600 bg-green-50 p-3 rounded-md">
+                      <p className="text-sm text-slate bg-teal-50 p-3 rounded-control">
                         {consultation.doctor_prescription}
                       </p>
                     </div>
                   )}
 
-                  <div className="flex justify-between items-center pt-4 border-t border-gray-200">
-                    <div className="text-xs text-gray-500">
+                  <div className="flex justify-between items-center pt-4 border-t border-rule">
+                    <div className="text-xs text-slate">
                       Consultation ID: #{consultation.id}
                     </div>
                     <div className="flex space-x-3">
                       {consultation.status === "confirmed" && (
                         <Link
                           href={`/patient/video-call/${consultation.id}`}
-                          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                          className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium"
                         >
                           Join Video Call
                         </Link>
                       )}
                       {consultation.payment_status === "pending" && (
-                        <button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium">
+                        <button className="bg-teal-600 hover:bg-teal-700 text-white px-4 py-2 rounded-control text-sm font-medium">
                           Complete Payment
                         </button>
                       )}

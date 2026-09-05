@@ -92,17 +92,17 @@ export default function DoctorDashboard() {
   const getStatusColor = (status) => {
     switch (status) {
       case "pending":
-        return "bg-yellow-100 text-yellow-800";
+        return "bg-saffron-100 text-ink";
       case "confirmed":
-        return "bg-blue-100 text-blue-800";
+        return "bg-teal-50 text-teal-700";
       case "in_progress":
-        return "bg-green-100 text-green-800";
+        return "bg-teal-50 text-teal-700";
       case "completed":
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
       case "cancelled":
-        return "bg-red-100 text-red-800";
+        return "bg-saffron-100 text-danger";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "bg-mist text-ink";
     }
   };
 
@@ -129,7 +129,7 @@ export default function DoctorDashboard() {
     switch (status) {
       case "pending":
         return (
-          <span className="text-sm text-gray-500 italic">
+          <span className="text-sm text-slate italic">
             Waiting for payment
           </span>
         );
@@ -138,7 +138,7 @@ export default function DoctorDashboard() {
           <Link
             href={`/doctor/video-call/${id}`}
             target="_blank"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
+            className="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
           >
             Join Video Call
           </Link>
@@ -148,7 +148,7 @@ export default function DoctorDashboard() {
           <Link
             href={`/doctor/video-call/${id}`}
             target="_blank"
-            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
+            className="bg-teal-600 hover:bg-teal-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
           >
             Continue Call
           </Link>
@@ -157,18 +157,18 @@ export default function DoctorDashboard() {
         return (
           <Link
             href={`/doctor/consultations/${id}`}
-            className="text-blue-600 hover:text-blue-900 text-sm"
+            className="text-teal-600 hover:text-teal-700 text-sm"
           >
             View Details
           </Link>
         );
       case "cancelled":
-        return <span className="text-sm text-gray-500">Cancelled</span>;
+        return <span className="text-sm text-slate">Cancelled</span>;
       default:
         return (
           <Link
             href={`/doctor/consultations/${id}`}
-            className="text-blue-600 hover:text-blue-900 text-sm"
+            className="text-teal-600 hover:text-teal-700 text-sm"
           >
             View
           </Link>
@@ -178,42 +178,42 @@ export default function DoctorDashboard() {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-500 mx-auto mb-4"></div>
+          <p className="text-slate">Loading dashboard...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="max-w-6xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
       {/* Welcome Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">
+        <h1 className="text-3xl font-bold text-ink">
           Welcome, Dr. {doctor?.name}
         </h1>
-        <p className="mt-2 text-lg text-gray-600">
+        <p className="mt-2 text-lg text-slate">
           {doctor?.doctor?.specialization} • {doctor?.doctor?.experience_years}{" "}
           years experience
         </p>
       </div>
 
       {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-sm text-red-600">{error}</p>
+        <div className="mb-6 bg-saffron-100 border border-danger rounded-control p-4">
+          <p className="text-sm text-danger">{error}</p>
         </div>
       )}
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-gray-400"
+                  className="h-6 w-6 text-slate-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -228,10 +228,10 @@ export default function DoctorDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Consultations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.total_consultations}
                   </dd>
                 </dl>
@@ -240,12 +240,12 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-gray-400"
+                  className="h-6 w-6 text-slate-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -260,10 +260,10 @@ export default function DoctorDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Total Earnings
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     ৳{stats.total_earnings}
                   </dd>
                 </dl>
@@ -272,12 +272,12 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-gray-400"
+                  className="h-6 w-6 text-slate-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -292,10 +292,10 @@ export default function DoctorDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Pending Consultations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.pending_consultations}
                   </dd>
                 </dl>
@@ -304,12 +304,12 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
+        <div className="bg-white overflow-hidden rounded-control">
           <div className="p-5">
             <div className="flex items-center">
               <div className="shrink-0">
                 <svg
-                  className="h-6 w-6 text-gray-400"
+                  className="h-6 w-6 text-slate-2"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -324,10 +324,10 @@ export default function DoctorDashboard() {
               </div>
               <div className="ml-5 w-0 flex-1">
                 <dl>
-                  <dt className="text-sm font-medium text-gray-500 truncate">
+                  <dt className="text-sm font-medium text-slate truncate">
                     Completed Consultations
                   </dt>
-                  <dd className="text-lg font-medium text-gray-900">
+                  <dd className="text-lg font-medium text-ink">
                     {stats.completed_consultations}
                   </dd>
                 </dl>
@@ -338,18 +338,18 @@ export default function DoctorDashboard() {
       </div>
 
       {/* Recent Consultations */}
-      <div className="bg-white shadow-sm overflow-hidden sm:rounded-md">
+      <div className="bg-white overflow-hidden sm:rounded-control">
         <div className="px-4 py-5 sm:px-6">
-          <h3 className="text-lg leading-6 font-medium text-gray-900">
+          <h3 className="text-lg leading-6 font-medium text-ink">
             Recent Consultations
           </h3>
-          <p className="mt-1 max-w-2xl text-sm text-gray-500">
+          <p className="mt-1 max-w-2xl text-sm text-slate">
             Your latest consultation appointments
           </p>
         </div>
-        <ul className="divide-y divide-gray-200">
+        <ul className="divide-y divide-rule">
           {consultations.length === 0 ? (
-            <li className="px-4 py-4 text-center text-gray-500">
+            <li className="px-4 py-4 text-center text-slate">
               No consultations found
             </li>
           ) : (
@@ -358,8 +358,8 @@ export default function DoctorDashboard() {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
                     <div className="shrink-0 h-10 w-10">
-                      <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
-                        <span className="text-sm font-medium text-gray-700">
+                      <div className="h-10 w-10 rounded-full bg-mist-2 flex items-center justify-center">
+                        <span className="text-sm font-medium text-ink-2">
                           {consultation.patient_name?.charAt(0).toUpperCase() ||
                             "P"}
                         </span>
@@ -367,7 +367,7 @@ export default function DoctorDashboard() {
                     </div>
                     <div className="ml-4">
                       <div className="flex items-center">
-                        <p className="text-sm font-medium text-gray-900">
+                        <p className="text-sm font-medium text-ink">
                           {consultation.patient_name || "Unknown Patient"}
                         </p>
                         <span
@@ -378,18 +378,18 @@ export default function DoctorDashboard() {
                           {getStatusMessage(consultation.status)}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-500">
-                        {formatDate(consultation.scheduled_time)}
+                      <p className="text-sm text-slate">
+                        {formatDate((consultation.scheduled_at || consultation.created_at))}
                       </p>
                       {consultation.patient_symptoms && (
-                        <p className="text-sm text-gray-600 mt-1">
+                        <p className="text-sm text-slate mt-1">
                           Symptoms: {consultation.patient_symptoms}
                         </p>
                       )}
                     </div>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-ink">
                       ৳{consultation.fee}
                     </span>
                     {renderActionButton(consultation)}
@@ -400,10 +400,10 @@ export default function DoctorDashboard() {
           )}
         </ul>
         {consultations.length > 10 && (
-          <div className="bg-gray-50 px-4 py-3 text-center">
+          <div className="bg-mist px-4 py-3 text-center">
             <Link
               href="/doctor/consultations"
-              className="text-sm text-blue-600 hover:text-blue-700"
+              className="text-sm text-teal-600 hover:text-teal-700"
             >
               View all consultations
             </Link>
