@@ -97,8 +97,10 @@ const Call = ({ consultationId, userRole, onCallEnd }) => {
   }, [consultationId]);
 
   useEffect(() => {
-    if (!calling) return;
-    if (joinError) setProblem({ title: "Could not join the call", detail: describeAgoraError(joinError), retry: true });
+    if (!calling || !joinError) return;
+    // leave the channel state and show the reason with a retry, instead of "connecting" forever
+    setCalling(false);
+    setProblem({ title: "Could not join the call", detail: describeAgoraError(joinError), retry: true });
   }, [joinError, calling]);
 
   useEffect(() => {
@@ -214,11 +216,12 @@ const Screen = ({ children }) => (
 const Spinner = () => <div className="h-10 w-10 animate-spin rounded-full border-2 border-slate-500 border-t-white" />;
 
 function describeAgoraError(err) {
-  const code = err?.code || "";
-  if (code === "CAN_NOT_GET_GATEWAY_SERVER" || code === "INVALID_VENDOR_KEY") return "The call service rejected the room key. Please try again in a moment.";
-  if (code === "DYNAMIC_KEY_EXPIRED" || code === "TOKEN_EXPIRED") return "The call key expired. Reload the page to get a new one.";
-  if (code === "UID_CONFLICT") return "You are already in this call in another tab.";
-  return err?.message || "The call service did not answer.";
+  const text = `${err?.code || ""} ${err?.message || ""}`;
+  if (/CAN_NOT_GET_GATEWAY_SERVER|INVALID_VENDOR_KEY|invalid vendor key|invalid token/i.test(text)) return "The call service rejected this room key. Please try again in a moment.";
+  if (/DYNAMIC_KEY_EXPIRED|TOKEN_EXPIRED/i.test(text)) return "The call key expired. Reload the page to get a new one.";
+  if (/UID_CONFLICT/i.test(text)) return "You are already in this call in another tab.";
+  if (/NETWORK|TIMEOUT|WS_ABORT/i.test(text)) return "The network dropped while connecting. Check your connection and try again.";
+  return "The call service did not answer. Please try again.";
 }
 
 function describeDeviceError(err) {

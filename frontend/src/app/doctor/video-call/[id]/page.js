@@ -35,10 +35,10 @@ export default function DoctorVideoCall() {
         }
       );
 
-      const data = await response.json();
+      const data = await response.json().catch(() => ({}));
+      const consultationData = data.consultation || data.data;
 
-      if (data.success) {
-        const consultationData = data.data;
+      if (response.ok && consultationData) {
 
         // Validate that consultation is paid and confirmed
         if (consultationData.payment_status !== "paid") {
