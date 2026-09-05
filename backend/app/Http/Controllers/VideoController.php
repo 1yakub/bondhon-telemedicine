@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Consultation;
-use App\Classes\AgoraDynamicKey\RtcTokenBuilder;
+use App\Classes\Agora\RtcTokenBuilder2;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
@@ -35,33 +35,33 @@ class VideoController extends Controller
                 $consultation->save();
             }
 
-            // Get Agora credentials from environment
-            $appId = config('app.agora.app_id', env('AGORA_APP_ID'));
-            $appCertificate = config('app.agora.app_certificate', env('AGORA_APP_CERTIFICATE'));
+            // Credentials come through config() so they survive config:cache.
+            $appId = config('agora.app_id');
+            $appCertificate = config('agora.app_certificate');
 
-            if (!$appId || !$appCertificate) {
+            if (! $appId || ! $appCertificate) {
+                Log::error('Agora credentials are not configured');
+
                 return response()->json([
                     'success' => false,
-                    'message' => 'Agora configuration missing'
-                ], 500);
+                    'message' => 'Video calling is not configured on this server',
+                ], 503);
             }
 
-            // Token parameters
+            // Numeric uid: the account id, the same value the browser joins with.
             $channelName = $consultation->agora_channel;
-            $uid = (string) Auth::id(); // Use user ID as UID
-            $role = RtcTokenBuilder::RoleAttendee; // Both doctor and patient as attendees
-            $expireTimeInSeconds = 7200; // 2 hours
-            $currentTimestamp = time();
-            $privilegeExpiredTs = $currentTimestamp + $expireTimeInSeconds;
+            $uid = (int) Auth::id();
+            $ttl = (int) config('agora.token_ttl', 7200);
+            $privilegeExpiredTs = time() + $ttl;
 
-            // Generate the token
-            $token = RtcTokenBuilder::buildTokenWithUserAccount(
+            $token = RtcTokenBuilder2::buildTokenWithUid(
                 $appId,
                 $appCertificate,
                 $channelName,
                 $uid,
-                $role,
-                $privilegeExpiredTs
+                RtcTokenBuilder2::ROLE_PUBLISHER,
+                $ttl,
+                $ttl
             );
 
             return response()->json([

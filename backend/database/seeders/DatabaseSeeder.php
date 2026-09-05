@@ -6,6 +6,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use App\Models\Doctor;
+use App\Models\Consultation;
 use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
@@ -95,5 +96,19 @@ class DatabaseSeeder extends Seeder
         echo "👤 Admin: admin@bondhon.com / admin123\n";
         echo "👨‍⚕️ Doctors: ahmed@bondhon.com, fatima@bondhon.com, ali@bondhon.com / doctor123\n";
         echo "🏥 3 doctors created with different specializations\n";
+
+        // One paid consultation between the test patient and the first doctor, so the
+        // video call page can be opened right after seeding.
+        $patient = User::where('phone', '01700000099')->first();
+        if ($patient && isset($doctor1)) {
+            Consultation::create([
+                'patient_id' => $patient->id,
+                'doctor_id' => $doctor1->id,
+                'patient_symptoms' => 'Demo consultation for the video call.',
+                'fee_amount' => 500.00,
+                'payment_status' => 'paid',
+                'agora_channel' => 'consultation_demo',
+            ]);
+        }
     }
 }

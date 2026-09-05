@@ -2,7 +2,10 @@
 
 import { useParams, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import VideoCall from "../../../../components/video/VideoCall";
+import dynamic from "next/dynamic";
+
+// The call component pulls in the Agora SDK, which needs a browser; never render it on the server.
+const VideoCall = dynamic(() => import("../../../../components/video/VideoCall"), { ssr: false });
 
 export default function PatientVideoCall() {
   const params = useParams();
