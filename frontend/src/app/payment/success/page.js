@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function PaymentSuccess() {
+function PaymentSuccessContent() {
   const [loading, setLoading] = useState(true);
   const [paymentData, setPaymentData] = useState(null);
   const [consultationData, setConsultationData] = useState(null);
@@ -114,12 +114,12 @@ export default function PaymentSuccess() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md mx-auto text-center">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-sm mb-4">
             <p>{error}</p>
           </div>
           <Link
             href="/patient/dashboard"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-sm"
           >
             Go to Dashboard
           </Link>
@@ -245,13 +245,13 @@ export default function PaymentSuccess() {
             <>
               <Link
                 href="/patient/consultations"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 View My Consultations
               </Link>
               <Link
                 href="/patient/dashboard"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Go to Dashboard
               </Link>
@@ -260,13 +260,13 @@ export default function PaymentSuccess() {
             <>
               <Link
                 href="/login?message=Payment successful! Please log in to view your consultation."
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Login to View Consultation
               </Link>
               <Link
                 href="/doctors"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Book Another Consultation
               </Link>
@@ -282,5 +282,14 @@ export default function PaymentSuccess() {
         </p>
       </div>
     </div>
+  );
+}
+
+// useSearchParams needs a Suspense boundary so the page can prerender its shell.
+export default function PaymentSuccess() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>}>
+      <PaymentSuccessContent />
+    </Suspense>
   );
 }

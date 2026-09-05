@@ -138,7 +138,7 @@ export default function DoctorDashboard() {
           <Link
             href={`/doctor/video-call/${id}`}
             target="_blank"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm font-medium"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
           >
             Join Video Call
           </Link>
@@ -148,7 +148,7 @@ export default function DoctorDashboard() {
           <Link
             href={`/doctor/video-call/${id}`}
             target="_blank"
-            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm font-medium"
+            className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-sm text-sm font-medium"
           >
             Continue Call
           </Link>
@@ -208,10 +208,10 @@ export default function DoctorDashboard() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-gray-400"
                   fill="none"
@@ -240,10 +240,10 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-gray-400"
                   fill="none"
@@ -272,10 +272,10 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-gray-400"
                   fill="none"
@@ -304,10 +304,10 @@ export default function DoctorDashboard() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-gray-400"
                   fill="none"
@@ -338,7 +338,7 @@ export default function DoctorDashboard() {
       </div>
 
       {/* Recent Consultations */}
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
+      <div className="bg-white shadow-sm overflow-hidden sm:rounded-md">
         <div className="px-4 py-5 sm:px-6">
           <h3 className="text-lg leading-6 font-medium text-gray-900">
             Recent Consultations
@@ -357,7 +357,7 @@ export default function DoctorDashboard() {
               <li key={consultation.id} className="px-4 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center">
-                    <div className="flex-shrink-0 h-10 w-10">
+                    <div className="shrink-0 h-10 w-10">
                       <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                         <span className="text-sm font-medium text-gray-700">
                           {consultation.patient_name?.charAt(0).toUpperCase() ||

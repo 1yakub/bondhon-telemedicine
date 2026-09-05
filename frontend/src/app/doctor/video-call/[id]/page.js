@@ -83,20 +83,20 @@ export default function DoctorVideoCall() {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100">
         <div className="text-center max-w-md mx-auto">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-sm mb-4">
             <p className="font-bold">Unable to Join Video Call</p>
             <p>{error}</p>
           </div>
           <div className="space-y-2">
             <button
               onClick={fetchConsultationDetails}
-              className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 mr-2"
+              className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700 mr-2"
             >
               Retry
             </button>
             <button
               onClick={() => router.push("/doctor/dashboard")}
-              className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700"
+              className="bg-gray-600 text-white px-4 py-2 rounded-sm hover:bg-gray-700"
             >
               Back to Dashboard
             </button>
@@ -168,7 +168,7 @@ export default function DoctorVideoCall() {
       {/* Emergency Exit Button */}
       <button
         onClick={() => router.push("/doctor/dashboard")}
-        className="absolute top-20 right-4 z-20 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded text-sm"
+        className="absolute top-20 right-4 z-20 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-sm text-sm"
       >
         Exit
       </button>

@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export default function PaymentFailed() {
+function PaymentFailedContent() {
   const [loading, setLoading] = useState(true);
   const [paymentData, setPaymentData] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -190,7 +190,7 @@ export default function PaymentFailed() {
         <div className="flex flex-col gap-3 w-full">
           {/* Debug info in development */}
           {process.env.NODE_ENV === "development" && (
-            <div className="text-xs text-gray-500 mb-2 p-2 bg-gray-100 rounded">
+            <div className="text-xs text-gray-500 mb-2 p-2 bg-gray-100 rounded-sm">
               Debug: isLoggedIn={isLoggedIn.toString()}, authChecked=
               {authChecked.toString()}, restored_session=
               {searchParams.get("restored_session") || "null"}
@@ -200,19 +200,19 @@ export default function PaymentFailed() {
             <>
               <Link
                 href="/doctors"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Try Again - Book Consultation
               </Link>
               <Link
                 href="/patient/dashboard"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Go to Dashboard
               </Link>
               <Link
                 href="/patient/consultations"
-                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-sm transition duration-200 block text-center"
               >
                 View My Consultations
               </Link>
@@ -221,13 +221,13 @@ export default function PaymentFailed() {
             <>
               <Link
                 href="/login?redirect=/doctors&message=Login to try booking again"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Login & Try Again
               </Link>
               <Link
                 href="/doctors"
-                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded transition duration-200 block text-center"
+                className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-4 rounded-sm transition duration-200 block text-center"
               >
                 Browse Doctors
               </Link>
@@ -251,5 +251,14 @@ export default function PaymentFailed() {
         </div>
       </div>
     </div>
+  );
+}
+
+// useSearchParams needs a Suspense boundary so the page can prerender its shell.
+export default function PaymentFailed() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-slate-500">Loading…</div>}>
+      <PaymentFailedContent />
+    </Suspense>
   );
 }

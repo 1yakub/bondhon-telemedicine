@@ -9,17 +9,17 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "agora-rtc-react": "^2.4.0",
-    "agora-rtc-sdk-ng": "^4.23.4",
-    "autoprefixer": "10.4.21",
-    "eslint": "^8.57.0",
-    "eslint-config-next": "^13.4.19",
-    "next": "^13.4.19",
+    "agora-rtc-react": "^2.5.1",
+    "agora-rtc-sdk-ng": "^4.24.8",
+    "eslint": "^10.10.0",
+    "eslint-config-next": "^16.3.4",
+    "next": "^16.3.4",
     "postcss": "8.5.6",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   },
   "devDependencies": {
-    "tailwindcss": "^3.2.7"
+    "@tailwindcss/postcss": "^4.3.3",
+    "tailwindcss": "^4.3.3"
   }
 }

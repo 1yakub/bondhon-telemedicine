@@ -116,13 +116,13 @@ export default function PatientProfile() {
         <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
           {/* Success/Error Messages */}
           {success && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
+            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-sm mb-4">
               {success}
             </div>
           )}
 
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm mb-4">
               {error}
             </div>
           )}
@@ -142,7 +142,7 @@ export default function PatientProfile() {
               required
               value={formData.name}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your full name"
             />
           </div>
@@ -160,7 +160,7 @@ export default function PatientProfile() {
               id="phone"
               value={`+880${user?.phone || ""}`}
               disabled
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50 text-gray-500 cursor-not-allowed"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs bg-gray-50 text-gray-500 cursor-not-allowed"
             />
             <p className="mt-1 text-sm text-gray-500">
               Phone number cannot be changed. Contact support if needed.
@@ -181,7 +181,7 @@ export default function PatientProfile() {
               name="date_of_birth"
               value={formData.date_of_birth}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
             />
           </div>
 
@@ -198,7 +198,7 @@ export default function PatientProfile() {
               name="gender"
               value={formData.gender}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
             >
               <option value="">Select gender</option>
               <option value="male">Male</option>
@@ -221,7 +221,7 @@ export default function PatientProfile() {
               rows={3}
               value={formData.address}
               onChange={handleInputChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm text-gray-900 bg-white focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-xs text-gray-900 bg-white focus:outline-hidden focus:ring-blue-500 focus:border-blue-500"
               placeholder="Enter your full address"
             />
           </div>
@@ -231,7 +231,7 @@ export default function PatientProfile() {
             <button
               type="submit"
               disabled={submitting}
-              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-md text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white px-6 py-3 rounded-md text-sm font-medium focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
             >
               {submitting ? (
                 <div className="flex items-center">

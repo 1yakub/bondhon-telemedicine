@@ -189,7 +189,7 @@ export default function AdminDoctors() {
       )}
 
       {/* Filters and Create Button */}
-      <div className="bg-white shadow rounded-lg mb-6">
+      <div className="bg-white shadow-sm rounded-lg mb-6">
         <div className="px-6 py-4">
           <div className="flex flex-col sm:flex-row gap-4 items-end">
             <div className="flex-1">
@@ -201,7 +201,7 @@ export default function AdminDoctors() {
                 placeholder="Search by name, email, or specialization..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               />
             </div>
             <div>
@@ -211,7 +211,7 @@ export default function AdminDoctors() {
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
               >
                 <option value="all">All Doctors</option>
                 <option value="online">Online</option>
@@ -245,10 +245,10 @@ export default function AdminDoctors() {
 
       {/* Stats Summary */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-blue-400"
                   fill="none"
@@ -277,10 +277,10 @@ export default function AdminDoctors() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-green-400"
                   fill="none"
@@ -309,10 +309,10 @@ export default function AdminDoctors() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-purple-400"
                   fill="none"
@@ -345,10 +345,10 @@ export default function AdminDoctors() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-orange-400"
                   fill="none"
@@ -379,7 +379,7 @@ export default function AdminDoctors() {
       </div>
 
       {/* Doctors Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-white shadow-sm rounded-lg overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <h3 className="text-lg leading-6 font-medium text-gray-900">
             Doctor List
@@ -441,7 +441,7 @@ export default function AdminDoctors() {
                   <tr key={doctor.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
+                        <div className="shrink-0 h-10 w-10">
                           <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center">
                             <span className="text-sm font-medium text-gray-700">
                               {doctor.name?.charAt(0).toUpperCase()}
@@ -554,7 +554,7 @@ export default function AdminDoctors() {
                     value={createDoctorData.name}
                     onChange={handleCreateDoctorInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     placeholder="Dr. John Doe"
                   />
                 </div>
@@ -569,7 +569,7 @@ export default function AdminDoctors() {
                     value={createDoctorData.email}
                     onChange={handleCreateDoctorInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     placeholder="doctor@example.com"
                   />
                 </div>
@@ -584,7 +584,7 @@ export default function AdminDoctors() {
                     value={createDoctorData.password}
                     onChange={handleCreateDoctorInputChange}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     placeholder="Minimum 8 characters"
                   />
                 </div>
@@ -600,7 +600,7 @@ export default function AdminDoctors() {
                       name="phone"
                       value={createDoctorData.phone}
                       onChange={handleCreateDoctorInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       placeholder="01XXXXXXXXX"
                     />
                   </div>
@@ -613,7 +613,7 @@ export default function AdminDoctors() {
                       name="gender"
                       value={createDoctorData.gender}
                       onChange={handleCreateDoctorInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     >
                       <option value="">Select Gender</option>
                       <option value="male">Male</option>
@@ -632,7 +632,7 @@ export default function AdminDoctors() {
                     name="specialization"
                     value={createDoctorData.specialization}
                     onChange={handleCreateDoctorInputChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     placeholder="e.g., Cardiology, Dermatology"
                   />
                 </div>
@@ -648,7 +648,7 @@ export default function AdminDoctors() {
                       value={createDoctorData.experience_years}
                       onChange={handleCreateDoctorInputChange}
                       min="0"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       placeholder="5"
                     />
                   </div>
@@ -664,7 +664,7 @@ export default function AdminDoctors() {
                       onChange={handleCreateDoctorInputChange}
                       min="0"
                       step="50"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       placeholder="500"
                     />
                   </div>
@@ -679,7 +679,7 @@ export default function AdminDoctors() {
                     value={createDoctorData.qualifications}
                     onChange={handleCreateDoctorInputChange}
                     rows={3}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                     placeholder="MBBS, MD, Specializations..."
                   />
                 </div>

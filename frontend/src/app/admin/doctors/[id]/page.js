@@ -313,10 +313,10 @@ export default function AdminDoctorDetails() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-blue-400"
                   fill="none"
@@ -345,10 +345,10 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-green-400"
                   fill="none"
@@ -377,10 +377,10 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-purple-400"
                   fill="none"
@@ -409,10 +409,10 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-yellow-400"
                   fill="none"
@@ -441,10 +441,10 @@ export default function AdminDoctorDetails() {
           </div>
         </div>
 
-        <div className="bg-white overflow-hidden shadow rounded-lg">
+        <div className="bg-white overflow-hidden shadow-sm rounded-lg">
           <div className="p-5">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <svg
                   className="h-6 w-6 text-indigo-400"
                   fill="none"
@@ -502,7 +502,7 @@ export default function AdminDoctorDetails() {
 
       {/* Tab Content */}
       {activeTab === "overview" && (
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-white shadow-sm rounded-lg">
           <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h3 className="text-lg font-medium text-gray-900">
               Doctor Profile
@@ -563,7 +563,7 @@ export default function AdminDoctorDetails() {
                         name="name"
                         value={editData.name || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">{doctor.name}</p>
@@ -579,7 +579,7 @@ export default function AdminDoctorDetails() {
                         name="email"
                         value={editData.email || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">{doctor.email}</p>
@@ -595,7 +595,7 @@ export default function AdminDoctorDetails() {
                         name="phone"
                         value={editData.phone || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">
@@ -612,7 +612,7 @@ export default function AdminDoctorDetails() {
                         name="gender"
                         value={editData.gender || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       >
                         <option value="">Select Gender</option>
                         <option value="male">Male</option>
@@ -644,7 +644,7 @@ export default function AdminDoctorDetails() {
                         name="specialization"
                         value={editData.specialization || ""}
                         onChange={handleEditChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">
@@ -663,7 +663,7 @@ export default function AdminDoctorDetails() {
                         value={editData.experience_years || ""}
                         onChange={handleEditChange}
                         min="0"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">
@@ -683,7 +683,7 @@ export default function AdminDoctorDetails() {
                         onChange={handleEditChange}
                         min="0"
                         step="50"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">
@@ -701,7 +701,7 @@ export default function AdminDoctorDetails() {
                         value={editData.qualifications || ""}
                         onChange={handleEditChange}
                         rows={3}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                       />
                     ) : (
                       <p className="text-gray-900">
@@ -717,7 +717,7 @@ export default function AdminDoctorDetails() {
       )}
 
       {activeTab === "consultations" && (
-        <div className="bg-white shadow rounded-lg">
+        <div className="bg-white shadow-sm rounded-lg">
           <div className="px-6 py-4 border-b border-gray-200">
             <h3 className="text-lg font-medium text-gray-900">
               Recent Consultations ({consultations.length})
@@ -836,7 +836,7 @@ export default function AdminDoctorDetails() {
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-blue-500 focus:border-blue-500 text-gray-900 bg-white"
                   placeholder="Enter new password (min 6 characters)"
                 />
               </div>

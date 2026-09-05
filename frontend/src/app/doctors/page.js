@@ -247,7 +247,7 @@ export default function DoctorsPage() {
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={fetchDoctors}
-            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700"
           >
             Try Again
           </button>
@@ -261,7 +261,7 @@ export default function DoctorsPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         {/* Patient Navigation */}
-        <nav className="bg-white shadow-sm">
+        <nav className="bg-white shadow-xs">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               {/* Logo */}
@@ -379,7 +379,7 @@ export default function DoctorsPage() {
         {/* Main Content */}
         <div className="max-w-7xl mx-auto py-4 sm:py-8 px-4 sm:px-6 lg:px-8">
           {/* Page Header */}
-          <div className="bg-white rounded-lg shadow-sm mb-6">
+          <div className="bg-white rounded-lg shadow-xs mb-6">
             <div className="py-6 px-6">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold text-gray-900">
@@ -400,7 +400,7 @@ export default function DoctorsPage() {
                       placeholder="Search doctors by name or specialization..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     />
                   </div>
                   {/* Specialization Filter */}
@@ -408,7 +408,7 @@ export default function DoctorsPage() {
                     <select
                       value={filterSpecialization}
                       onChange={(e) => setFilterSpecialization(e.target.value)}
-                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className="px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     >
                       <option value="">All Specializations</option>
                       {specializations.map((spec) => (
@@ -426,7 +426,7 @@ export default function DoctorsPage() {
           {/* Doctors Grid */}
           {filteredDoctors.length === 0 ? (
             <div className="text-center py-12">
-              <div className="bg-white rounded-lg shadow-sm p-12">
+              <div className="bg-white rounded-lg shadow-xs p-12">
                 <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
                   <svg
                     className="w-8 h-8 text-blue-600"
@@ -556,7 +556,7 @@ export default function DoctorsPage() {
                     {/* Qualifications */}
                     {doctor.qualifications && (
                       <div className="mb-4">
-                        <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                        <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded-sm">
                           {doctor.qualifications}
                         </p>
                       </div>
@@ -618,7 +618,7 @@ export default function DoctorsPage() {
                       console.log("Textarea value:", e.target.value);
                       setSymptoms(e.target.value);
                     }}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 bg-white"
                     placeholder="Briefly describe your health concerns..."
                     style={{
                       minHeight: "80px",
@@ -659,7 +659,7 @@ export default function DoctorsPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Public Navigation */}
-      <nav className="bg-white shadow-sm">
+      <nav className="bg-white shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <Link href="/" className="flex items-center">
@@ -710,7 +710,7 @@ export default function DoctorsPage() {
                   placeholder="Search doctors by name or specialization..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
               {/* Specialization Filter */}
@@ -718,7 +718,7 @@ export default function DoctorsPage() {
                 <select
                   value={filterSpecialization}
                   onChange={(e) => setFilterSpecialization(e.target.value)}
-                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  className="px-4 py-2 border border-gray-300 rounded-md text-gray-900 bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 >
                   <option value="">All Specializations</option>
                   {specializations.map((spec) => (
@@ -848,7 +848,7 @@ export default function DoctorsPage() {
                   {/* Qualifications */}
                   {doctor.qualifications && (
                     <div className="mb-4">
-                      <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+                      <p className="text-xs text-gray-500 bg-gray-50 p-2 rounded-sm">
                         {doctor.qualifications}
                       </p>
                     </div>

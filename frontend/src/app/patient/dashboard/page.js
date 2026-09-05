@@ -344,7 +344,7 @@ export default function PatientDashboard() {
   return (
     <>
       {/* Dashboard Header */}
-      <div className="bg-white rounded-lg shadow-sm mb-6">
+      <div className="bg-white rounded-lg shadow-xs mb-6">
         <div className="py-6 px-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
@@ -723,7 +723,7 @@ export default function PatientDashboard() {
                 rows={3}
                 value={symptoms}
                 onChange={(e) => setSymptoms(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 bg-white"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-hidden focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none text-gray-900 bg-white"
                 placeholder="Briefly describe your health concerns..."
                 style={{
                   minHeight: "80px",

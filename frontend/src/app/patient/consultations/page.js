@@ -87,12 +87,12 @@ export default function PatientConsultations() {
   if (error) {
     return (
       <div className="text-center py-12">
-        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-sm mb-4">
           {error}
         </div>
         <button
           onClick={fetchConsultations}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+          className="bg-blue-600 text-white px-4 py-2 rounded-sm hover:bg-blue-700"
         >
           Try Again
         </button>
@@ -103,7 +103,7 @@ export default function PatientConsultations() {
   return (
     <>
       {/* Header */}
-      <div className="bg-white rounded-lg shadow-sm mb-6">
+      <div className="bg-white rounded-lg shadow-xs mb-6">
         <div className="py-6 px-6">
           <div className="md:flex md:items-center md:justify-between">
             <div className="flex-1 min-w-0">
@@ -142,7 +142,7 @@ export default function PatientConsultations() {
       {/* Content */}
       {consultations.length === 0 ? (
         <div className="text-center py-12">
-          <div className="bg-white rounded-lg shadow-sm p-12">
+          <div className="bg-white rounded-lg shadow-xs p-12">
             <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
               <svg
                 className="w-8 h-8 text-blue-600"
@@ -180,7 +180,7 @@ export default function PatientConsultations() {
             return (
               <div
                 key={consultation.id}
-                className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden"
+                className="bg-white rounded-lg shadow-xs border border-gray-200 overflow-hidden"
               >
                 <div className="p-6">
                   <div className="flex items-center justify-between mb-4">
