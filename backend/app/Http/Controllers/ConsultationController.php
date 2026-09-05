@@ -245,7 +245,7 @@ class ConsultationController extends Controller
                         'name' => $consultation->patient->name,
                         'phone' => $consultation->patient->phone,
                         'age' => $consultation->patient->date_of_birth
-                            ? now()->diffInYears($consultation->patient->date_of_birth)
+                            ? \Carbon\Carbon::parse($consultation->patient->date_of_birth)->age
                             : null,
                         'gender' => $consultation->patient->gender,
                     ],

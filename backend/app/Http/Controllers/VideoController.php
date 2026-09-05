@@ -135,7 +135,7 @@ class VideoController extends Controller
                 if ($consultation->started_at) {
                     $startTime = Carbon::parse($consultation->started_at);
                     $endTime = Carbon::parse($consultation->ended_at);
-                    $consultation->duration_minutes = $startTime->diffInMinutes($endTime);
+                    $consultation->duration_minutes = (int) abs($startTime->diffInMinutes($endTime));
                 }
 
                 $consultation->save();
