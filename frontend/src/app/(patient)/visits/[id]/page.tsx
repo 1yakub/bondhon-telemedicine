@@ -29,6 +29,7 @@ export default function VisitPage({ params }: PageProps<"/visits/[id]">) {
 
 function Visit({ id }: { id: string }) {
   const t = useTranslations("visits");
+  const tc = useTranslations("common");
   const router = useRouter();
   const search = useSearchParams();
   const paymentResult = search.get("payment");
@@ -186,11 +187,11 @@ function Visit({ id }: { id: string }) {
           </CardHeader>
           <CardContent className="space-y-2 text-sm">
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Amount</span>
+              <span className="text-muted-foreground">{tc("amount")}</span>
               <span className="font-semibold">{money(visit.amount)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-muted-foreground">Status</span>
+              <span className="text-muted-foreground">{tc("status")}</span>
               <span className="capitalize">{visit.payment_status}</span>
             </div>
             {visit.payment?.transaction_id && (

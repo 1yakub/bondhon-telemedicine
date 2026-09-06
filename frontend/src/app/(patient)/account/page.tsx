@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
@@ -16,13 +16,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { toApiError } from "@/lib/api";
 import { useUpdateProfile, useUser } from "@/lib/queries";
 
-const schema = z.object({
-  name: z.string().trim().min(2, "Enter your full name.").max(255),
+const makeSchema = (tv: (key: string) => string) =>
+  z.object({
+  name: z.string().trim().min(2, tv("fullName")).max(255),
   gender: z.enum(["male", "female", "other", ""]),
   date_of_birth: z.string().optional(),
   address: z.string().trim().max(500).optional(),
-});
-type Values = z.infer<typeof schema>;
+  });
+type Values = z.infer<ReturnType<typeof makeSchema>>;
 
 export default function AccountPage() {
   return (
@@ -34,6 +35,8 @@ export default function AccountPage() {
 
 function Account() {
   const t = useTranslations("account");
+  const tv = useTranslations("validation");
+  const schema = useMemo(() => makeSchema(tv), [tv]);
   const router = useRouter();
   const next = useSearchParams().get("next");
   const { data: user } = useUser();

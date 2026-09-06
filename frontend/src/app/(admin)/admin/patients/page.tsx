@@ -33,7 +33,7 @@ export default function AdminPatientsPage() {
             <TableBody>
               {(data ?? []).map((p) => (
                 <TableRow key={p.id}>
-                  <TableCell className="font-medium">{p.name ?? <span className="text-muted-foreground">No name yet</span>}</TableCell>
+                  <TableCell className="font-medium">{p.name ?? <span className="text-muted-foreground">{t("noName")}</span>}</TableCell>
                   <TableCell>{p.phone}</TableCell>
                   <TableCell className="text-muted-foreground">{day(p.registration_date)}</TableCell>
                   <TableCell className="text-right">{p.total_consultations}</TableCell>

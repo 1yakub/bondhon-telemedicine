@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -20,20 +20,23 @@ import { money } from "@/lib/format";
 import { useAdminDoctorMutations, useAdminDoctors } from "@/lib/queries";
 import type { AdminDoctor } from "@/lib/types";
 
-const createSchema = z.object({
+const makeCreateSchema = (tv: (key: string) => string) =>
+  z.object({
   name: z.string().trim().min(2).max(255),
   email: z.email(),
-  password: z.string().min(8, "Use at least 8 characters."),
+  password: z.string().min(8, tv("minPassword")),
   phone: z.string().trim().optional(),
   specialization: z.string().trim().min(2).max(255),
   qualifications: z.string().trim().optional(),
   experience_years: z.number().int().min(0).max(50),
   fee_per_consultation: z.number().min(0).max(10000),
-});
-type CreateValues = z.infer<typeof createSchema>;
+  });
+type CreateValues = z.infer<ReturnType<typeof makeCreateSchema>>;
 
 export default function AdminDoctorsPage() {
   const t = useTranslations("admin");
+  const tc = useTranslations("common");
+  const td = useTranslations("doctors");
   const { data, isPending } = useAdminDoctors();
   const { toggle } = useAdminDoctorMutations();
 
@@ -65,7 +68,7 @@ export default function AdminDoctorsPage() {
                   <TableCell>
                     <span className="flex items-center gap-2">
                       <OnlineDot online={d.is_online} />
-                      {d.is_online ? "Online" : "Offline"}
+                      {d.is_online ? td("online") : td("offline")}
                     </span>
                   </TableCell>
                   <TableCell className="text-right">
@@ -88,6 +91,10 @@ export default function AdminDoctorsPage() {
 
 function CreateDoctorDialog() {
   const t = useTranslations("admin");
+  const tc = useTranslations("common");
+  const td = useTranslations("doctors");
+  const tv = useTranslations("validation");
+  const createSchema = useMemo(() => makeCreateSchema(tv), [tv]);
   const { create } = useAdminDoctorMutations();
   const [open, setOpen] = useState(false);
   const form = useForm<CreateValues>({
@@ -125,11 +132,11 @@ function CreateDoctorDialog() {
             <F label={t("table.name")} error={err.name?.message}><Input {...form.register("name")} /></F>
             <F label={t("table.specialization")} error={err.specialization?.message}><Input {...form.register("specialization")} /></F>
             <F label={t("table.email")} error={err.email?.message}><Input type="email" autoComplete="off" {...form.register("email")} /></F>
-            <F label="Password" error={err.password?.message}><Input type="password" autoComplete="new-password" {...form.register("password")} /></F>
+            <F label={tc("password")} error={err.password?.message}><Input type="password" autoComplete="new-password" {...form.register("password")} /></F>
             <F label={t("table.phone")} error={err.phone?.message}><Input {...form.register("phone")} /></F>
-            <F label="Qualifications" error={err.qualifications?.message}><Input {...form.register("qualifications")} /></F>
-            <F label="Years of experience" error={err.experience_years?.message}><Input type="number" min={0} max={50} {...form.register("experience_years", { valueAsNumber: true })} /></F>
-            <F label="Fee (BDT)" error={err.fee_per_consultation?.message}><Input type="number" min={0} max={10000} step={50} {...form.register("fee_per_consultation", { valueAsNumber: true })} /></F>
+            <F label={tc("qualifications")} error={err.qualifications?.message}><Input {...form.register("qualifications")} /></F>
+            <F label={tc("yearsOfExperience")} error={err.experience_years?.message}><Input type="number" min={0} max={50} {...form.register("experience_years", { valueAsNumber: true })} /></F>
+            <F label={tc("feeBdt")} error={err.fee_per_consultation?.message}><Input type="number" min={0} max={10000} step={50} {...form.register("fee_per_consultation", { valueAsNumber: true })} /></F>
           </div>
           {err.root && <p className="text-sm text-destructive">{err.root.message}</p>}
           <DialogFooter>
@@ -145,10 +152,12 @@ function CreateDoctorDialog() {
 
 function ResetPasswordDialog({ doctor }: { doctor: AdminDoctor }) {
   const t = useTranslations("admin");
+  const tc = useTranslations("common");
+  const tv = useTranslations("validation");
   const { resetPassword } = useAdminDoctorMutations();
   const [open, setOpen] = useState(false);
   const form = useForm<{ new_password: string }>({
-    resolver: zodResolver(z.object({ new_password: z.string().min(8, "Use at least 8 characters.") })),
+    resolver: zodResolver(z.object({ new_password: z.string().min(8, tv("minPassword")) })),
     defaultValues: { new_password: "" },
   });
 
@@ -172,7 +181,7 @@ function ResetPasswordDialog({ doctor }: { doctor: AdminDoctor }) {
             <DialogTitle>{t("resetPassword")}</DialogTitle>
             <DialogDescription>{t("resetPasswordBody", { name: doctor.name })}</DialogDescription>
           </DialogHeader>
-          <F label="New password" error={form.formState.errors.new_password?.message}>
+          <F label={tc("newPassword")} error={form.formState.errors.new_password?.message}>
             <Input type="password" autoComplete="new-password" {...form.register("new_password")} />
           </F>
           <DialogFooter>

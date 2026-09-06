@@ -8,12 +8,13 @@ const order: ConsultationStatus[] = ["pending", "confirmed", "in_progress", "com
 /** The visit journey in one line: booked, paid, doctor ready, in the call, done. */
 export function VisitSteps({ status }: { status: ConsultationStatus }) {
   const t = useTranslations("visits.steps");
+  const tc = useTranslations("common");
   const steps = [t("booked"), t("paid"), t("inCall"), t("done")];
   // index of the step currently reached; "cancelled" shows as stopped after booking
   const reached = status === "cancelled" ? 0 : order.indexOf(status);
 
   return (
-    <ol className="flex items-center gap-2" aria-label="Progress">
+    <ol className="flex items-center gap-2" aria-label={tc("progress")}>
       {steps.map((label, i) => {
         const done = i < reached || status === "completed";
         const current = i === reached && status !== "completed";

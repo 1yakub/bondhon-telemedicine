@@ -45,7 +45,8 @@
     "about": "About the visit",
     "aboutBody": "A visit is a private video call of about 15 to 30 minutes. Pay after booking; the call button appears once the doctor is ready.",
     "notFound": "This doctor could not be found.",
-    "experienceLabel": "Experience"
+    "experienceLabel": "Experience",
+    "onlyPatientsBook": "Only patients can book a visit."
   },
   "booking": {
     "title": "Book a video visit",
@@ -162,7 +163,8 @@
     "newPassword": "New password",
     "confirmPassword": "Repeat new password",
     "passwordChanged": "Password changed.",
-    "readyToStart": "The patient has paid. You can start the call when you are ready."
+    "readyToStart": "The patient has paid. You can start the call when you are ready.",
+    "noNote": "No note from the patient."
   },
   "admin": {
     "overview": "Overview",
@@ -207,7 +209,8 @@
       "amount": "Amount",
       "payment": "Payment",
       "date": "Date"
-    }
+    },
+    "noName": "No name yet"
   },
   "status": {
     "pending": "Awaiting payment",
@@ -233,7 +236,18 @@
     "back": "Back to the visit",
     "retry": "Try again",
     "notReady": "This visit is not ready for a call.",
-    "noConnection": "No connection to the server. Check your internet and try again."
+    "noConnection": "No connection to the server. Check your internet and try again.",
+    "errors": {
+      "rejectedKey": "The call service rejected this room key. Please try again in a moment.",
+      "expiredKey": "The call key expired. Reload the page to get a new one.",
+      "otherTab": "You are already in this call in another tab.",
+      "network": "The network dropped while connecting. Check your connection and try again.",
+      "noAnswer": "The call service did not answer. Please try again.",
+      "permission": "Allow camera and microphone in your browser to be seen and heard.",
+      "noDevice": "No camera or microphone was found on this device.",
+      "busyDevice": "Another app is using your camera or microphone.",
+      "deviceStart": "Camera or microphone could not start."
+    }
   },
   "common": {
     "loading": "Loading",
@@ -246,6 +260,37 @@
     "notFoundTitle": "Page not found",
     "notFoundBody": "The page you asked for does not exist.",
     "home": "Go to the home page",
-    "bdt": "BDT {amount}"
+    "bdt": "BDT {amount}",
+    "name": "Name",
+    "age": "Age",
+    "gender": "Gender",
+    "phone": "Phone",
+    "fee": "Fee",
+    "status": "Status",
+    "duration": "Duration",
+    "amount": "Amount",
+    "password": "Password",
+    "newPassword": "New password",
+    "qualifications": "Qualifications",
+    "yearsOfExperience": "Years of experience",
+    "feeBdt": "Fee (BDT)",
+    "saved": "Saved.",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "mainNav": "Main",
+    "footerNav": "Footer",
+    "areaNav": "Area",
+    "progress": "Progress",
+    "specialty": "Specialty",
+    "brandHome": "Bondhon home"
+  },
+  "validation": {
+    "email": "Enter your email address.",
+    "password": "Enter your password.",
+    "currentPassword": "Enter your current password.",
+    "passwordsDiffer": "The passwords do not match.",
+    "fullName": "Enter your full name.",
+    "minPassword": "Use at least 8 characters.",
+    "maxSymptoms": "Keep it under 1000 characters."
   }
 }

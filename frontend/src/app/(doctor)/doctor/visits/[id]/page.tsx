@@ -15,6 +15,7 @@ import { useConsultation } from "@/lib/queries";
 export default function DoctorVisitPage({ params }: PageProps<"/doctor/visits/[id]">) {
   const { id } = use(params);
   const t = useTranslations("doctor");
+  const tc = useTranslations("common");
   const tv = useTranslations("visits");
   const { data: visit, isPending, isError } = useConsultation(id);
 
@@ -65,13 +66,13 @@ export default function DoctorVisitPage({ params }: PageProps<"/doctor/visits/[i
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-              <dt className="text-muted-foreground">Name</dt>
+              <dt className="text-muted-foreground">{tc("name")}</dt>
               <dd>{visit.patient?.name ?? "-"}</dd>
-              <dt className="text-muted-foreground">Age</dt>
+              <dt className="text-muted-foreground">{tc("age")}</dt>
               <dd>{visit.patient?.age ?? "-"}</dd>
-              <dt className="text-muted-foreground">Gender</dt>
+              <dt className="text-muted-foreground">{tc("gender")}</dt>
               <dd className="capitalize">{visit.patient?.gender ?? "-"}</dd>
-              <dt className="text-muted-foreground">Phone</dt>
+              <dt className="text-muted-foreground">{tc("phone")}</dt>
               <dd>{visit.patient?.phone ?? "-"}</dd>
             </dl>
           </CardContent>
@@ -82,13 +83,13 @@ export default function DoctorVisitPage({ params }: PageProps<"/doctor/visits/[i
           </CardHeader>
           <CardContent>
             <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-              <dt className="text-muted-foreground">Fee</dt>
+              <dt className="text-muted-foreground">{tc("fee")}</dt>
               <dd className="font-semibold">{money(visit.amount)}</dd>
-              <dt className="text-muted-foreground">Status</dt>
+              <dt className="text-muted-foreground">{tc("status")}</dt>
               <dd className="capitalize">{visit.payment_status}</dd>
               {visit.ended_at && visit.duration_minutes != null && (
                 <>
-                  <dt className="text-muted-foreground">Duration</dt>
+                  <dt className="text-muted-foreground">{tc("duration")}</dt>
                   <dd>{tv("duration", { minutes: visit.duration_minutes })}</dd>
                 </>
               )}
@@ -102,7 +103,7 @@ export default function DoctorVisitPage({ params }: PageProps<"/doctor/visits/[i
           <CardTitle className="text-base">{tv("symptoms")}</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="whitespace-pre-line">{visit.patient_symptoms || "No note from the patient."}</p>
+          <p className="whitespace-pre-line">{visit.patient_symptoms || t("noNote")}</p>
         </CardContent>
       </Card>
     </div>

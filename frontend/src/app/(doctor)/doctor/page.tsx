@@ -74,7 +74,7 @@ export default function DoctorTodayPage() {
                       <div className="min-w-0 flex-1">
                         <p className="truncate font-medium">{v.patient?.name ?? "Patient"}</p>
                         <p className="truncate text-sm text-muted-foreground">
-                          {v.patient_symptoms || "No note from the patient"} {"·"} {when(v.created_at)}
+                          {v.patient_symptoms || t("noNote")} {"·"} {when(v.created_at)}
                         </p>
                       </div>
                       <StatusBadge status={v.status} />

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -18,11 +18,12 @@ import { keys } from "@/lib/queries";
 import { homePathFor } from "@/components/require-role";
 import type { User } from "@/lib/types";
 
-const schema = z.object({
-  email: z.email("Enter your email address."),
-  password: z.string().min(1, "Enter your password."),
-});
-type Values = z.infer<typeof schema>;
+const makeSchema = (tv: (key: string) => string) =>
+  z.object({
+    email: z.email(tv("email")),
+    password: z.string().min(1, tv("password")),
+  });
+type Values = z.infer<ReturnType<typeof makeSchema>>;
 
 const demo = process.env.NEXT_PUBLIC_DEMO === "true";
 
@@ -36,6 +37,8 @@ export function StaffLogin({ role }: { role: "doctor" | "admin" }) {
 
 function StaffLoginForm({ role }: { role: "doctor" | "admin" }) {
   const t = useTranslations("login");
+  const tv = useTranslations("validation");
+  const schema = useMemo(() => makeSchema(tv), [tv]);
   const router = useRouter();
   const qc = useQueryClient();
   const next = useSearchParams().get("next") || homePathFor[role];

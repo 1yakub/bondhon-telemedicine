@@ -20,6 +20,7 @@ export type NavItem = { href: string; label: string; icon: LucideIcon; exact?: b
  */
 export function AppShell({ user, items, children }: { user: User; items: NavItem[]; children: React.ReactNode }) {
   const t = useTranslations("nav");
+  const tc = useTranslations("common");
   const pathname = usePathname();
   const router = useRouter();
   const logout = useLogout();
@@ -52,7 +53,7 @@ export function AppShell({ user, items, children }: { user: User; items: NavItem
       </header>
 
       <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-6 sm:px-6 md:flex-row">
-        <nav className="flex gap-1 overflow-x-auto md:w-52 md:flex-col md:overflow-visible" aria-label="Area">
+        <nav className="flex gap-1 overflow-x-auto md:w-52 md:flex-col md:overflow-visible" aria-label={tc("areaNav")}>
           {items.map((item) => (
             <Link
               key={item.href}

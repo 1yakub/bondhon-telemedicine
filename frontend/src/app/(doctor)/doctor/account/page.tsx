@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -23,17 +24,21 @@ const profileSchema = z.object({
 });
 type Profile = z.infer<typeof profileSchema>;
 
-const passwordSchema = z
-  .object({
-    current_password: z.string().min(1, "Enter your current password."),
-    new_password: z.string().min(8, "Use at least 8 characters."),
-    new_password_confirmation: z.string(),
-  })
-  .refine((v) => v.new_password === v.new_password_confirmation, { path: ["new_password_confirmation"], message: "The passwords do not match." });
-type Password = z.infer<typeof passwordSchema>;
+const makePasswordSchema = (tv: (key: string) => string) =>
+  z
+    .object({
+      current_password: z.string().min(1, tv("currentPassword")),
+      new_password: z.string().min(8, tv("minPassword")),
+      new_password_confirmation: z.string(),
+    })
+    .refine((v) => v.new_password === v.new_password_confirmation, { path: ["new_password_confirmation"], message: tv("passwordsDiffer") });
+type Password = z.infer<ReturnType<typeof makePasswordSchema>>;
 
 export default function DoctorAccountPage() {
   const t = useTranslations("doctor");
+  const tc = useTranslations("common");
+  const tv = useTranslations("validation");
+  const passwordSchema = useMemo(() => makePasswordSchema(tv), [tv]);
   const { data: user } = useUser();
   const update = useUpdateDoctorProfile();
   const change = useChangePassword();
@@ -57,7 +62,7 @@ export default function DoctorAccountPage() {
   const saveProfile = profile.handleSubmit(async (v) => {
     try {
       await update.mutateAsync(v);
-      toast.success("Profile saved.");
+      toast.success(tc("saved"));
     } catch (err) {
       toast.error(toApiError(err).message);
     }
@@ -86,7 +91,7 @@ export default function DoctorAccountPage() {
           </CardHeader>
           <CardContent>
             <form onSubmit={saveProfile} className="space-y-4">
-              <Field label="Name" error={pe.name?.message}>
+              <Field label={tc("name")} error={pe.name?.message}>
                 <Input {...profile.register("name")} />
               </Field>
               <Field label={t("specialization")} error={pe.specialization?.message}>
@@ -104,7 +109,7 @@ export default function DoctorAccountPage() {
                 </Field>
               </div>
               <Button type="submit" disabled={update.isPending}>
-                Save
+                {tc("save")}
               </Button>
             </form>
           </CardContent>

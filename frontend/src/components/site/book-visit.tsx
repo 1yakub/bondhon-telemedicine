@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -16,14 +16,18 @@ import { toApiError } from "@/lib/api";
 import { useBookConsultation, useUser } from "@/lib/queries";
 import type { Doctor } from "@/lib/types";
 
-const schema = z.object({
-  patient_symptoms: z.string().trim().max(1000, "Keep it under 1000 characters.").optional(),
-});
-type Values = z.infer<typeof schema>;
+const makeSchema = (tv: (key: string) => string) =>
+  z.object({
+    patient_symptoms: z.string().trim().max(1000, tv("maxSymptoms")).optional(),
+  });
+type Values = z.infer<ReturnType<typeof makeSchema>>;
 
 /** Signed in patients book in a dialog; everyone else is sent to sign in and back here. */
 export function BookVisit({ doctor }: { doctor: Doctor }) {
   const t = useTranslations("booking");
+  const td = useTranslations("doctors");
+  const tv = useTranslations("validation");
+  const schema = useMemo(() => makeSchema(tv), [tv]);
   const { data: user, isPending } = useUser();
   const router = useRouter();
   const book = useBookConsultation();
@@ -42,7 +46,7 @@ export function BookVisit({ doctor }: { doctor: Doctor }) {
   }
 
   if (user.role !== "patient") {
-    return <p className="text-sm text-muted-foreground">Only patients can book a visit.</p>;
+    return <p className="text-sm text-muted-foreground">{td("onlyPatientsBook")}</p>;
   }
 
   const submit = form.handleSubmit(async (values) => {

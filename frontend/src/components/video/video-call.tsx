@@ -95,7 +95,7 @@ function Call({ consultationId, role, onLeave, onRetry }: Props & { onRetry: () 
         return { text: e.status === 403 ? t("notReady") : e.status ? e.message : t("noConnection"), retry: !e.status || e.status >= 500 };
       })()
     : joinError
-      ? { text: describeAgoraError(joinError), retry: true }
+      ? { text: t(agoraErrorKey(joinError)), retry: true }
       : null;
 
   if (problem) {
@@ -149,7 +149,7 @@ function Call({ consultationId, role, onLeave, onRetry }: Props & { onRetry: () 
 
       {deviceProblem && live && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 rounded-lg bg-amber-100 px-4 py-2 text-sm text-amber-900">
-          {describeDeviceError(deviceProblem)}
+          {t(deviceErrorKey(deviceProblem))}
         </div>
       )}
 
@@ -187,20 +187,20 @@ const Screen = ({ children }: { children: React.ReactNode }) => (
   <div className="flex h-dvh flex-col items-center justify-center bg-neutral-900 px-6 text-center text-white">{children}</div>
 );
 
-function describeAgoraError(err: unknown) {
+function agoraErrorKey(err: unknown) {
   const e = err as { code?: string; message?: string } | null;
   const text = `${e?.code ?? ""} ${e?.message ?? ""}`;
-  if (/CAN_NOT_GET_GATEWAY_SERVER|INVALID_VENDOR_KEY|invalid token/i.test(text)) return "The call service rejected this room key. Please try again in a moment.";
-  if (/DYNAMIC_KEY_EXPIRED|TOKEN_EXPIRED/i.test(text)) return "The call key expired. Reload the page to get a new one.";
-  if (/UID_CONFLICT/i.test(text)) return "You are already in this call in another tab.";
-  if (/NETWORK|TIMEOUT|WS_ABORT/i.test(text)) return "The network dropped while connecting. Check your connection and try again.";
-  return "The call service did not answer. Please try again.";
+  if (/CAN_NOT_GET_GATEWAY_SERVER|INVALID_VENDOR_KEY|invalid token/i.test(text)) return "errors.rejectedKey";
+  if (/DYNAMIC_KEY_EXPIRED|TOKEN_EXPIRED/i.test(text)) return "errors.expiredKey";
+  if (/UID_CONFLICT/i.test(text)) return "errors.otherTab";
+  if (/NETWORK|TIMEOUT|WS_ABORT/i.test(text)) return "errors.network";
+  return "errors.noAnswer";
 }
 
-function describeDeviceError(err: unknown) {
+function deviceErrorKey(err: unknown) {
   const code = (err as { code?: string } | null)?.code ?? "";
-  if (code === "PERMISSION_DENIED") return "Allow camera and microphone in your browser to be seen and heard.";
-  if (code === "DEVICE_NOT_FOUND") return "No camera or microphone was found on this device.";
-  if (code === "NOT_READABLE") return "Another app is using your camera or microphone.";
-  return "Camera or microphone could not start.";
+  if (code === "PERMISSION_DENIED") return "errors.permission";
+  if (code === "DEVICE_NOT_FOUND") return "errors.noDevice";
+  if (code === "NOT_READABLE") return "errors.busyDevice";
+  return "errors.deviceStart";
 }

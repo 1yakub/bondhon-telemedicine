@@ -10,6 +10,7 @@ import { useDoctors } from "@/lib/queries";
 
 export default function DoctorsPage() {
   const t = useTranslations("doctors");
+  const tc = useTranslations("common");
   const { data, isPending } = useDoctors();
   const [specialty, setSpecialty] = useState<string>("all");
   const [onlineOnly, setOnlineOnly] = useState(false);
@@ -37,7 +38,7 @@ export default function DoctorsPage() {
             onValueChange={(v) => setSpecialty(v ?? "all")}
             items={{ all: t("filterAll"), ...Object.fromEntries(specialties.map((s) => [s, s])) }}
           >
-            <SelectTrigger className="min-w-48" aria-label="Specialty">
+            <SelectTrigger className="min-w-48" aria-label={tc("specialty")}>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
