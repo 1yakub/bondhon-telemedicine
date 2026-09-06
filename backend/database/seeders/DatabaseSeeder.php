@@ -93,10 +93,7 @@ class DatabaseSeeder extends Seeder
             'address' => 'Dhaka, Bangladesh',
         ]);
 
-        echo "✅ Database seeded successfully!\n";
-        echo "👤 Admin: admin@bondhon.com / admin123\n";
-        echo "👨‍⚕️ Doctors: ahmed@bondhon.com, fatima@bondhon.com, ali@bondhon.com / doctor123\n";
-        echo "🏥 3 doctors created with different specializations\n";
+        echo "Database seeded: admin, three doctors, one patient, one paid consultation.\n";
 
         // One paid consultation between the test patient and the first doctor, so the
         // video call page can be opened right after seeding.
