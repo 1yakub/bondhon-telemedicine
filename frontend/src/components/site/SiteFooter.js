@@ -16,7 +16,6 @@ export default function SiteFooter() {
             <li><Link href="/doctors" className="hover:text-teal-600">Doctors</Link></li>
             <li><Link href="/login" className="hover:text-teal-600">Patient sign in</Link></li>
             <li><Link href="/doctor/login" className="hover:text-teal-600">Doctor sign in</Link></li>
-            <li><Link href="/admin/login" className="hover:text-teal-600">Admin</Link></li>
           </ul>
         </div>
         <div className="text-slate">
@@ -24,7 +23,7 @@ export default function SiteFooter() {
           <p className="mt-2">Bondhon is a telemedicine platform built in Bangladesh. This is a working demo: video calls run on Agora, payments are in test mode, and the data resets every night.</p>
           {process.env.NEXT_PUBLIC_DEMO === "true" && (
             <p className="mt-3 rounded-control bg-paper p-3 text-sm">
-              Try it: sign in as a patient with any Bangladeshi mobile number, the code appears on screen. Doctor: <span className="font-semibold text-ink">ahmed@bondhon.com</span>, Admin: <span className="font-semibold text-ink">admin@bondhon.com</span>, password for both is shown on their sign in pages.
+              Try it: sign in as a patient with any Bangladeshi mobile number, the code appears on screen. To see the doctor side, sign in as <span className="font-semibold text-ink">ahmed@bondhon.com</span> with the password <span className="font-semibold text-ink">doctor123</span>.
             </p>
           )}
         </div>
