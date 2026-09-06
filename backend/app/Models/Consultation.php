@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -22,6 +23,8 @@ class Consultation extends Model
         'agora_channel',
     ];
 
+    protected $appends = ['status'];
+
     protected $casts = [
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
@@ -32,6 +35,18 @@ class Consultation extends Model
     /**
      * Relationships
      */
+    /** Journey state derived from payment and call timestamps. */
+    protected function status(): Attribute
+    {
+        return Attribute::get(fn () => match (true) {
+            $this->payment_status === 'failed' => 'cancelled',
+            $this->payment_status !== 'paid' => 'pending',
+            $this->ended_at !== null => 'completed',
+            $this->started_at !== null => 'in_progress',
+            default => 'confirmed',
+        });
+    }
+
     public function patient()
     {
         return $this->belongsTo(User::class, 'patient_id');

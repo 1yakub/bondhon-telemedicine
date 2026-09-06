@@ -22,9 +22,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             // Get total counts
             $totalDoctors = User::where('role', 'doctor')->count();
@@ -64,9 +61,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctors = Doctor::with([
                 'user' => function ($query) {
@@ -111,9 +105,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $consultations = Consultation::with(['patient', 'doctor.doctor', 'payment'])
                 ->orderBy('created_at', 'desc')
@@ -164,9 +155,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::find($id);
 
@@ -203,69 +191,53 @@ class AdminController extends Controller
      */
     public function analytics(Request $request)
     {
-        try {
-            $user = $request->user();
+        $since = now()->subMonths(6)->startOfMonth();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
+        $consultationsByStatus = Consultation::query()
+            ->selectRaw('payment_status, COUNT(*) as count')
+            ->groupBy('payment_status')
+            ->get()
+            ->mapWithKeys(fn ($row) => [$row->payment_status => (int) $row->count]);
 
-            // Get consultations by payment status (since status column doesn't exist)
-            $consultationsByStatus = Consultation::selectRaw('payment_status, COUNT(*) as count')
-                ->groupBy('payment_status')
-                ->get()
-                ->pluck('count', 'payment_status');
+        $consultationsByMonth = Consultation::query()
+            ->where('created_at', '>=', $since)
+            ->get(['created_at'])
+            ->groupBy(fn ($c) => $c->created_at->format('Y-m'))
+            ->map(fn ($group, $month) => ['month' => $month, 'count' => $group->count()])
+            ->sortKeys()
+            ->values();
 
-            // Get consultations by month (last 6 months)
-            $consultationsByMonth = Consultation::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count')
-                ->where('created_at', '>=', now()->subMonths(6))
-                ->groupBy('month')
-                ->orderBy('month')
-                ->get();
+        $revenueByMonth = Payment::query()
+            ->where('ssl_status', 'VALID')
+            ->where('created_at', '>=', $since)
+            ->get(['created_at', 'amount'])
+            ->groupBy(fn ($p) => $p->created_at->format('Y-m'))
+            ->map(fn ($group, $month) => ['month' => $month, 'total' => number_format((float) $group->sum('amount'), 2, '.', '')])
+            ->sortKeys()
+            ->values();
 
-            // Get revenue by month
-            $revenueByMonth = Payment::selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(amount) as total')
-                ->where('ssl_status', 'VALID')
-                ->where('created_at', '>=', now()->subMonths(6))
-                ->groupBy('month')
-                ->orderBy('month')
-                ->get();
-
-            // Top doctors by consultation count
-            $topDoctors = Consultation::selectRaw('doctor_id, COUNT(*) as consultation_count')
-                ->with(['doctor:id,name'])
-                ->groupBy('doctor_id')
-                ->orderBy('consultation_count', 'desc')
-                ->limit(5)
-                ->get()
-                ->map(function ($item) {
-                    return [
-                        'doctor_name' => $item->doctor->name,
-                        'consultation_count' => $item->consultation_count,
-                    ];
-                });
-
-            return response()->json([
-                'analytics' => [
-                    'consultations_by_status' => $consultationsByStatus,
-                    'consultations_by_month' => $consultationsByMonth,
-                    'revenue_by_month' => $revenueByMonth,
-                    'top_doctors' => $topDoctors,
-                ]
+        $topDoctors = Consultation::query()
+            ->selectRaw('doctor_id, COUNT(*) as consultation_count')
+            ->with('doctor:id,name')
+            ->groupBy('doctor_id')
+            ->orderByDesc('consultation_count')
+            ->limit(5)
+            ->get()
+            ->map(fn ($row) => [
+                'doctor_name' => $row->doctor?->name,
+                'consultation_count' => (int) $row->consultation_count,
             ]);
 
-        } catch (\Exception $e) {
-            Log::error('Error fetching admin analytics: ' . $e->getMessage());
-            return response()->json([
-                'message' => 'Failed to fetch analytics'
-            ], 500);
-        }
+        return response()->json([
+            'analytics' => [
+                'consultations_by_status' => $consultationsByStatus,
+                'consultations_by_month' => $consultationsByMonth,
+                'revenue_by_month' => $revenueByMonth,
+                'top_doctors' => $topDoctors,
+            ],
+        ]);
     }
 
-    /**
-     * Map internal status to frontend status
-     * Priority: payment_status first, then consultation progress
-     */
     private function mapStatus($paymentStatus, $startedAt, $endedAt)
     {
         // Payment status is PRIMARY factor
@@ -301,9 +273,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             // Validate required fields only
             $validated = $request->validate([
@@ -367,9 +336,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::with('user')->find($id);
 
@@ -428,9 +394,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::with('user')->find($id);
 
@@ -471,9 +434,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $patients = User::where('role', 'patient')
                 ->with(['patientConsultations.payment', 'patientConsultations.doctor.doctor'])
@@ -558,9 +518,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::with([
                 'user' => function ($query) {
@@ -646,9 +603,6 @@ class AdminController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'admin') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::find($id);
 

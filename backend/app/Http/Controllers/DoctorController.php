@@ -48,14 +48,16 @@ class DoctorController extends Controller
      * Toggle doctor online/offline status
      * PUT /api/doctors/toggle-status
      */
+    public function show(Doctor $doctor)
+    {
+        return new \App\Http\Resources\DoctorResource($doctor->load('user'));
+    }
+
     public function toggleStatus(Request $request)
     {
         try {
             $user = $request->user();
 
-            if ($user->role !== 'doctor') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::where('user_id', $user->id)->first();
 
@@ -90,11 +92,6 @@ class DoctorController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'doctor') {
-            return response()->json([
-                'message' => 'Only doctors can access this endpoint'
-            ], 403);
-        }
 
         $user->load('doctor');
 
@@ -111,11 +108,6 @@ class DoctorController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'doctor') {
-            return response()->json([
-                'message' => 'Only doctors can update profile'
-            ], 403);
-        }
 
         // Validate user fields
         $userValidation = $request->validate([
@@ -154,9 +146,6 @@ class DoctorController extends Controller
         try {
             $user = $request->user();
 
-            if ($user->role !== 'doctor') {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
 
             $doctor = Doctor::where('user_id', $user->id)->first();
 
@@ -207,9 +196,6 @@ class DoctorController extends Controller
         try {
             $user = Auth::user();
 
-            if ($user->role !== 'doctor') {
-                return response()->json(['message' => 'Only doctors can change password'], 403);
-            }
 
             // Validate password change request
             $validated = $request->validate([

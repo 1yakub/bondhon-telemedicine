@@ -21,11 +21,6 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'patient') {
-            return response()->json([
-                'message' => 'Only patients need profile completion'
-            ], 403);
-        }
 
         $needsCompletion = empty($user->name);
 
@@ -43,11 +38,6 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'patient') {
-            return response()->json([
-                'message' => 'Only patients can complete profile'
-            ], 403);
-        }
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -78,11 +68,6 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'patient') {
-            return response()->json([
-                'message' => 'Only patients have profiles'
-            ], 403);
-        }
 
         return response()->json([
             'user' => $user
@@ -97,11 +82,6 @@ class ProfileController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role !== 'patient') {
-            return response()->json([
-                'message' => 'Only patients can update profile'
-            ], 403);
-        }
 
         $request->validate([
             'name' => 'sometimes|required|string|max:255',

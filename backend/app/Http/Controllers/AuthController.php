@@ -2,300 +2,102 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\SendOtpRequest;
+use App\Http\Requests\VerifyOtpRequest;
+use App\Http\Resources\UserResource;
+use App\Models\User;
+use App\Services\OtpService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Log;
-use App\Models\User;
+use Illuminate\Validation\ValidationException;
 
+/**
+ * Session sign in, the way the Laravel authentication docs describe it:
+ * Auth::attempt or Auth::login, then session()->regenerate() against fixation,
+ * and invalidate() plus regenerateToken() on logout. Brute force is handled by the
+ * named rate limiters on the routes, not here.
+ */
 class AuthController extends Controller
 {
-    /**
-     * Send OTP to phone number (patients only)
-     * POST /api/auth/send-otp
-     */
-    public function sendOtp(Request $request)
+    public function __construct(private readonly OtpService $otp) {}
+
+    public function sendOtp(SendOtpRequest $request): JsonResponse
     {
-        $request->validate([
-            'phone' => 'required|string|min:11|max:14'
+        $code = $this->otp->issue($request->phone());
+
+        return response()->json([
+            'message' => 'We sent a 6 digit code to your phone.',
+            'phone' => $request->phone(),
+            // only present in demo and local, where no SMS is sent
+            'demo_code' => $code,
         ]);
-
-        $phone = $request->phone;
-
-        // Generate 6-digit OTP
-        $otp = rand(100000, 999999);
-
-        // Store OTP in session for 5 minutes
-        Session::put('otp_' . $phone, [
-            'code' => $otp,
-            'expires_at' => now()->addMinutes(5)
-        ]);
-
-        // Send SMS via BulkSMSBD
-        $message = "Your Bondhon verification code is: {$otp}. Valid for 5 minutes.";
-
-        try {
-            // Check if we should actually send SMS (cost control)
-            $shouldSendSMS = config('app.env') === 'production' && config('sms.enabled', true) && ! config('app.demo');
-
-            if ($shouldSendSMS) {
-                $response = Http::timeout(2)->get(config('sms.bulk_sms_bd.base_url'), [
-                    'api_key' => config('sms.bulk_sms_bd.api_key'),
-                    'senderid' => config('sms.bulk_sms_bd.sender_id'),
-                    'number' => $phone,
-                    'message' => $message
-                ]);
-
-                if ($response->successful()) {
-                    return response()->json([
-                        'message' => 'OTP sent successfully',
-                        'phone' => $phone
-                    ], 200);
-                } else {
-                    throw new \Exception('SMS service failed');
-                }
-            } else {
-                // Development/Staging mode - don't send real SMS
-                Log::info('SMS not sent (staging mode)', [
-                    'phone' => $phone,
-                    'otp' => $otp,
-                    'sms_enabled' => config('sms.enabled', true)
-                ]);
-
-                return response()->json([
-                    'message' => 'OTP sent successfully (Staging mode)',
-                    'phone' => $phone,
-                    'debug_otp' => (config('app.debug') || config('app.demo')) ? $otp : null
-                ], 200);
-            }
-        } catch (\Exception $e) {
-            Log::error('SMS sending failed', [
-                'phone' => $phone,
-                'error' => $e->getMessage()
-            ]);
-
-            // Fallback for development/staging
-            if (config('app.env') === 'local' || config('app.env') === 'development' || !config('sms.enabled', true)) {
-                return response()->json([
-                    'message' => 'OTP sent successfully (Fallback mode)',
-                    'phone' => $phone,
-                    'debug_otp' => (config('app.debug') || config('app.demo')) ? $otp : null
-                ], 200);
-            }
-
-            return response()->json([
-                'message' => 'Failed to send OTP',
-                'error' => $e->getMessage()
-            ], 500);
-        }
     }
 
-    /**
-     * Verify OTP and auto-register/login patient
-     * POST /api/auth/verify-otp
-     */
-    public function verifyOtp(Request $request)
+    public function verifyOtp(VerifyOtpRequest $request): JsonResponse
     {
-        $request->validate([
-            'phone' => 'required|string',
-            'otp' => 'required|string|size:6'
-        ]);
-
-        $phone = $request->phone;
-        $otp = $request->otp;
-
-        // Check OTP from session
-        $storedOtp = Session::get('otp_' . $phone);
-
-        // In development, be more lenient with OTP validation  
-        if ((config('app.env') === 'local' || config('app.env') === 'development') && strlen($otp) === 6 && is_numeric($otp)) {
-            // Allow any 6-digit OTP in development mode
-        } else {
-            if (!$storedOtp || !isset($storedOtp['expires_at']) || $storedOtp['expires_at']->isPast()) {
-                return response()->json([
-                    'message' => 'OTP expired or invalid'
-                ], 400);
-            }
-
-            if (!isset($storedOtp['code']) || $storedOtp['code'] != $otp) {
-                return response()->json([
-                    'message' => 'Invalid OTP'
-                ], 400);
-            }
+        if (! $this->otp->verify($request->phone(), $request->input('otp'))) {
+            throw ValidationException::withMessages([
+                'otp' => 'That code is wrong or has expired. Ask for a new one.',
+            ]);
         }
 
-        // Clear OTP from session
-        Session::forget('otp_' . $phone);
+        $user = User::firstOrCreate(['phone' => $request->phone()], ['role' => 'patient']);
 
-        // FirstOrCreate pattern - auto register/login
-        $user = User::firstOrCreate(
-            ['phone' => $phone],
-            ['role' => 'patient']
-        );
+        if ($user->role !== 'patient') {
+            // doctors and admins sign in with a password on their own pages
+            throw ValidationException::withMessages(['phone' => 'Use the staff sign in for this account.']);
+        }
 
-        // Login the user
         Auth::login($user);
+        $request->session()->regenerate();
 
-        // Force session save without regeneration
-        Session::save();
-
-        // Double-check authentication worked
-        if (!Auth::check()) {
-            Log::error('Authentication failed after login attempt', [
-                'user_id' => $user->id,
-                'session_id' => Session::getId()
-            ]);
-            return response()->json(['message' => 'Authentication failed'], 500);
-        }
-
-        // Determine redirect based on profile completion
-        $needsProfileCompletion = empty($user->name);
-
-        // Debug information in development
-        if (config('app.env') === 'local') {
-            Log::info('OTP Login successful', [
-                'user_id' => $user->id,
-                'session_id' => Session::getId(),
-                'auth_check' => Auth::check(),
-                'auth_user_id' => Auth::id()
-            ]);
-        }
-
-        return response()->json([
-            'message' => 'Authentication successful',
-            'user' => $user,
-            'needs_profile_completion' => $needsProfileCompletion,
-            'redirect_to' => $needsProfileCompletion
-                ? '/patient/complete-profile'
-                : '/patient/dashboard',
-            'debug' => config('app.env') === 'local' ? [
-                'session_id' => Session::getId(),
-                'auth_check' => Auth::check()
-            ] : null
-        ], 200);
+        return response()->json(['user' => new UserResource($user)]);
     }
 
-    /**
-     * Doctor email/password login
-     * POST /api/auth/doctor/login
-     */
-    public function doctorLogin(Request $request)
+    public function doctorLogin(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string'
-        ]);
-
-        $credentials = $request->only('email', 'password');
-        $credentials['role'] = 'doctor';
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user->load('doctor'),
-                'redirect_to' => '/doctor/dashboard'
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => 'Invalid credentials'
-        ], 401);
+        return $this->passwordLogin($request, 'doctor');
     }
 
-    /**
-     * Admin email/password login
-     * POST /api/auth/admin/login
-     */
-    public function adminLogin(Request $request)
+    public function adminLogin(LoginRequest $request): JsonResponse
     {
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|string'
-        ]);
-
-        $credentials = $request->only('email', 'password');
-        $credentials['role'] = 'admin';
-
-        if (Auth::attempt($credentials)) {
-            $user = Auth::user();
-            return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-                'redirect_to' => '/admin/dashboard'
-            ], 200);
-        }
-
-        return response()->json([
-            'message' => 'Invalid credentials'
-        ], 401);
+        return $this->passwordLogin($request, 'admin');
     }
 
-    /**
-     * Get authenticated user
-     * GET /api/auth/user
-     */
-    public function getUser(Request $request)
+    public function user(Request $request): JsonResponse
     {
-        // Ensure session is properly started
-        if (!Session::isStarted()) {
-            Session::start();
+        $user = $request->user();
+
+        if (! $user) {
+            return response()->json(['message' => 'Unauthenticated.'], 401);
         }
 
-        // Check if session exists and has authentication data
-        $sessionAuth = Session::get('login_web_' . sha1(Auth::class));
-        $user = Auth::user();
+        return response()->json(['user' => new UserResource($user->loadMissing('doctor'))]);
+    }
 
-        // Enhanced debug information in development
-        if (config('app.env') === 'local') {
-            Log::info('Auth check debug', [
-                'headers' => $request->headers->all(),
-                'cookies' => $request->cookies->all(),
-                'session_id' => Session::getId(),
-                'session_auth_key' => $sessionAuth ? 'exists' : 'missing',
-                'auth_check' => Auth::check(),
-                'auth_id' => Auth::id(),
-                'user_exists' => $user ? true : false,
-                'session_driver' => config('session.driver'),
-                'session_cookie' => config('session.cookie')
+    public function logout(Request $request): JsonResponse
+    {
+        Auth::guard('web')->logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->json(['message' => 'Signed out.']);
+    }
+
+    private function passwordLogin(LoginRequest $request, string $role): JsonResponse
+    {
+        $credentials = $request->only('email', 'password') + ['role' => $role];
+
+        if (! Auth::attempt($credentials)) {
+            throw ValidationException::withMessages([
+                'email' => 'These sign in details do not match our records.',
             ]);
         }
 
-        if (!$user) {
-            return response()->json([
-                'message' => 'Unauthenticated',
-                'debug' => config('app.env') === 'local' ? [
-                    'session_id' => Session::getId(),
-                    'auth_id' => Auth::id(),
-                    'session_auth' => $sessionAuth ? 'exists' : 'missing',
-                    'cookies_received' => array_keys($request->cookies->all())
-                ] : null
-            ], 401);
-        }
+        $request->session()->regenerate();
 
-        // Load relationships based on role
-        if ($user->role === 'doctor' && method_exists($user, 'doctor')) {
-            $user->load('doctor');
-        }
-
-        return response()->json([
-            'user' => $user
-        ], 200);
-    }
-
-    /**
-     * Logout user
-     * POST /api/auth/logout
-     */
-    public function logout(Request $request)
-    {
-        Auth::logout();
-        Session::flush();
-
-        return response()->json([
-            'message' => 'Logged out successfully'
-        ], 200);
+        return response()->json(['user' => new UserResource($request->user()->loadMissing('doctor'))]);
     }
 }

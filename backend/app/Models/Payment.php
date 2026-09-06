@@ -13,7 +13,11 @@ class Payment extends Model
         'consultation_id',
         'amount',
         'ssl_transaction_id',
+        'ssl_session_key',
         'ssl_status',
+        'ssl_val_id',
+        'ssl_bank_tran_id',
+        'ssl_card_type',
         'paid_at',
     ];
 

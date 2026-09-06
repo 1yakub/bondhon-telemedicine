@@ -27,6 +27,12 @@ class Doctor extends Model
     /**
      * Relationships
      */
+    /** Public URLs address a doctor by their user id, the same id the list returns. */
+    public function getRouteKeyName(): string
+    {
+        return 'user_id';
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
