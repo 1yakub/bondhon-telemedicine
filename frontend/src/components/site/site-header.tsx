@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { LogOut, Menu } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { LocaleSwitch } from "@/components/locale-switch";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useLogout, useUser } from "@/lib/queries";
@@ -55,7 +56,10 @@ export function SiteHeader() {
             </Button>
           ))}
         </nav>
-        <div className="hidden items-center gap-2 md:flex">{account}</div>
+        <div className="hidden items-center gap-2 md:flex">
+          <LocaleSwitch />
+          {account}
+        </div>
         <Sheet>
           <SheetTrigger render={<Button variant="outline" size="icon" className="md:hidden" aria-label="Open menu" />}>
             <Menu />
@@ -68,7 +72,10 @@ export function SiteHeader() {
                   {l.label}
                 </Button>
               ))}
-              <div className="mt-4 flex flex-col gap-2 border-t pt-4">{account}</div>
+              <div className="mt-4 flex flex-col gap-2 border-t pt-4">
+                <LocaleSwitch className="justify-start" />
+                {account}
+              </div>
             </nav>
           </SheetContent>
         </Sheet>

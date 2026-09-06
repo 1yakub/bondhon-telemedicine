@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LogOut, type LucideIcon } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
+import { LocaleSwitch } from "@/components/locale-switch";
 import { Button } from "@/components/ui/button";
 import { OnlineDot } from "@/components/status-badge";
 import { useLogout } from "@/lib/queries";
@@ -31,6 +32,7 @@ export function AppShell({ user, items, children }: { user: User; items: NavItem
         <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
           <Logo href={items[0]?.href ?? "/"} />
           <div className="flex items-center gap-3">
+            <LocaleSwitch />
             <div className="hidden items-center gap-2 text-sm sm:flex">
               {user.role === "doctor" && <OnlineDot online={!!user.doctor?.is_online} />}
               <span className="max-w-40 truncate font-medium">{user.name ?? user.phone}</span>
