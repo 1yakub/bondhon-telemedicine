@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Http\Resources\UserResource;
 use App\Models\Doctor;
 use App\Models\User;
 use App\Models\Consultation;
@@ -96,7 +97,7 @@ class DoctorController extends Controller
         $user->load('doctor');
 
         return response()->json([
-            'user' => $user
+            'user' => new UserResource($user->loadMissing('doctor'))
         ], 200);
     }
 
@@ -137,7 +138,7 @@ class DoctorController extends Controller
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => $user->load('doctor')
+            'user' => new UserResource($user->load('doctor'))
         ], 200);
     }
 

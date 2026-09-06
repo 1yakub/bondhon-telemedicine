@@ -5,6 +5,9 @@ import { Providers } from "@/components/providers";
 import { BANGLA_NAME } from "@/components/brand/logo";
 import "./globals.css";
 
+// every page renders per request so the CSP nonce reaches the script tags (Next CSP guide)
+export const dynamic = "force-dynamic";
+
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
 
 export const metadata: Metadata = {

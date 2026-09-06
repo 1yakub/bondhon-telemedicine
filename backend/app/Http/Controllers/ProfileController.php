@@ -2,106 +2,60 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\UserResource;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use App\Models\User;
 
+/** A patient's own details. Route middleware (auth, role:patient) already applies. */
 class ProfileController extends Controller
 {
-    public function __construct()
+    public function checkCompletion(Request $request): JsonResponse
     {
-        $this->middleware('auth');
-    }
-
-    /**
-     * Check if profile completion is needed
-     * GET /api/profile/complete
-     */
-    public function checkCompletion(Request $request)
-    {
-        $user = Auth::user();
-
-
-        $needsCompletion = empty($user->name);
+        $user = $request->user();
 
         return response()->json([
-            'needs_completion' => $needsCompletion,
-            'user' => $user
-        ], 200);
+            'needs_completion' => ! filled($user->name),
+            'user' => new UserResource($user),
+        ]);
     }
 
-    /**
-     * Complete patient profile
-     * POST /api/profile/complete
-     */
-    public function completeProfile(Request $request)
+    public function completeProfile(Request $request): JsonResponse
     {
-        $user = Auth::user();
-
-
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'date_of_birth' => 'nullable|date|before:today',
-            'gender' => 'nullable|in:male,female,other',
-            'address' => 'nullable|string|max:500'
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
+            'gender' => ['nullable', 'in:male,female,other'],
+            'address' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $user->update([
-            'name' => $request->name,
-            'date_of_birth' => $request->date_of_birth,
-            'gender' => $request->gender,
-            'address' => $request->address,
-        ]);
+        $request->user()->update($validated);
 
         return response()->json([
             'message' => 'Profile completed successfully',
-            'user' => $user->fresh(),
-            'redirect_to' => '/patient/dashboard'
-        ], 200);
+            'user' => new UserResource($request->user()->fresh()),
+        ]);
     }
 
-    /**
-     * Get patient profile
-     * GET /api/profile
-     */
-    public function getProfile(Request $request)
+    public function getProfile(Request $request): JsonResponse
     {
-        $user = Auth::user();
-
-
-        return response()->json([
-            'user' => $user
-        ], 200);
+        return response()->json(['user' => new UserResource($request->user())]);
     }
 
-    /**
-     * Update patient profile
-     * PUT /api/profile
-     */
-    public function updateProfile(Request $request)
+    public function updateProfile(Request $request): JsonResponse
     {
-        $user = Auth::user();
-
-
-        $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'date_of_birth' => 'nullable|date|before:today',
-            'gender' => 'nullable|in:male,female,other',
-            'address' => 'nullable|string|max:500',
-            'profile_photo' => 'nullable|string|max:255'
+        $validated = $request->validate([
+            'name' => ['sometimes', 'required', 'string', 'max:255'],
+            'date_of_birth' => ['nullable', 'date', 'before:today'],
+            'gender' => ['nullable', 'in:male,female,other'],
+            'address' => ['nullable', 'string', 'max:500'],
+            'profile_photo' => ['nullable', 'string', 'max:255'],
         ]);
 
-        $user->update($request->only([
-            'name',
-            'date_of_birth',
-            'gender',
-            'address',
-            'profile_photo'
-        ]));
+        $request->user()->update($validated);
 
         return response()->json([
             'message' => 'Profile updated successfully',
-            'user' => $user->fresh()
-        ], 200);
+            'user' => new UserResource($request->user()->fresh()),
+        ]);
     }
 }
