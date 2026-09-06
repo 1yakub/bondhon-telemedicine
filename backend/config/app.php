@@ -59,6 +59,10 @@ return [
     // Public demo: sign in codes are shown on screen instead of sent by SMS; data resets nightly.
     'demo' => (bool) env('APP_DEMO', false),
 
+    // seeded accounts; the admin password is a deployment secret and is never shown
+    'admin_password' => env('ADMIN_PASSWORD'),
+    'demo_doctor_password' => env('DEMO_DOCTOR_PASSWORD', 'doctor123'),
+
     'frontend_url' => env('FRONTEND_URL', env('APP_URL', 'http://localhost')),
 
     'asset_url' => env('ASSET_URL'),

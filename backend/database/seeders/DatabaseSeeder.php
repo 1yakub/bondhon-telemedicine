@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '01700000000',
             'email' => 'admin@bondhon.com',
             // no default: the admin password is a deployment secret; a missing value makes a random one nobody knows
-            'password' => Hash::make(env('ADMIN_PASSWORD') ?: bin2hex(random_bytes(16))),
+            'password' => Hash::make(config('app.admin_password') ?: bin2hex(random_bytes(16))),
             'role' => 'admin',
         ]);
 
@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Ahmed Rahman',
             'phone' => '01700000001',
             'email' => 'ahmed@bondhon.com',
-            'password' => Hash::make(env('DEMO_DOCTOR_PASSWORD', 'doctor123')),
+            'password' => Hash::make(config('app.demo_doctor_password')),
             'role' => 'doctor',
             'gender' => 'male',
         ]);
@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Fatima Khatun',
             'phone' => '01700000002',
             'email' => 'fatima@bondhon.com',
-            'password' => Hash::make(env('DEMO_DOCTOR_PASSWORD', 'doctor123')),
+            'password' => Hash::make(config('app.demo_doctor_password')),
             'role' => 'doctor',
             'gender' => 'female',
         ]);
@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Mohammad Ali',
             'phone' => '01700000003',
             'email' => 'ali@bondhon.com',
-            'password' => Hash::make(env('DEMO_DOCTOR_PASSWORD', 'doctor123')),
+            'password' => Hash::make(config('app.demo_doctor_password')),
             'role' => 'doctor',
             'gender' => 'male',
         ]);
