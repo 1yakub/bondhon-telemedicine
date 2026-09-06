@@ -35,7 +35,6 @@ type CreateValues = z.infer<ReturnType<typeof makeCreateSchema>>;
 
 export default function AdminDoctorsPage() {
   const t = useTranslations("admin");
-  const tc = useTranslations("common");
   const td = useTranslations("doctors");
   const { data, isPending } = useAdminDoctors();
   const { toggle } = useAdminDoctorMutations();
@@ -92,7 +91,6 @@ export default function AdminDoctorsPage() {
 function CreateDoctorDialog() {
   const t = useTranslations("admin");
   const tc = useTranslations("common");
-  const td = useTranslations("doctors");
   const tv = useTranslations("validation");
   const createSchema = useMemo(() => makeCreateSchema(tv), [tv]);
   const { create } = useAdminDoctorMutations();
