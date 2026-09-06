@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import AgoraRTC, {
   AgoraRTCProvider,
   LocalVideoTrack,
@@ -18,7 +19,6 @@ import { Mic, MicOff, PhoneOff, Video as VideoIcon, VideoOff } from "lucide-reac
 import { Button } from "@/components/ui/button";
 import { toApiError } from "@/lib/api";
 import { video } from "@/lib/queries";
-import type { VideoSession } from "@/lib/types";
 
 type Props = { consultationId: string; role: "patient" | "doctor"; onLeave: () => void };
 
@@ -26,66 +26,49 @@ type Props = { consultationId: string; role: "patient" | "doctor"; onLeave: () =
  * One consultation call on agora-rtc-react's declarative hooks. Loaded with
  * `dynamic(..., { ssr: false })` because the SDK touches browser globals on import.
  * The server hands out the room token only to the two parties of a paid visit.
+ * A retry remounts the call (new key), which resets every hook cleanly.
  */
 export default function VideoCall(props: Props) {
   const client = useMemo(() => AgoraRTC.createClient({ mode: "rtc", codec: "vp8" }), []);
+  const [attempt, setAttempt] = useState(0);
   return (
     <AgoraRTCProvider client={client}>
-      <Call {...props} />
+      <Call key={attempt} {...props} onRetry={() => setAttempt((n) => n + 1)} />
     </AgoraRTCProvider>
   );
 }
 
-function Call({ consultationId, role, onLeave }: Props) {
+function Call({ consultationId, role, onLeave, onRetry }: Props & { onRetry: () => void }) {
   const t = useTranslations("call");
-  const [session, setSession] = useState<VideoSession | null>(null);
-  const [problem, setProblem] = useState<{ text: string; retry: boolean } | null>(null);
-  const [loading, setLoading] = useState(true);
   const [calling, setCalling] = useState(false);
   const [micOn, setMicOn] = useState(true);
   const [camOn, setCamOn] = useState(true);
-  const [attempt, setAttempt] = useState(0);
+
+  const token = useQuery({
+    queryKey: ["video-token", consultationId],
+    queryFn: () => video.token(consultationId),
+    retry: false,
+    staleTime: 0,
+    gcTime: 0,
+  });
+  const session = token.data;
 
   const isConnected = useIsConnected();
   const connectionState = useConnectionState();
-  const { localMicrophoneTrack, error: micError } = useLocalMicrophoneTrack(calling && micOn);
-  const { localCameraTrack, error: camError } = useLocalCameraTrack(calling && camOn);
   const { error: joinError } = useJoin(
     { appid: session?.app_id ?? "", channel: session?.channel ?? "", token: session?.token ?? null, uid: session?.uid ?? null },
     calling && !!session,
   );
-  usePublish([localMicrophoneTrack, localCameraTrack], calling && isConnected);
+  const live = calling && !joinError;
+  const { localMicrophoneTrack, error: micError } = useLocalMicrophoneTrack(live && micOn);
+  const { localCameraTrack, error: camError } = useLocalCameraTrack(live && camOn);
+  usePublish([localMicrophoneTrack, localCameraTrack], live && isConnected);
   const remoteUsers = useRemoteUsers();
   const other = remoteUsers[0];
 
   useEffect(() => {
-    let cancelled = false;
-    setLoading(true);
-    setProblem(null);
-    video
-      .token(consultationId)
-      .then((s) => !cancelled && setSession(s))
-      .catch((err) => {
-        if (cancelled) return;
-        const e = toApiError(err);
-        setProblem({ text: e.status === 403 ? t("notReady") : e.status ? e.message : t("noConnection"), retry: !e.status || e.status >= 500 });
-      })
-      .finally(() => !cancelled && setLoading(false));
-    return () => {
-      cancelled = true;
-    };
-  }, [consultationId, attempt, t]);
-
-  useEffect(() => {
-    if (calling && joinError) {
-      setCalling(false);
-      setProblem({ text: describeAgoraError(joinError), retry: true });
-    }
-  }, [joinError, calling]);
-
-  useEffect(() => {
-    if (calling && isConnected) video.start(consultationId).catch(() => {});
-  }, [calling, isConnected, consultationId]);
+    if (live && isConnected) video.start(consultationId).catch(() => {});
+  }, [live, isConnected, consultationId]);
 
   const leave = async () => {
     setCalling(false);
@@ -96,7 +79,7 @@ function Call({ consultationId, role, onLeave }: Props) {
     }
   };
 
-  if (loading) {
+  if (token.isPending) {
     return (
       <Screen>
         <div className="size-10 animate-spin rounded-full border-2 border-white/30 border-t-white" aria-hidden="true" />
@@ -105,13 +88,23 @@ function Call({ consultationId, role, onLeave }: Props) {
     );
   }
 
-  if (problem && !calling) {
+  // derived, never synced through state: a token failure or a failed join shows one problem screen
+  const problem = token.error
+    ? (() => {
+        const e = toApiError(token.error);
+        return { text: e.status === 403 ? t("notReady") : e.status ? e.message : t("noConnection"), retry: !e.status || e.status >= 500 };
+      })()
+    : joinError
+      ? { text: describeAgoraError(joinError), retry: true }
+      : null;
+
+  if (problem) {
     return (
       <Screen>
         <div className="max-w-md rounded-2xl bg-background p-6 text-foreground">
           <p className="text-lg font-semibold">{problem.text}</p>
           <div className="mt-5 flex justify-center gap-3">
-            {problem.retry && <Button onClick={() => setAttempt((n) => n + 1)}>{t("retry")}</Button>}
+            {problem.retry && <Button onClick={onRetry}>{t("retry")}</Button>}
             <Button variant="outline" onClick={onLeave}>
               {t("back")}
             </Button>
@@ -139,7 +132,7 @@ function Call({ consultationId, role, onLeave }: Props) {
         )}
       </div>
 
-      {calling && (
+      {live && (
         <div className="absolute top-4 right-4 h-40 w-28 overflow-hidden rounded-xl border border-white/30 bg-neutral-800 sm:h-48 sm:w-64">
           {camOn && localCameraTrack ? (
             <LocalVideoTrack track={localCameraTrack} play className="h-full w-full" />
@@ -151,10 +144,10 @@ function Call({ consultationId, role, onLeave }: Props) {
 
       <div className="absolute top-4 left-4 rounded-full bg-black/50 px-3 py-1 text-sm capitalize">
         {role}
-        {calling && isConnected && <span className="ml-2 text-emerald-300">{"● "}{t("live")}</span>}
+        {live && isConnected && <span className="ml-2 text-emerald-300">{"● "}{t("live")}</span>}
       </div>
 
-      {deviceProblem && calling && (
+      {deviceProblem && live && (
         <div className="absolute top-16 left-1/2 -translate-x-1/2 rounded-lg bg-amber-100 px-4 py-2 text-sm text-amber-900">
           {describeDeviceError(deviceProblem)}
         </div>
