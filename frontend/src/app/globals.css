@@ -1,55 +1,124 @@
-@import 'tailwindcss';
-@import '../../public/fonts/fonts.css';
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@import "../../public/fonts/fonts.css";
 
-/* Explicit sources: the production image builds in a stage that holds only src/, so the class
-   scan must not depend on automatic detection. */
-@source '../components';
-@source '.';
+@custom-variant dark (&:is(.dark *));
 
-@theme {
-  /* Palette: paper ground, mist sections, ink text, teal primary (medical, calm), one warm
-     accent (saffron) for highlights, slate for secondary text, danger for errors. */
-  --color-paper: #ffffff;
-  --color-mist: #f2f6f5;
-  --color-mist-2: #e4ecea;
-  --color-ink: #14213d;
-  --color-ink-2: #2c3a5a;
-  --color-slate: #5c6b7a;
-  --color-slate-2: #93a0ad;
-  --color-rule: #dde4e2;
-  --color-teal-50: #e8f4f1;
-  --color-teal-100: #cbe6df;
+/* Brand palette mapped onto the shadcn tokens: paper ground, mist sections, ink text,
+   teal primary (medical, calm), one warm saffron accent, slate for secondary text. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Hind Siliguri", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
   --color-teal-500: #0e7c6b;
   --color-teal-600: #0b6a5b;
   --color-teal-700: #08564a;
+  --color-teal-50: #e8f4f1;
   --color-saffron-100: #fdefd6;
   --color-saffron-500: #e9a23b;
   --color-saffron-600: #d18d2a;
-  --color-danger: #b3261e;
+  --color-mist: #f2f6f5;
   --color-ok: #0e7c6b;
-
-  /* One family for Bangla and Latin, self hosted. */
-  --font-sans: 'Hind Siliguri', ui-sans-serif, system-ui, sans-serif;
-
-  --radius-control: 12px;
-  --radius-card: 16px;
-
-  --shadow-lift: 0 1px 2px rgba(20, 33, 61, 0.06), 0 10px 30px rgba(20, 33, 61, 0.08);
-
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
   --text-display: clamp(2.25rem, 1.4rem + 3vw, 4rem);
   --text-display--line-height: 1.08;
   --text-title: clamp(1.5rem, 1.15rem + 1.2vw, 2.125rem);
   --text-title--line-height: 1.15;
 }
 
-@layer base {
-  html { -webkit-text-size-adjust: 100%; }
-  body { @apply bg-paper text-ink antialiased; }
-  /* Bangla glyphs sit taller than Latin; a touch more line height keeps mixed lines even */
-  :lang(bn) { line-height: 1.6; }
-  [x-cloak] { display: none !important; }
-  :focus-visible { outline: 3px solid var(--color-saffron-500); outline-offset: 2px; }
+:root {
+  --background: #ffffff;
+  --foreground: #14213d;
+  --card: #ffffff;
+  --card-foreground: #14213d;
+  --popover: #ffffff;
+  --popover-foreground: #14213d;
+  --primary: #0e7c6b;
+  --primary-foreground: #ffffff;
+  --secondary: #f2f6f5;
+  --secondary-foreground: #14213d;
+  --muted: #f2f6f5;
+  --muted-foreground: #5c6b7a;
+  --accent: #e8f4f1;
+  --accent-foreground: #08564a;
+  --destructive: #b3261e;
+  --border: #dde4e2;
+  --input: #dde4e2;
+  --ring: #0e7c6b;
+  --chart-1: #0e7c6b;
+  --chart-2: #e9a23b;
+  --chart-3: #2c3a5a;
+  --chart-4: #93a0ad;
+  --chart-5: #cbe6df;
+  --radius: 0.75rem;
+  --sidebar: #f2f6f5;
+  --sidebar-foreground: #14213d;
+  --sidebar-primary: #0e7c6b;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #e8f4f1;
+  --sidebar-accent-foreground: #08564a;
+  --sidebar-border: #dde4e2;
+  --sidebar-ring: #0e7c6b;
 }
 
-@utility measure { max-width: 62ch; }
-@utility tap { min-height: 3rem; }
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  html {
+    @apply font-sans;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  /* Bangla glyphs sit taller than Latin; a touch more line height keeps mixed lines even */
+  :lang(bn) {
+    line-height: 1.6;
+  }
+  :focus-visible {
+    outline: 3px solid var(--color-saffron-500);
+    outline-offset: 2px;
+  }
+}
+
+@utility measure {
+  max-width: 62ch;
+}

@@ -6,8 +6,6 @@ ENV NEXT_TELEMETRY_DISABLED=1
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 COPY . .
-# Browser calls go to the same origin; Next rewrites /api/* to the API container at run time.
-ENV NEXT_PUBLIC_API_URL=/api
 ARG NEXT_PUBLIC_DEMO=true
 ENV NEXT_PUBLIC_DEMO=$NEXT_PUBLIC_DEMO
 ARG NEXT_PUBLIC_SITE_URL=https://bondhon.yakubhossain.dev
