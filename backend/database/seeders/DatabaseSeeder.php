@@ -18,6 +18,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        // Inserts only. On a database that already has users, leave everything as it is;
+        // the nightly reset runs migrate:fresh first, so it always starts empty.
+        if (User::query()->exists()) {
+            echo "Database already seeded, nothing changed.\n";
+            return;
+        }
         // Create Admin User
         $admin = User::create([
             'name' => 'Bondhon Admin',
