@@ -44,7 +44,8 @@
     "qualifications": "Qualifications",
     "about": "About the visit",
     "aboutBody": "A visit is a private video call of about 15 to 30 minutes. Pay after booking; the call button appears once the doctor is ready.",
-    "notFound": "This doctor could not be found."
+    "notFound": "This doctor could not be found.",
+    "experienceLabel": "Experience"
   },
   "booking": {
     "title": "Book a video visit",

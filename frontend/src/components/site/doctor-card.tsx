@@ -33,7 +33,7 @@ export function DoctorCard({ doctor }: { doctor: Doctor }) {
             <dd className="font-semibold">{money(doctor.fee_per_consultation)}</dd>
           </div>
           <div>
-            <dt className="text-muted-foreground">Experience</dt>
+            <dt className="text-muted-foreground">{t("experienceLabel")}</dt>
             <dd className="font-semibold">{t("experience", { years: doctor.experience_years ?? 0 })}</dd>
           </div>
         </dl>
