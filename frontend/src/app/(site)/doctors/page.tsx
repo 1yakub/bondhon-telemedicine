@@ -32,7 +32,11 @@ export default function DoctorsPage() {
           <p className="mt-1 text-muted-foreground">{t("subtitle")}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-          <Select value={specialty} onValueChange={(v) => setSpecialty(v ?? "all")}>
+          <Select
+            value={specialty}
+            onValueChange={(v) => setSpecialty(v ?? "all")}
+            items={{ all: t("filterAll"), ...Object.fromEntries(specialties.map((s) => [s, s])) }}
+          >
             <SelectTrigger className="min-w-48" aria-label="Specialty">
               <SelectValue />
             </SelectTrigger>

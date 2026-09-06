@@ -160,7 +160,6 @@ coverage/
 # ===============================================
 
 # Documentation (sensitive/internal docs)
-docs/
 
 # Database files (SQLite, etc.)
 *.sqlite
