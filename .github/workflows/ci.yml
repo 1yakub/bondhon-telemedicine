@@ -48,7 +48,7 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - run: npm run build
         env:
-
+          NEXT_PUBLIC_DEMO: "true"
 
   images:
     name: Build and push images
